@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { HeroVideoBackground } from "@/components/HeroVideoBackground";
 import { TrustBadge } from "@/components/ui/TrustBadge";
 
 function ShieldIcon() {
@@ -32,14 +32,9 @@ function TeamIcon() {
 export function BuyToOrderHero() {
   return (
     <section className="relative min-h-[70svh] overflow-hidden md:min-h-[75svh]">
-      <Image
-        src="/images/hero.png"
-        alt="Premium vehicle in cinematic lighting"
-        fill
-        priority
-        className="object-cover"
-        sizes="100vw"
-      />
+      <div className="absolute inset-0">
+        <HeroVideoBackground />
+      </div>
       <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/75 to-charcoal/40" />
 
       <div className="relative z-10 mx-auto flex min-h-[70svh] max-w-7xl flex-col justify-end px-5 pb-16 pt-24 md:min-h-[75svh] md:px-8 md:pb-20 lg:px-12">

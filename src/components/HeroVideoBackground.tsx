@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const videos = [
@@ -24,8 +23,7 @@ const MIN_PLAY_MS = 6000;
 export function HeroVideoBackground() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [incomingIndex, setIncomingIndex] = useState<number | null>(null);
-  const [useStaticFallback, setUseStaticFallback] = useState(false);
-  const [videosReady, setVideosReady] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -42,18 +40,23 @@ export function HeroVideoBackground() {
     }
   }, []);
 
+  const playVideo = useCallback((index: number) => {
+    const video = videoRefs.current[index];
+    if (!video) return;
+
+    video.currentTime = 0;
+    void video.play().catch(() => {
+      // Keep trying on the active clip without falling back to a static image.
+    });
+  }, []);
+
   const goToNext = useCallback(() => {
+    if (reducedMotion) return;
+
     setActiveIndex((current) => {
       const next = (current + 1) % videos.length;
       setIncomingIndex(next);
-
-      const incomingVideo = videoRefs.current[next];
-      if (incomingVideo) {
-        incomingVideo.currentTime = 0;
-        void incomingVideo.play().catch(() => {
-          setUseStaticFallback(true);
-        });
-      }
+      playVideo(next);
 
       transitionTimeoutRef.current = setTimeout(() => {
         setActiveIndex(next);
@@ -62,50 +65,35 @@ export function HeroVideoBackground() {
 
       return current;
     });
-  }, []);
+  }, [playVideo, reducedMotion]);
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-
-    if (prefersReducedMotion) {
-      setUseStaticFallback(true);
-      return;
-    }
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const prefersReducedMotion = motionQuery.matches;
+    setReducedMotion(prefersReducedMotion);
 
     const firstVideo = videoRefs.current[0];
     if (!firstVideo) return;
 
+    if (prefersReducedMotion) {
+      firstVideo.pause();
+      firstVideo.currentTime = 0;
+      return;
+    }
+
     void firstVideo.play().then(() => {
-      setVideosReady(true);
       playTimeoutRef.current = setTimeout(goToNext, MIN_PLAY_MS);
-    }).catch(() => {
-      setUseStaticFallback(true);
     });
 
     return clearTimers;
   }, [clearTimers, goToNext]);
 
   useEffect(() => {
-    if (useStaticFallback || incomingIndex !== null) return;
+    if (reducedMotion || incomingIndex !== null) return;
 
     playTimeoutRef.current = setTimeout(goToNext, MIN_PLAY_MS);
     return clearTimers;
-  }, [activeIndex, clearTimers, goToNext, incomingIndex, useStaticFallback]);
-
-  if (useStaticFallback) {
-    return (
-      <Image
-        src="/images/hero.png"
-        alt="Premium car in cinematic lighting"
-        fill
-        priority
-        className="object-cover"
-        sizes="100vw"
-      />
-    );
-  }
+  }, [activeIndex, clearTimers, goToNext, incomingIndex, reducedMotion]);
 
   return (
     <>
@@ -124,7 +112,6 @@ export function HeroVideoBackground() {
               isVisible ? "opacity-100" : "opacity-0"
             } ${isIncoming ? "z-[1]" : isActive ? "z-0" : "-z-10"}`}
             src={video.src}
-            poster="/images/hero.png"
             muted
             playsInline
             loop={videos.length === 1}
@@ -133,18 +120,6 @@ export function HeroVideoBackground() {
           />
         );
       })}
-
-      {!videosReady && (
-        <Image
-          src="/images/hero.png"
-          alt=""
-          fill
-          priority
-          className="object-cover"
-          sizes="100vw"
-          aria-hidden
-        />
-      )}
     </>
   );
 }
