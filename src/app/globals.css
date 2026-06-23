@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  --color-charcoal: #181717;
+  --color-surface: #262424;
+  --color-cream: #f8f5ee;
+  --color-cream-muted: rgba(248, 245, 238, 0.5);
+  --color-coral: #ff4438;
+  --color-coral-hover: #e63d32;
+  --color-success: #2d9d6f;
+
+  --font-sans: var(--font-hanken), system-ui, sans-serif;
+
+  --radius-card: 1.5rem;
+  --radius-image: 1.75rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-charcoal text-cream antialiased;
+  }
+
+  ::selection {
+    @apply bg-coral/30 text-cream;
+  }
+}
+
+@layer utilities {
+  .section-padding {
+    @apply px-5 py-16 md:px-8 md:py-24 lg:px-12;
+  }
+
+  .headline-xl {
+    @apply text-[2.75rem] font-light leading-[1.05] tracking-tight md:text-6xl lg:text-[4.25rem];
+  }
+
+  .headline-hero {
+    @apply text-[2.75rem] font-light leading-[1.02] tracking-tight md:text-[3.75rem] lg:text-[4.75rem];
+  }
+
+  .headline-lg {
+    @apply text-3xl font-light leading-tight tracking-tight md:text-4xl lg:text-5xl;
+  }
+
+  .eyebrow {
+    @apply text-xs font-medium uppercase tracking-[0.2em] text-cream-muted;
+  }
+
+  .arrow-link {
+    @apply inline-flex items-center gap-3 text-sm font-medium text-cream transition-colors hover:text-coral;
+  }
+
+  .carousel-snap {
+    @apply flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .carousel-snap::-webkit-scrollbar {
+    display: none;
+  }
+}
