@@ -22,7 +22,7 @@ function highlightMatch(text: string, query: string) {
   return (
     <>
       {text.slice(0, index)}
-      <mark className="rounded bg-coral/20 px-0.5 text-cream no-underline">
+      <mark className="rounded bg-green/15 px-0.5 text-ink no-underline">
         {text.slice(index, index + query.trim().length)}
       </mark>
       {text.slice(index + query.trim().length)}
@@ -92,14 +92,14 @@ export function VehicleSearchInput({ value, onChange, onSelect }: VehicleSearchI
 
   return (
     <div ref={containerRef} className="relative">
-      <label htmlFor="vehicleSearch" className="mb-2 block text-sm font-medium text-cream">
-        Search for a car <span className="text-cream-muted">(optional)</span>
+      <label htmlFor="vehicleSearch" className="mb-2 block text-sm font-medium text-ink">
+        Search for a car <span className="text-muted">(optional)</span>
       </label>
 
       <div className="relative">
         <span
           aria-hidden
-          className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-cream-muted"
+          className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted"
         >
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path
@@ -132,12 +132,12 @@ export function VehicleSearchInput({ value, onChange, onSelect }: VehicleSearchI
           onKeyDown={handleKeyDown}
           placeholder="e.g. BMW 3 Series"
           autoComplete="off"
-          className="min-h-12 w-full rounded-2xl border border-cream/15 bg-charcoal/40 py-3 pl-12 pr-4 text-base text-cream placeholder:text-cream-muted focus:border-coral/40 focus:outline-none focus:ring-2 focus:ring-coral/20"
+          className="min-h-12 w-full rounded-2xl border border-line bg-mist py-3 pl-12 pr-4 text-base text-ink placeholder:text-muted focus:border-green/40 focus:outline-none focus:ring-2 focus:ring-green/20"
         />
       </div>
 
       {!showDropdown && !value.trim() && (
-        <p className="mt-2 text-xs text-cream-muted">
+        <p className="mt-2 text-xs text-muted">
           Don&apos;t worry if you&apos;re not sure yet — you can choose later
         </p>
       )}
@@ -146,7 +146,7 @@ export function VehicleSearchInput({ value, onChange, onSelect }: VehicleSearchI
         <div
           id={listboxId}
           role="listbox"
-          className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50 overflow-hidden rounded-2xl border border-cream/10 bg-surface shadow-2xl"
+          className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50 overflow-hidden rounded-2xl border border-line bg-paper shadow-2xl"
         >
           {results.length > 0 ? (
             <ul className="max-h-72 overflow-y-auto py-2">
@@ -164,10 +164,10 @@ export function VehicleSearchInput({ value, onChange, onSelect }: VehicleSearchI
                       onMouseEnter={() => setActiveIndex(index)}
                       onClick={() => selectVehicle(vehicle)}
                       className={`flex w-full items-center gap-3 px-3 py-3 text-left transition-colors ${
-                        isActive ? "bg-coral/10" : "hover:bg-cream/5"
+                        isActive ? "bg-green/10" : "hover:bg-mist"
                       }`}
                     >
-                      <div className="relative h-12 w-16 shrink-0 overflow-hidden rounded-xl bg-charcoal/60">
+                      <div className="relative h-12 w-16 shrink-0 overflow-hidden rounded-xl bg-mist">
                         <Image
                           src={vehicle.images[0]}
                           alt=""
@@ -177,10 +177,10 @@ export function VehicleSearchInput({ value, onChange, onSelect }: VehicleSearchI
                         />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-cream">
+                        <p className="truncate text-sm font-medium text-ink">
                           {highlightMatch(label, value)}
                         </p>
-                        <p className="mt-0.5 text-xs text-cream-muted">
+                        <p className="mt-0.5 text-xs text-muted">
                           {vehicle.year} · {formatPrice(vehicle.price)} · from{" "}
                           {formatPrice(vehicle.monthlyHp)}/mo
                         </p>
@@ -192,8 +192,8 @@ export function VehicleSearchInput({ value, onChange, onSelect }: VehicleSearchI
             </ul>
           ) : (
             <div className="px-4 py-6 text-center">
-              <p className="text-sm text-cream">No cars found for &ldquo;{value}&rdquo;</p>
-              <p className="mt-1 text-xs text-cream-muted">
+              <p className="text-sm text-ink">No cars found for &ldquo;{value}&rdquo;</p>
+              <p className="mt-1 text-xs text-muted">
                 Try a make or model like Audi, Golf, or Focus
               </p>
             </div>

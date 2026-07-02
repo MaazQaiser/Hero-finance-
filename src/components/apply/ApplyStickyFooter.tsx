@@ -18,10 +18,10 @@ export function ApplyStickyFooter({
   networkError,
 }: ApplyStickyFooterProps) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-cream/10 bg-charcoal/95 backdrop-blur-2xl">
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper/95 backdrop-blur-2xl">
       <div className="mx-auto max-w-lg px-5 py-4">
         {networkError && (
-          <p className="mb-3 rounded-2xl border border-coral/30 bg-coral/10 px-4 py-3 text-sm text-coral">
+          <p className="mb-3 rounded-2xl border border-green/30 bg-green/10 px-4 py-3 text-sm text-green-deep">
             {networkError}
           </p>
         )}
@@ -32,7 +32,7 @@ export function ApplyStickyFooter({
           type="button"
           onClick={onSave}
           disabled={saving}
-          className="mt-3 min-h-11 w-full text-sm font-medium text-cream-muted transition-colors hover:text-cream disabled:opacity-50"
+          className="mt-3 min-h-11 w-full text-sm font-medium text-muted transition-colors hover:text-ink disabled:opacity-50"
         >
           {saving ? "Saving..." : "Save for later"}
         </button>

@@ -1,89 +1,110 @@
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Card } from "@/components/ui/Card";
+import Image from "next/image";
+import { HowItWorksStockImages } from "@/components/HowItWorksStockImages";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
-const steps = [
-  {
-    number: "1",
-    title: "Check eligibility",
-    description:
-      "Tell us about your budget and circumstances. We run a soft search that won't affect your credit score.",
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden>
-        <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M7 9h10M7 13h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
-    number: "2",
-    title: "Get approved",
-    description:
-      "Receive a quick decision from our finance team. Clear terms, no hidden broker fees.",
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden>
-        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M8 12l3 3 5-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
-  },
-  {
-    number: "3",
-    title: "Choose & reserve your car",
-    description:
-      "Browse our AA-inspected stock, see your monthly HP payment, and reserve online.",
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden>
-        <path d="M4 16l2-6h12l2 6M6 16h12M8 10l1-3h6l1 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        <circle cx="8" cy="17" r="1.5" fill="currentColor" />
-        <circle cx="16" cy="17" r="1.5" fill="currentColor" />
-      </svg>
-    ),
-  },
+const stepTags = [
+  { label: "Check", position: "left-4 top-4" },
+  { label: "Approve", position: "right-6 top-1/2 -translate-y-1/2" },
+  { label: "Reserve", position: "left-6 bottom-4" },
+];
+
+const customers = [
+  { name: "Sarah M.", avatar: "/images/avatars/sarah.jpg" },
+  { name: "James T.", avatar: "/images/avatars/james.jpg" },
+  { name: "Priya K.", avatar: "/images/avatars/priya.jpg" },
+  { name: "Emma L.", avatar: "/images/avatars/emma.jpg" },
+  { name: "David R.", avatar: "/images/avatars/david.jpg" },
 ];
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="section-padding">
-      <div className="mx-auto max-w-7xl">
-        <SectionHeading
-          eyebrow="How it works"
-          title="Three simple steps to your next car"
-          description="A streamlined finance journey designed to get you approved and driving — without the broker runaround."
-        />
+    <section id="how-it-works" className="section-padding bg-paper">
+      <div className="container-site">
+        <div className="grid gap-4 lg:gap-5">
+          <ScrollReveal>
+            <div className="grid overflow-hidden rounded-[28px] bg-green-bright lg:grid-cols-[1fr_auto] lg:items-stretch lg:gap-10">
+              <div className="flex flex-col p-8 lg:p-10 lg:pr-4">
+                <span className="inline-flex w-fit items-center rounded-full border border-white/80 bg-white px-4 py-2 text-[13px] font-bold text-ink shadow-[0_4px_16px_rgba(11,41,32,0.08)]">
+                  How it works
+                </span>
+                <h2 className="cyclix-headline mt-6 max-w-[640px] text-ink">
+                  Three simple steps to your next car — finance and stock under one roof
+                </h2>
+              </div>
 
-        <div className="relative mt-14">
-          <div
-            aria-hidden
-            className="absolute left-[16.666%] right-[16.666%] top-10 hidden h-px bg-gradient-to-r from-transparent via-coral/40 to-transparent md:block"
-          />
+              <HowItWorksStockImages />
+            </div>
+          </ScrollReveal>
 
-          <div className="grid gap-8 md:grid-cols-3 md:gap-6">
-            {steps.map((step, index) => (
-              <div key={step.number} className="relative flex flex-col items-center md:items-stretch">
-                {index < steps.length - 1 && (
-                  <div
-                    aria-hidden
-                    className="absolute left-1/2 top-10 hidden h-full w-px -translate-x-1/2 bg-cream/10 md:hidden"
-                  />
-                )}
+          <div className="grid gap-4 lg:grid-cols-2 lg:gap-5">
+            <ScrollReveal delay={100}>
+              <div className="flex h-full flex-col overflow-hidden rounded-[28px] bg-ink p-8 lg:p-10">
+                <p className="font-display text-2xl font-extrabold leading-snug tracking-tight text-white md:text-[1.75rem] lg:text-[2rem]">
+                  Soft-search eligibility, fast approval, and AA-inspected stock — one seamless
+                  journey from enquiry to reserved car.
+                </p>
 
-                <div className="relative z-10 mb-6 flex flex-col items-center md:mb-8">
-                  <div className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-coral/30 bg-charcoal text-3xl font-light text-coral shadow-lg shadow-coral/10">
-                    {step.number}
+                <div className="relative mt-8 flex-1 overflow-hidden rounded-[20px]">
+                  <div className="relative aspect-[16/10] w-full sm:aspect-[16/9]">
+                    <Image
+                      src="/images/dealer/customer-keys.jpg"
+                      alt="Hero customer receiving keys on the forecourt"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                    />
                   </div>
-                  <div className="mt-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-coral/10 text-coral">
-                    {step.icon}
-                  </div>
+
+                  {stepTags.map((tag) => (
+                    <span
+                      key={tag.label}
+                      className={`absolute ${tag.position} rounded-full bg-ink/90 px-4 py-2 text-sm font-bold text-white shadow-[0_4px_20px_rgba(0,0,0,0.35)] ring-1 ring-white/10 backdrop-blur-sm`}
+                    >
+                      {tag.label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </ScrollReveal>
+
+            <ScrollReveal delay={200}>
+              <div className="flex h-full flex-col justify-between overflow-hidden rounded-[28px] bg-green-bright p-8 lg:p-10">
+                <div>
+                  <h3 className="font-display text-3xl font-extrabold leading-tight tracking-tight text-ink md:text-4xl">
+                    Ready to find out where you stand?
+                  </h3>
+                  <p className="mt-4 max-w-md text-base leading-relaxed text-ink/75 md:text-lg">
+                    Start with a soft search that won&apos;t affect your credit score — then browse
+                    stock matched to your budget.
+                  </p>
                 </div>
 
-                <Card className="flex flex-1 flex-col text-center md:text-left">
-                  <h3 className="text-xl font-medium text-cream">{step.title}</h3>
-                  <p className="mt-3 flex-1 text-sm leading-relaxed text-cream-muted">
-                    {step.description}
-                  </p>
-                </Card>
+                <div className="mt-10 flex flex-wrap items-center gap-6">
+                  <div className="flex items-center gap-3">
+                    <div className="flex -space-x-2.5">
+                      {customers.map((customer) => (
+                        <span
+                          key={customer.name}
+                          className="relative h-10 w-10 overflow-hidden rounded-full ring-2 ring-green-bright"
+                        >
+                          <Image
+                            src={customer.avatar}
+                            alt=""
+                            fill
+                            className="object-cover"
+                            sizes="40px"
+                          />
+                        </span>
+                      ))}
+                    </div>
+                    <p className="text-sm font-semibold text-ink/80">
+                      10,000+
+                      <span className="block text-xs font-medium text-ink/60">drivers financed</span>
+                    </p>
+                  </div>
+                </div>
               </div>
-            ))}
+            </ScrollReveal>
           </div>
         </div>
       </div>

@@ -13,7 +13,7 @@ export function VehicleRelatedCars({ vehicles }: VehicleRelatedCarsProps) {
   return (
     <section className="px-5 pb-8 md:px-8 lg:px-12">
       <div className="mx-auto max-w-7xl">
-        <h2 className="text-lg font-medium text-cream">Similar cars you may like</h2>
+        <h2 className="text-lg font-medium text-ink">Similar cars you may like</h2>
 
         <div className="carousel-snap mt-4 -mx-5 px-5 md:-mx-8 md:px-8">
           {vehicles.map((vehicle) => (
@@ -21,7 +21,7 @@ export function VehicleRelatedCars({ vehicles }: VehicleRelatedCarsProps) {
               key={vehicle.id}
               className="w-[78vw] shrink-0 snap-center sm:w-[280px]"
             >
-              <div className="overflow-hidden rounded-[var(--radius-card)] border border-cream/10 bg-surface">
+              <div className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-paper">
                 <div className="relative aspect-[4/3]">
                   <Image
                     src={vehicle.images[0]}
@@ -32,14 +32,14 @@ export function VehicleRelatedCars({ vehicles }: VehicleRelatedCarsProps) {
                   />
                 </div>
                 <div className="p-4">
-                  <h3 className="font-medium text-cream">
+                  <h3 className="font-medium text-ink">
                     {vehicle.make} {vehicle.model}
                   </h3>
-                  <p className="mt-2 text-xl font-medium text-coral">
+                  <p className="mt-2 text-xl font-medium text-green-deep">
                     {formatPrice(vehicle.monthlyHp)}
-                    <span className="text-sm font-normal text-cream-muted">/mo</span>
+                    <span className="text-sm font-normal text-muted">/mo</span>
                   </p>
-                  <p className="text-sm text-cream-muted">{formatPrice(vehicle.price)}</p>
+                  <p className="text-sm text-muted">{formatPrice(vehicle.price)}</p>
                   <Link href={`/cars/${vehicle.id}`} className="mt-4 block">
                     <Button variant="secondary" fullWidth>
                       View Car

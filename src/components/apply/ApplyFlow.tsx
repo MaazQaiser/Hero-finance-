@@ -203,7 +203,7 @@ export function ApplyFlow({
   }
 
   return (
-    <>
+    <div className="min-h-[100svh] bg-paper">
       <ApplyProgressHeader
         stepNumber={stepIndex + 1}
         totalSteps={steps.length}
@@ -213,11 +213,11 @@ export function ApplyFlow({
 
       <main className="mx-auto max-w-lg px-5 pb-40 pt-6">
         <p className="eyebrow">Finance application</p>
-        <h1 className="mt-3 text-2xl font-medium text-cream md:text-3xl">{meta.title}</h1>
-        <p className="mt-3 text-sm leading-relaxed text-cream-muted">{meta.helper}</p>
+        <h1 className="mt-3 text-2xl font-medium text-ink md:text-3xl">{meta.title}</h1>
+        <p className="mt-3 text-sm leading-relaxed text-muted">{meta.helper}</p>
 
         {meta.encouragement && stepIndex > 0 && (
-          <p className="mt-2 text-sm text-coral">{meta.encouragement}</p>
+          <p className="mt-2 text-sm text-green-deep">{meta.encouragement}</p>
         )}
 
         <div className="mt-8">
@@ -225,7 +225,7 @@ export function ApplyFlow({
         </div>
 
         {stepIndex > 0 && stepIndex % 3 === 0 && (
-          <p className="mt-8 rounded-2xl border border-cream/10 bg-surface/50 px-4 py-3 text-center text-xs text-cream-muted">
+          <p className="mt-8 rounded-2xl border border-line bg-mist-2 px-4 py-3 text-center text-xs text-muted">
             Soft search only · FCA regulated · Your data is secure
           </p>
         )}
@@ -253,6 +253,6 @@ export function ApplyFlow({
         onLeave={() => router.push("/")}
         sending={sendingResume}
       />
-    </>
+    </div>
   );
 }

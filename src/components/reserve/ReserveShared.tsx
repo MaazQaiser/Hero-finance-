@@ -39,11 +39,11 @@ function TeamIcon() {
 
 export function ReserveDepositCard() {
   return (
-    <div className="rounded-[var(--radius-card)] border border-coral/20 bg-gradient-to-br from-coral/10 via-surface to-surface p-6">
-      <p className="text-2xl font-medium text-cream">
+    <div className="rounded-[var(--radius-card)] border border-green/20 bg-gradient-to-br from-coral/10 via-surface to-surface p-6">
+      <p className="text-2xl font-medium text-ink">
         Reserve this vehicle for {formatPrice(DEPOSIT_AMOUNT)}
       </p>
-      <p className="mt-3 text-sm leading-relaxed text-cream-muted">
+      <p className="mt-3 text-sm leading-relaxed text-muted">
         This deposit is fully refundable and secures the vehicle while our team contacts you to
         finalise your finance.
       </p>
@@ -72,15 +72,15 @@ export function ReserveStepList({ steps }: ReserveStepListProps) {
       {steps.map((step, index) => (
         <div
           key={step.title}
-          className="flex gap-4 rounded-[var(--radius-card)] border border-cream/10 bg-surface p-4"
+          className="flex gap-4 rounded-[var(--radius-card)] border border-line bg-paper p-4"
         >
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-coral/15 text-sm font-medium text-coral">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green/15 text-sm font-medium text-green-deep">
             {index + 1}
           </div>
           <div>
-            <p className="font-medium text-cream">{step.title}</p>
+            <p className="font-medium text-ink">{step.title}</p>
             {step.description && (
-              <p className="mt-1 text-sm text-cream-muted">{step.description}</p>
+              <p className="mt-1 text-sm text-muted">{step.description}</p>
             )}
           </div>
         </div>

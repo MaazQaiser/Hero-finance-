@@ -53,7 +53,7 @@ export function VehicleGallery({ vehicle }: VehicleGalleryProps) {
           <div className="relative md:overflow-hidden md:rounded-[var(--radius-image)]">
             <div
               ref={scrollRef}
-              className="carousel-snap aspect-[4/3] w-full bg-charcoal md:aspect-[16/10]"
+              className="carousel-snap aspect-[4/3] w-full bg-paper md:aspect-[16/10]"
               onScroll={(event) => {
                 const container = event.currentTarget;
                 const index = Math.round(container.scrollLeft / container.clientWidth);
@@ -104,16 +104,16 @@ export function VehicleGallery({ vehicle }: VehicleGalleryProps) {
       </section>
 
       {expanded && (
-        <div className="fixed inset-0 z-[70] flex flex-col bg-charcoal">
+        <div className="fixed inset-0 z-[70] flex flex-col bg-paper">
           <div className="flex items-center justify-between px-5 py-4">
-            <p className="text-sm text-cream-muted">
+            <p className="text-sm text-muted">
               {activeIndex + 1} / {vehicle.images.length}
             </p>
             <button
               type="button"
               onClick={() => setExpanded(false)}
               aria-label="Close gallery"
-              className="flex min-h-11 min-w-11 items-center justify-center rounded-full border border-cream/20 text-cream"
+              className="flex min-h-11 min-w-11 items-center justify-center rounded-full border border-line text-ink"
             >
               ✕
             </button>
@@ -124,7 +124,7 @@ export function VehicleGallery({ vehicle }: VehicleGalleryProps) {
               type="button"
               onClick={() => goTo(activeIndex - 1)}
               aria-label="Previous image"
-              className="absolute left-3 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-charcoal/70 text-cream"
+              className="absolute left-3 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper/90 text-ink shadow-sm"
             >
               ‹
             </button>
@@ -143,7 +143,7 @@ export function VehicleGallery({ vehicle }: VehicleGalleryProps) {
               type="button"
               onClick={() => goTo(activeIndex + 1)}
               aria-label="Next image"
-              className="absolute right-3 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-charcoal/70 text-cream"
+              className="absolute right-3 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper/90 text-ink shadow-sm"
             >
               ›
             </button>

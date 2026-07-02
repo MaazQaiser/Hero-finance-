@@ -54,7 +54,7 @@ export function ApplyStepContent({
             autoComplete="tel"
             placeholder="07XXX XXXXXX"
           />
-          <p className="rounded-2xl border border-cream/10 bg-surface/60 px-4 py-3 text-sm text-cream-muted">
+          <p className="rounded-2xl border border-line bg-mist px-4 py-3 text-sm text-muted">
             We never ask for bank details at this stage.
           </p>
         </div>
@@ -120,7 +120,7 @@ export function ApplyStepContent({
             </ApplySelect>
           ) : (
             data.postcode.trim() && (
-              <p className="text-sm text-cream-muted">
+              <p className="text-sm text-muted">
                 Try M1 1AA, B1 1BB, LS1 1CC, E1 1DD, or SW1A 1AA to see sample addresses.
               </p>
             )
@@ -258,7 +258,7 @@ export function ApplyStepContent({
     case "address-history":
       return (
         <div className="space-y-4">
-          <p className="text-sm text-cream-muted">
+          <p className="text-sm text-muted">
             Because you&apos;ve lived at your current address for less than 3 years, we need your
             previous address.
           </p>
@@ -315,21 +315,21 @@ export function ApplyStepContent({
       return (
         <div className="space-y-4">
           {selectedVehicle ? (
-            <div className="rounded-[var(--radius-card)] border border-coral/20 bg-coral/10 p-4">
+            <div className="rounded-[var(--radius-card)] border border-green/20 bg-green/10 p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-xs uppercase tracking-wide text-cream-muted">Selected vehicle</p>
-                  <p className="mt-1 font-medium text-cream">
+                  <p className="text-xs tracking-wide text-muted">Selected vehicle</p>
+                  <p className="mt-1 font-medium text-ink">
                     {selectedVehicle.make} {selectedVehicle.model}
                   </p>
-                  <p className="text-sm text-cream-muted">
+                  <p className="text-sm text-muted">
                     {selectedVehicle.year} · {selectedVehicle.fuel} · {selectedVehicle.transmission}
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => onChange({ vehicleId: "", vehicleSearch: "" })}
-                  className="shrink-0 text-sm text-coral hover:underline"
+                  className="shrink-0 text-sm text-green-deep hover:underline"
                 >
                   Change
                 </button>
@@ -370,24 +370,24 @@ export function ApplyStepContent({
           </div>
 
           {data.jointApplicant && (
-            <details open className="group rounded-[var(--radius-card)] border border-cream/10 bg-surface">
+            <details open className="group rounded-[var(--radius-card)] border border-line bg-paper">
               <summary className="cursor-pointer list-none px-4 py-4 [&::-webkit-details-marker]:hidden">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-sm font-medium text-cream">Joint applicant details</p>
-                    <p className="mt-0.5 text-xs text-cream-muted">
+                    <p className="text-sm font-medium text-ink">Joint applicant details</p>
+                    <p className="mt-0.5 text-xs text-muted">
                       {data.jointFirstName || data.jointLastName
                         ? `${data.jointFirstName} ${data.jointLastName}`.trim()
                         : "Add their details below"}
                     </p>
                   </div>
-                  <span className="text-cream-muted transition-transform group-open:rotate-180">
+                  <span className="text-muted transition-transform group-open:rotate-180">
                     ▾
                   </span>
                 </div>
               </summary>
 
-              <div className="space-y-4 border-t border-cream/10 px-4 pb-4 pt-2">
+              <div className="space-y-4 border-t border-line px-4 pb-4 pt-2">
                 <ApplyInput
                   id="jointFirstName"
                   label="Joint applicant first name"
@@ -463,38 +463,38 @@ export function ApplyStepContent({
     case "consent":
       return (
         <div className="space-y-4">
-          <label className="flex min-h-12 cursor-pointer items-start gap-3 rounded-2xl border border-cream/10 bg-surface p-4">
+          <label className="flex min-h-12 cursor-pointer items-start gap-3 rounded-2xl border border-line bg-paper p-4">
             <input
               type="checkbox"
               checked={data.termsAccepted}
               onChange={(e) => onChange({ termsAccepted: e.target.checked })}
               className="mt-1 h-5 w-5 accent-coral"
             />
-            <span className="text-sm text-cream">
+            <span className="text-sm text-ink">
               I agree to the Terms & Conditions and understand this is a finance application.
             </span>
           </label>
 
-          <label className="flex min-h-12 cursor-pointer items-start gap-3 rounded-2xl border border-cream/10 bg-surface p-4">
+          <label className="flex min-h-12 cursor-pointer items-start gap-3 rounded-2xl border border-line bg-paper p-4">
             <input
               type="checkbox"
               checked={data.privacyAccepted}
               onChange={(e) => onChange({ privacyAccepted: e.target.checked })}
               className="mt-1 h-5 w-5 accent-coral"
             />
-            <span className="text-sm text-cream">
+            <span className="text-sm text-ink">
               I have read and accept the Privacy Policy.
             </span>
           </label>
 
-          <label className="flex min-h-12 cursor-pointer items-start gap-3 rounded-2xl border border-cream/10 bg-surface/60 p-4">
+          <label className="flex min-h-12 cursor-pointer items-start gap-3 rounded-2xl border border-line bg-mist p-4">
             <input
               type="checkbox"
               checked={data.marketingConsent}
               onChange={(e) => onChange({ marketingConsent: e.target.checked })}
               className="mt-1 h-5 w-5 accent-coral"
             />
-            <span className="text-sm text-cream-muted">
+            <span className="text-sm text-muted">
               Send me updates about cars and offers (optional)
             </span>
           </label>
@@ -551,12 +551,12 @@ export function ApplyStepContent({
           ].map((section) => (
             <div
               key={section.title}
-              className="rounded-[var(--radius-card)] border border-cream/10 bg-surface p-4"
+              className="rounded-[var(--radius-card)] border border-line bg-paper p-4"
             >
-              <p className="text-xs uppercase tracking-wide text-cream-muted">{section.title}</p>
+              <p className="text-xs tracking-wide text-muted">{section.title}</p>
               <ul className="mt-2 space-y-1">
                 {section.items.map((item) => (
-                  <li key={item} className="text-sm text-cream">
+                  <li key={item} className="text-sm text-ink">
                     {item}
                   </li>
                 ))}
@@ -564,7 +564,7 @@ export function ApplyStepContent({
             </div>
           ))}
 
-          <p className="rounded-2xl border border-coral/20 bg-coral/10 px-4 py-3 text-sm text-cream">
+          <p className="rounded-2xl border border-green/20 bg-green/10 px-4 py-3 text-sm text-ink">
             Soft search only — no impact on your credit score at this stage.
           </p>
         </div>

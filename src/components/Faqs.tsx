@@ -1,4 +1,7 @@
-import { SectionHeading } from "@/components/ui/SectionHeading";
+"use client";
+
+import { useState } from "react";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 const faqs = [
   {
@@ -28,32 +31,78 @@ const faqs = [
   },
 ];
 
-export function Faqs() {
+function PlusIcon({ className = "" }: { className?: string }) {
   return (
-    <section id="faqs" className="section-padding bg-surface/30">
-      <div className="mx-auto max-w-3xl">
-        <SectionHeading
-          eyebrow="FAQs"
-          title="Common questions"
-          description="Everything you need to know before you start your application."
-          align="center"
-        />
+    <svg
+      className={className}
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      aria-hidden
+    >
+      <path d="M12 5v14M5 12h14" strokeLinecap="round" />
+    </svg>
+  );
+}
 
-        <div className="mt-14 divide-y divide-cream/10 overflow-hidden rounded-[var(--radius-card)] border border-cream/10 bg-surface">
-          {faqs.map((faq) => (
-            <details key={faq.question} className="group">
-              <summary className="flex min-h-[4.25rem] cursor-pointer list-none items-center justify-between gap-6 px-6 py-5 text-left text-base font-medium text-cream transition-colors hover:bg-cream/[0.03] md:px-8 md:py-6 md:text-lg [&::-webkit-details-marker]:hidden">
-                {faq.question}
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-cream/15 bg-charcoal/60 text-xl text-coral transition-transform group-open:rotate-45">
-                  +
-                </span>
-              </summary>
-              <div className="border-t border-cream/10 bg-charcoal/30 px-6 pb-6 pt-5 md:px-8 md:pb-7">
-                <p className="text-base leading-relaxed text-cream-muted">{faq.answer}</p>
-              </div>
-            </details>
-          ))}
-        </div>
+export function Faqs() {
+  const [openIndex, setOpenIndex] = useState(-1);
+
+  return (
+    <section id="faqs" className="section-padding bg-paper">
+      <div className="container-site max-w-4xl">
+        <ScrollReveal>
+          <p className="text-xl text-ink">Common questions</p>
+        </ScrollReveal>
+
+        <ScrollReveal delay={80}>
+          <div className="mt-8 border-y border-line">
+            {faqs.map((faq, index) => {
+              const isOpen = openIndex === index;
+
+              return (
+                <div
+                  key={faq.question}
+                  className="group border-b border-line bg-paper transition-colors duration-300 last:border-b-0 hover:bg-green-bright"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setOpenIndex(isOpen ? -1 : index)}
+                    aria-expanded={isOpen}
+                    className="flex w-full items-center justify-between gap-6 px-4 py-6 text-left transition-all duration-300 group-hover:px-8 md:py-7 md:group-hover:px-10"
+                  >
+                    <span className="font-display text-lg font-extrabold tracking-tight text-ink md:text-xl lg:text-[1.35rem]">
+                      {faq.question}
+                    </span>
+                    <span
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all duration-300 md:h-11 md:w-11 ${
+                        isOpen ? "bg-ink text-white" : "bg-mist text-ink"
+                      }`}
+                      aria-hidden
+                    >
+                      <PlusIcon className={`transition-transform duration-300 ${isOpen ? "rotate-45" : ""}`} />
+                    </span>
+                  </button>
+
+                  <div
+                    className={`grid transition-all duration-300 ease-out ${
+                      isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                    }`}
+                  >
+                    <div className="overflow-hidden">
+                      <p className="px-4 pb-6 text-base leading-relaxed text-ink/75 transition-all duration-300 group-hover:px-8 md:pb-7 md:text-[17px] md:group-hover:px-10">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </ScrollReveal>
       </div>
     </section>
   );

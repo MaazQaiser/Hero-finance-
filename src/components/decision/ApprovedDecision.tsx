@@ -26,49 +26,49 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
         <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-success/15 text-3xl text-success">
           ✓
         </div>
-        <h1 className="mt-6 text-3xl font-medium text-cream">
+        <h1 className="mt-6 text-3xl font-medium text-ink">
           You&apos;re approved — let&apos;s find your car
         </h1>
-        <p className="mx-auto mt-3 max-w-md text-cream-muted">
+        <p className="mx-auto mt-3 max-w-md text-muted">
           Great news{decision.applicantName ? `, ${decision.applicantName}` : ""}. Your soft
           search is complete and you&apos;re ready to browse vehicles within your budget.
         </p>
       </section>
 
-      <section className="rounded-[var(--radius-card)] border border-coral/20 bg-gradient-to-br from-coral/10 via-surface to-surface p-6">
-        <p className="text-xs font-medium uppercase tracking-wide text-cream-muted">
+      <section className="rounded-[var(--radius-card)] border border-green/20 bg-gradient-to-br from-coral/10 via-surface to-surface p-6">
+        <p className="text-xs font-medium tracking-wide text-muted">
           Your finance summary
         </p>
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div>
-            <p className="text-xs uppercase tracking-wide text-cream-muted">Approved amount</p>
-            <p className="mt-1 text-2xl font-medium text-cream">
+            <p className="text-xs tracking-wide text-muted">Approved amount</p>
+            <p className="mt-1 text-2xl font-medium text-ink">
               {formatPrice(decision.approvedAmount ?? 0)}
             </p>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-wide text-cream-muted">Est. monthly</p>
-            <p className="mt-1 text-2xl font-medium text-coral">
+            <p className="text-xs tracking-wide text-muted">Est. monthly</p>
+            <p className="mt-1 text-2xl font-medium text-green-deep">
               {formatPrice(decision.estimatedMonthly ?? 0)}
-              <span className="text-sm font-normal text-cream-muted">/mo</span>
+              <span className="text-sm font-normal text-muted">/mo</span>
             </p>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-wide text-cream-muted">Representative APR</p>
-            <p className="mt-1 text-lg font-medium text-cream">{decision.apr}% fixed</p>
+            <p className="text-xs tracking-wide text-muted">Representative APR</p>
+            <p className="mt-1 text-lg font-medium text-ink">{decision.apr}% fixed</p>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-wide text-cream-muted">Term</p>
-            <p className="mt-1 text-lg font-medium text-cream">
+            <p className="text-xs tracking-wide text-muted">Term</p>
+            <p className="mt-1 text-lg font-medium text-ink">
               {decision.termMonths} months
             </p>
           </div>
         </div>
 
         {decision.lenderName && (
-          <p className="mt-5 border-t border-cream/10 pt-4 text-sm text-cream-muted">
-            Finance partner: <span className="text-cream">{decision.lenderName}</span>
+          <p className="mt-5 border-t border-line pt-4 text-sm text-muted">
+            Finance partner: <span className="text-ink">{decision.lenderName}</span>
           </p>
         )}
       </section>
@@ -76,12 +76,12 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
       <section>
         <div className="mb-4 flex items-end justify-between gap-4">
           <div>
-            <h2 className="text-lg font-medium text-cream">Cars within your budget</h2>
-            <p className="mt-1 text-sm text-cream-muted">
+            <h2 className="text-lg font-medium text-ink">Cars within your budget</h2>
+            <p className="mt-1 text-sm text-muted">
               Hand-picked matches based on your approval
             </p>
           </div>
-          <Link href="/cars" className="text-sm text-coral hover:underline">
+          <Link href="/cars" className="text-sm text-green-deep hover:underline">
             View all
           </Link>
         </div>
@@ -92,7 +92,7 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
               key={vehicle.id}
               className="w-[78vw] shrink-0 snap-center sm:w-[280px]"
             >
-              <div className="overflow-hidden rounded-[var(--radius-card)] border border-cream/10 bg-surface">
+              <div className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-paper">
                 <div className="relative aspect-[4/3]">
                   <Image
                     src={vehicle.images[0]}
@@ -106,14 +106,14 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
                   </div>
                 </div>
                 <div className="p-4">
-                  <h3 className="font-medium text-cream">
+                  <h3 className="font-medium text-ink">
                     {vehicle.make} {vehicle.model}
                   </h3>
-                  <p className="mt-2 text-xl font-medium text-coral">
+                  <p className="mt-2 text-xl font-medium text-green-deep">
                     {formatPrice(vehicle.monthlyHp)}
-                    <span className="text-sm font-normal text-cream-muted">/mo</span>
+                    <span className="text-sm font-normal text-muted">/mo</span>
                   </p>
-                  <p className="text-sm text-cream-muted">{formatPrice(vehicle.price)}</p>
+                  <p className="text-sm text-muted">{formatPrice(vehicle.price)}</p>
                   <Link href={`/cars/${vehicle.id}`} className="mt-4 block">
                     <Button variant="secondary" fullWidth>
                       View Car
@@ -126,9 +126,9 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
         </div>
       </section>
 
-      <section className="rounded-[var(--radius-card)] border border-cream/10 bg-surface p-6 text-center">
-        <h2 className="text-lg font-medium text-cream">Found one you love?</h2>
-        <p className="mt-2 text-sm text-cream-muted">
+      <section className="rounded-[var(--radius-card)] border border-line bg-paper p-6 text-center">
+        <h2 className="text-lg font-medium text-ink">Found one you love?</h2>
+        <p className="mt-2 text-sm text-muted">
           Reserve it today for £99 — fully refundable if you change your mind.
         </p>
         <Button size="lg" href="/cars" className="mt-5">

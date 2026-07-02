@@ -10,14 +10,14 @@ export function ApplyValidationBanner({ errorCount }: ApplyValidationBannerProps
   return (
     <div
       role="alert"
-      className="mb-6 rounded-2xl border border-coral/30 bg-coral/10 px-4 py-3"
+      className="mb-6 rounded-2xl border border-green/30 bg-green/10 px-4 py-3"
     >
-      <p className="text-sm font-medium text-coral">
+      <p className="text-sm font-medium text-green-deep">
         {errorCount === 1
           ? "Please check the highlighted field below."
           : `Please check the ${errorCount} highlighted fields below.`}
       </p>
-      <p className="mt-1 text-xs text-cream-muted">
+      <p className="mt-1 text-xs text-muted">
         We need a few details corrected before you can continue.
       </p>
     </div>

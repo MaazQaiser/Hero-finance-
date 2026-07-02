@@ -112,7 +112,7 @@ const rawVehicles: Omit<Vehicle, "specs" | "registration" | "apr">[] = [
     price: 18995,
     monthlyHp: 289,
     badge: "Hot Deal",
-    images: ["/images/car-1.png", "/images/car-2.png"],
+    images: ["/images/stock/used-car-1.jpg", "/images/stock/used-car-1.jpg"],
     addedAt: "2026-06-20",
   },
   {
@@ -126,7 +126,7 @@ const rawVehicles: Omit<Vehicle, "specs" | "registration" | "apr">[] = [
     price: 16450,
     monthlyHp: 249,
     badge: "Low Mileage",
-    images: ["/images/car-2.png", "/images/car-3.png"],
+    images: ["/images/stock/used-car-listed-2.jpg", "/images/stock/used-car-listed-2.jpg"],
     addedAt: "2026-06-18",
   },
   {
@@ -140,7 +140,7 @@ const rawVehicles: Omit<Vehicle, "specs" | "registration" | "apr">[] = [
     price: 12995,
     monthlyHp: 199,
     badge: "Hot Deal",
-    images: ["/images/car-3.png", "/images/car-4.png"],
+    images: ["/images/stock/used-car-1.jpg", "/images/stock/used-car-listed-2.jpg"],
     addedAt: "2026-06-15",
   },
   {
@@ -154,7 +154,7 @@ const rawVehicles: Omit<Vehicle, "specs" | "registration" | "apr">[] = [
     price: 22750,
     monthlyHp: 349,
     badge: "Just In",
-    images: ["/images/car-4.png", "/images/car-1.png"],
+    images: ["/images/stock/used-car-listed-2.jpg", "/images/stock/used-car-1.jpg"],
     addedAt: "2026-06-22",
   },
   {
@@ -168,7 +168,7 @@ const rawVehicles: Omit<Vehicle, "specs" | "registration" | "apr">[] = [
     price: 17850,
     monthlyHp: 269,
     badge: "Low Mileage",
-    images: ["/images/car-1.png", "/images/car-3.png"],
+    images: ["/images/stock/used-car-1.jpg", "/images/stock/used-car-listed-2.jpg"],
     addedAt: "2026-06-12",
   },
   {
@@ -182,7 +182,7 @@ const rawVehicles: Omit<Vehicle, "specs" | "registration" | "apr">[] = [
     price: 19200,
     monthlyHp: 295,
     badge: "Just In",
-    images: ["/images/car-2.png", "/images/car-4.png"],
+    images: ["/images/stock/used-car-listed-2.jpg", "/images/stock/used-car-1.jpg"],
     addedAt: "2026-06-21",
   },
   {
@@ -196,7 +196,7 @@ const rawVehicles: Omit<Vehicle, "specs" | "registration" | "apr">[] = [
     price: 14250,
     monthlyHp: 219,
     badge: "Hot Deal",
-    images: ["/images/car-3.png", "/images/car-1.png"],
+    images: ["/images/stock/used-car-3.jpg", "/images/stock/used-car-1.jpg"],
     addedAt: "2026-06-10",
   },
   {
@@ -210,7 +210,7 @@ const rawVehicles: Omit<Vehicle, "specs" | "registration" | "apr">[] = [
     price: 24500,
     monthlyHp: 375,
     badge: "Low Mileage",
-    images: ["/images/car-4.png", "/images/car-2.png"],
+    images: ["/images/stock/used-car-listed-2.jpg", "/images/stock/used-car-3.jpg"],
     addedAt: "2026-06-19",
   },
   {
@@ -224,7 +224,7 @@ const rawVehicles: Omit<Vehicle, "specs" | "registration" | "apr">[] = [
     price: 19995,
     monthlyHp: 305,
     badge: "Just In",
-    images: ["/images/car-1.png", "/images/car-4.png"],
+    images: ["/images/stock/used-car-1.jpg", "/images/stock/used-car-3.jpg"],
     addedAt: "2026-06-17",
   },
   {
@@ -238,7 +238,7 @@ const rawVehicles: Omit<Vehicle, "specs" | "registration" | "apr">[] = [
     price: 10995,
     monthlyHp: 169,
     badge: "Hot Deal",
-    images: ["/images/car-2.png", "/images/car-3.png"],
+    images: ["/images/stock/used-car-3.jpg", "/images/stock/used-car-listed-2.jpg"],
     addedAt: "2026-06-08",
   },
 ];

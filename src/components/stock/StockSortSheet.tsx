@@ -52,14 +52,14 @@ export function StockSortSheet({
               onClick={() => setDraft(option.value)}
               className={`flex min-h-12 w-full items-center justify-between rounded-2xl border px-4 text-left text-sm transition-colors ${
                 isSelected
-                  ? "border-coral bg-coral/10 text-cream"
-                  : "border-cream/10 bg-charcoal/30 text-cream-muted hover:border-cream/20 hover:text-cream"
+                  ? "border-green bg-green/10 text-ink"
+                  : "border-line bg-mist text-muted hover:border-line hover:text-ink"
               }`}
             >
               <span>{option.label}</span>
               <span
                 className={`flex h-5 w-5 items-center justify-center rounded-full border ${
-                  isSelected ? "border-coral bg-coral" : "border-cream/30"
+                  isSelected ? "border-green bg-green" : "border-line"
                 }`}
               >
                 {isSelected && <span className="h-2 w-2 rounded-full bg-cream" />}

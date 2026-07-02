@@ -51,13 +51,13 @@ export function BuyToOrderHowItWorks() {
           {steps.map((step) => (
             <Card key={step.number} className="relative">
               <div className="mb-6 flex items-center justify-between">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-coral/10 text-coral">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-green/10 text-green-deep">
                   {step.icon}
                 </div>
-                <span className="text-4xl font-light text-cream/20">{step.number}</span>
+                <span className="text-4xl font-light text-line">{step.number}</span>
               </div>
-              <h3 className="text-xl font-medium text-cream">{step.title}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-cream-muted">{step.description}</p>
+              <h3 className="text-xl font-medium text-ink">{step.title}</h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted">{step.description}</p>
             </Card>
           ))}
         </div>

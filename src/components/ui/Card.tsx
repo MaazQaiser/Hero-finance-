@@ -7,9 +7,10 @@ interface CardProps {
 }
 
 const variantClasses = {
-  default: "bg-surface border border-cream/10",
-  elevated: "bg-surface border border-cream/10 shadow-lg shadow-black/20",
-  light: "bg-cream text-charcoal border border-charcoal/5",
+  default: "bg-paper border border-line text-ink",
+  elevated:
+    "bg-paper border border-line text-ink shadow-[0_8px_32px_rgba(11,41,32,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(11,41,32,0.12)]",
+  light: "bg-mist-2 text-ink border border-line",
 };
 
 export function Card({
@@ -19,7 +20,7 @@ export function Card({
 }: CardProps) {
   return (
     <div
-      className={`rounded-[var(--radius-card)] p-6 md:p-8 ${variantClasses[variant]} ${className}`}
+      className={`rounded-[20px] p-6 md:p-8 ${variantClasses[variant]} ${className}`}
     >
       {children}
     </div>

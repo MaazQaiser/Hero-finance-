@@ -15,7 +15,7 @@ export const sourcedExamples: SourcedVehicle[] = [
     model: "X3 M Sport",
     price: 32995,
     monthlyHp: 449,
-    image: "/images/car-1.png",
+    image: "/images/stock/used-car-1.jpg",
     sourcedFor: "Family SUV · Leeds",
   },
   {
@@ -24,7 +24,7 @@ export const sourcedExamples: SourcedVehicle[] = [
     model: "Q5 S Line",
     price: 28750,
     monthlyHp: 399,
-    image: "/images/car-2.png",
+    image: "/images/stock/used-car-listed-2.jpg",
     sourcedFor: "Executive SUV · Manchester",
   },
   {
@@ -33,7 +33,7 @@ export const sourcedExamples: SourcedVehicle[] = [
     model: "A180 AMG Line",
     price: 21450,
     monthlyHp: 319,
-    image: "/images/car-4.png",
+    image: "/images/stock/used-car-3.jpg",
     sourcedFor: "Premium hatch · Birmingham",
   },
   {
@@ -42,7 +42,7 @@ export const sourcedExamples: SourcedVehicle[] = [
     model: "Tiguan R-Line",
     price: 24800,
     monthlyHp: 369,
-    image: "/images/car-3.png",
+    image: "/images/stock/forecourt-row.jpg",
     sourcedFor: "Family crossover · Bristol",
   },
 ];

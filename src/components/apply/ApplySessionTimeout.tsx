@@ -10,9 +10,9 @@ interface ApplySessionTimeoutProps {
 export function ApplySessionTimeout({ onResume, onStartAgain }: ApplySessionTimeoutProps) {
   return (
     <div className="flex min-h-[100svh] flex-col items-center justify-center px-5 text-center">
-      <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-full border border-cream/10 bg-surface">
+      <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-full border border-line bg-paper">
         <svg
-          className="h-7 w-7 text-cream-muted"
+          className="h-7 w-7 text-muted"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -27,10 +27,10 @@ export function ApplySessionTimeout({ onResume, onStartAgain }: ApplySessionTime
         </svg>
       </div>
 
-      <h1 className="text-2xl font-medium text-cream md:text-3xl">
+      <h1 className="text-2xl font-medium text-ink md:text-3xl">
         Your session has expired
       </h1>
-      <p className="mt-3 max-w-sm text-sm leading-relaxed text-cream-muted">
+      <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted">
         Don&apos;t worry — your progress has been saved.
       </p>
 
@@ -43,7 +43,7 @@ export function ApplySessionTimeout({ onResume, onStartAgain }: ApplySessionTime
         </Button>
       </div>
 
-      <p className="mt-8 flex items-center justify-center gap-2 text-xs text-cream-muted">
+      <p className="mt-8 flex items-center justify-center gap-2 text-xs text-muted">
         <span aria-hidden className="text-success">
           ✓
         </span>

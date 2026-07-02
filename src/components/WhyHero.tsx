@@ -1,158 +1,84 @@
-import { type ReactNode } from "react";
-import { SectionHeading } from "@/components/ui/SectionHeading";
+import Image from "next/image";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
-const features: {
-  label: string;
-  hero: boolean;
-  traditional: boolean;
-  icon: ReactNode;
-}[] = [
+const images = [
+  { src: "/images/stock/used-car-1.jpg", alt: "AA-inspected used car from Hero stock" },
+  { src: "/images/how-it-works/choose-your-car.jpg", alt: "Used cars on a dealership forecourt" },
+  { src: "/images/dealer/customer-keys.jpg", alt: "Hero customer receiving keys to their car" },
+];
+
+const advantages = [
   {
-    label: "Owns stock",
-    hero: true,
-    traditional: false,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-        <path d="M4 16l2-6h12l2 6M6 16h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <circle cx="8" cy="17" r="1.5" fill="currentColor" />
-        <circle cx="16" cy="17" r="1.5" fill="currentColor" />
-      </svg>
-    ),
+    number: "01",
+    title: "Stock you can reserve",
+    description:
+      "Unlike traditional brokers, Hero owns the vehicles. Browse AA-inspected cars, see your monthly HP payment, and reserve online — all in one place.",
   },
   {
-    label: "One point of contact",
-    hero: true,
-    traditional: false,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-        <circle cx="9" cy="8" r="3" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M3 20c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" strokeWidth="1.5" />
-      </svg>
-    ),
+    number: "02",
+    title: "One team, one journey",
+    description:
+      "From soft-search eligibility to approval and handover, a single team handles everything. No back-and-forth between a broker and a dealer.",
   },
   {
-    label: "Soft search",
-    hero: true,
-    traditional: false,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-        <path d="M12 2L4 6v6c0 5.25 3.4 10.15 8 11 4.6-.85 8-5.75 8-11V6l-8-4z" stroke="currentColor" strokeWidth="1.5" />
-      </svg>
-    ),
-  },
-  {
-    label: "Quick decisions",
-    hero: true,
-    traditional: false,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M12 7v5l3 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
-    label: "AA inspected cars",
-    hero: true,
-    traditional: false,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-        <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.5" />
-      </svg>
-    ),
+    number: "03",
+    title: "Soft search approval",
+    description:
+      "Check where you stand with a soft search that won't affect your credit score. Get a quick, clear decision with transparent terms and no hidden broker fees.",
   },
 ];
 
-function CheckIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <circle cx="12" cy="12" r="9" className="fill-coral/20 stroke-coral" strokeWidth="1.5" />
-      <path d="M8 12l2.5 2.5L16 9" stroke="currentColor" className="stroke-coral" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function CrossIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <circle cx="12" cy="12" r="9" className="stroke-cream/20" strokeWidth="1.5" fill="none" />
-      <path d="M9 9l6 6M15 9l-6 6" className="stroke-cream/30" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 export function WhyHero() {
   return (
-    <section id="why-hero" className="section-padding">
-      <div className="mx-auto max-w-7xl">
-        <SectionHeading
-          eyebrow="Why Hero"
-          title="Finance and your car, under one roof"
-          description="Unlike traditional brokers, Hero owns the stock and manages your entire journey."
-        />
+    <section id="why-hero" className="section-padding bg-paper">
+      <div className="container-site">
+        <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,360px)_1fr] lg:gap-16 xl:gap-20">
+          <ScrollReveal>
+            <div>
+              <span className="inline-flex items-center rounded-full bg-mist px-4 py-2 text-[13px] font-bold text-muted">
+                Why Hero
+              </span>
 
-        <div className="mt-12 hidden overflow-hidden rounded-[var(--radius-card)] border border-cream/10 md:block">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-cream/10 bg-charcoal">
-                <th className="px-8 py-6 text-sm font-medium text-cream-muted">Feature</th>
-                <th className="bg-coral/10 px-8 py-6 text-sm font-semibold text-coral">
-                  Hero Car Finance
-                </th>
-                <th className="px-8 py-6 text-sm font-medium text-cream-muted">Traditional brokers</th>
-              </tr>
-            </thead>
-            <tbody>
-              {features.map((feature, i) => (
-                <tr
-                  key={feature.label}
-                  className={i % 2 === 0 ? "bg-surface/40" : "bg-charcoal/60"}
-                >
-                  <td className="px-8 py-6">
-                    <div className="flex items-center gap-3 text-cream">
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-cream/5 text-coral">
-                        {feature.icon}
-                      </span>
-                      <span className="font-medium">{feature.label}</span>
-                    </div>
-                  </td>
-                  <td className="bg-coral/5 px-8 py-6">
-                    {feature.hero ? <CheckIcon /> : <CrossIcon />}
-                  </td>
-                  <td className="px-8 py-6">
-                    {feature.traditional ? <CheckIcon /> : <CrossIcon />}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <div className="mt-10 space-y-4 md:hidden">
-          {features.map((feature) => (
-            <div
-              key={feature.label}
-              className="rounded-[var(--radius-card)] border border-cream/10 bg-surface p-5"
-            >
-              <div className="flex items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-cream/5 text-coral">
-                  {feature.icon}
-                </span>
-                <p className="font-medium text-cream">{feature.label}</p>
-              </div>
-              <div className="mt-5 flex gap-8 border-t border-cream/10 pt-4">
-                <div className="flex items-center gap-2 rounded-xl bg-coral/10 px-3 py-2">
-                  <CheckIcon />
-                  <span className="text-sm font-medium text-coral">Hero</span>
-                </div>
-                <div className="flex items-center gap-2 px-3 py-2">
-                  <CrossIcon />
-                  <span className="text-sm text-cream-muted">Brokers</span>
-                </div>
+              <div className="mt-6 flex flex-col gap-3">
+                {images.map((image) => (
+                  <div
+                    key={image.src}
+                    className="relative aspect-[16/10] w-full overflow-hidden rounded-[20px]"
+                  >
+                    <Image
+                      src={image.src}
+                      alt={image.alt}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 1024px) 100vw, 360px"
+                    />
+                  </div>
+                ))}
               </div>
             </div>
-          ))}
+          </ScrollReveal>
+
+          <ScrollReveal delay={100}>
+            <div>
+              <h2 className="font-display text-[2rem] font-extrabold leading-[1.08] tracking-tight text-ink sm:text-[2.5rem] lg:text-[2.75rem] xl:text-[3rem]">
+                We pride ourselves on offering a unique and stress-free car finance experience
+              </h2>
+
+              <div className="mt-12 divide-y divide-line lg:mt-14">
+                {advantages.map((item) => (
+                  <article key={item.number} className="py-8 first:pt-0 last:pb-0">
+                    <h3 className="font-display text-xl font-extrabold tracking-tight text-ink md:text-2xl">
+                      <span className="mr-3 text-muted/50">{item.number}</span>
+                      {item.title}
+                    </h3>
+                    <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted md:text-[17px]">
+                      {item.description}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </ScrollReveal>
         </div>
       </div>
     </section>

@@ -3,97 +3,151 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const videos = [
-  {
-    src: "/videos/showroom-1.mp4",
-    label: "Sports car in showroom",
-  },
-  {
-    src: "/videos/showroom-2.mp4",
-    label: "Close-up of premium car",
-  },
-  {
-    src: "/videos/showroom-3.mp4",
-    label: "Luxury car at sunset",
-  },
+  { src: "/videos/showroom-1.mp4", label: "Sports car in showroom" },
+  { src: "/videos/showroom-2.mp4", label: "Close-up of premium car" },
+  { src: "/videos/showroom-3.mp4", label: "Luxury car at sunset" },
 ];
 
 const CROSSFADE_MS = 1200;
-const MIN_PLAY_MS = 6000;
+const DISPLAY_MS = 6000;
 
 export function HeroVideoBackground() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [incomingIndex, setIncomingIndex] = useState<number | null>(null);
-  const [reducedMotion, setReducedMotion] = useState(false);
 
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
-  const transitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const playTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const activeIndexRef = useRef(0);
+  const transitioningRef = useRef(false);
+  const reducedMotionRef = useRef(false);
+  const displayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const fadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const clearTimers = useCallback(() => {
-    if (transitionTimeoutRef.current) {
-      clearTimeout(transitionTimeoutRef.current);
-      transitionTimeoutRef.current = null;
+    if (displayTimerRef.current) {
+      clearTimeout(displayTimerRef.current);
+      displayTimerRef.current = null;
     }
-    if (playTimeoutRef.current) {
-      clearTimeout(playTimeoutRef.current);
-      playTimeoutRef.current = null;
+    if (fadeTimerRef.current) {
+      clearTimeout(fadeTimerRef.current);
+      fadeTimerRef.current = null;
     }
   }, []);
 
-  const playVideo = useCallback((index: number) => {
+  const pauseVideo = useCallback((index: number) => {
     const video = videoRefs.current[index];
     if (!video) return;
-
-    video.currentTime = 0;
-    void video.play().catch(() => {
-      // Keep trying on the active clip without falling back to a static image.
-    });
+    video.pause();
   }, []);
 
-  const goToNext = useCallback(() => {
-    if (reducedMotion) return;
+  const prepareAndPlay = useCallback(async (index: number) => {
+    const video = videoRefs.current[index];
+    if (!video) return false;
 
-    setActiveIndex((current) => {
-      const next = (current + 1) % videos.length;
-      setIncomingIndex(next);
-      playVideo(next);
+    try {
+      if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+        video.load();
+        await new Promise<void>((resolve, reject) => {
+          const onReady = () => {
+            cleanup();
+            resolve();
+          };
+          const onError = () => {
+            cleanup();
+            reject(new Error("Video failed to load"));
+          };
+          const cleanup = () => {
+            video.removeEventListener("canplay", onReady);
+            video.removeEventListener("error", onError);
+          };
+          video.addEventListener("canplay", onReady);
+          video.addEventListener("error", onError);
+        });
+      }
 
-      transitionTimeoutRef.current = setTimeout(() => {
-        setActiveIndex(next);
-        setIncomingIndex(null);
-      }, CROSSFADE_MS);
+      video.currentTime = 0;
+      await video.play();
+      return true;
+    } catch {
+      return false;
+    }
+  }, []);
 
-      return current;
-    });
-  }, [playVideo, reducedMotion]);
+  const scheduleNext = useCallback(() => {
+    clearTimers();
+    if (reducedMotionRef.current) return;
+
+    displayTimerRef.current = setTimeout(() => {
+      void goToNextRef.current();
+    }, DISPLAY_MS);
+  }, [clearTimers]);
+
+  const goToNext = useCallback(async () => {
+    if (reducedMotionRef.current || transitioningRef.current) return;
+
+    transitioningRef.current = true;
+    clearTimers();
+
+    const current = activeIndexRef.current;
+    const next = (current + 1) % videos.length;
+
+    setIncomingIndex(next);
+    await prepareAndPlay(next);
+
+    fadeTimerRef.current = setTimeout(() => {
+      pauseVideo(current);
+
+      activeIndexRef.current = next;
+      setActiveIndex(next);
+      setIncomingIndex(null);
+      transitioningRef.current = false;
+
+      scheduleNext();
+    }, CROSSFADE_MS);
+  }, [clearTimers, pauseVideo, prepareAndPlay, scheduleNext]);
+
+  const goToNextRef = useRef(goToNext);
+  goToNextRef.current = goToNext;
+
+  const handleVideoEnded = useCallback(
+    (index: number) => {
+      if (reducedMotionRef.current) return;
+      if (index !== activeIndexRef.current) return;
+      if (transitioningRef.current) return;
+      void goToNextRef.current();
+    },
+    [],
+  );
 
   useEffect(() => {
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const prefersReducedMotion = motionQuery.matches;
-    setReducedMotion(prefersReducedMotion);
+    const applyMotionPreference = () => {
+      const prefersReduced = motionQuery.matches;
+      reducedMotionRef.current = prefersReduced;
 
-    const firstVideo = videoRefs.current[0];
-    if (!firstVideo) return;
+      if (prefersReduced) {
+        clearTimers();
+        transitioningRef.current = false;
+        const firstVideo = videoRefs.current[0];
+        if (firstVideo) {
+          firstVideo.pause();
+          firstVideo.currentTime = 0;
+        }
+        return;
+      }
 
-    if (prefersReducedMotion) {
-      firstVideo.pause();
-      firstVideo.currentTime = 0;
-      return;
-    }
+      void prepareAndPlay(0).then((started) => {
+        if (started) scheduleNext();
+      });
+    };
 
-    void firstVideo.play().then(() => {
-      playTimeoutRef.current = setTimeout(goToNext, MIN_PLAY_MS);
-    });
+    applyMotionPreference();
+    motionQuery.addEventListener("change", applyMotionPreference);
 
-    return clearTimers;
-  }, [clearTimers, goToNext]);
-
-  useEffect(() => {
-    if (reducedMotion || incomingIndex !== null) return;
-
-    playTimeoutRef.current = setTimeout(goToNext, MIN_PLAY_MS);
-    return clearTimers;
-  }, [activeIndex, clearTimers, goToNext, incomingIndex, reducedMotion]);
+    return () => {
+      motionQuery.removeEventListener("change", applyMotionPreference);
+      clearTimers();
+    };
+  }, [clearTimers, prepareAndPlay, scheduleNext]);
 
   return (
     <>
@@ -114,8 +168,8 @@ export function HeroVideoBackground() {
             src={video.src}
             muted
             playsInline
-            loop={videos.length === 1}
-            preload={index === 0 ? "auto" : "metadata"}
+            preload="auto"
+            onEnded={() => handleVideoEnded(index)}
             aria-hidden
           />
         );

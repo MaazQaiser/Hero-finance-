@@ -16,7 +16,7 @@ export function VehicleSummary({ vehicle }: VehicleSummaryProps) {
   return (
     <section className="px-5 md:px-8 lg:px-12">
       <div className="mx-auto max-w-7xl">
-        <h1 className="text-2xl font-medium text-cream md:text-3xl">
+        <h1 className="text-2xl font-medium text-ink md:text-3xl">
           {vehicle.make} {vehicle.model}
         </h1>
 
@@ -24,12 +24,12 @@ export function VehicleSummary({ vehicle }: VehicleSummaryProps) {
           {specs.map((spec) => (
             <div
               key={spec.label}
-              className="shrink-0 rounded-2xl border border-cream/10 bg-surface px-4 py-3"
+              className="shrink-0 rounded-2xl border border-line bg-paper px-4 py-3"
             >
-              <p className="text-[11px] uppercase tracking-wide text-cream-muted">
+              <p className="text-[11px] tracking-wide text-muted">
                 {spec.label}
               </p>
-              <p className="mt-0.5 text-sm font-medium text-cream">{spec.value}</p>
+              <p className="mt-0.5 text-sm font-medium text-ink">{spec.value}</p>
             </div>
           ))}
         </div>

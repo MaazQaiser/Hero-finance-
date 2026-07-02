@@ -24,12 +24,12 @@ export function RangeSlider({
   highlight = false,
 }: RangeSliderProps) {
   return (
-    <div className={highlight ? "rounded-2xl border border-coral/20 bg-coral/5 p-4" : ""}>
+    <div className={highlight ? "rounded-2xl border border-green/20 bg-green/5 p-4" : ""}>
       <div className="mb-3 flex items-center justify-between">
-        <p className={`text-sm font-medium ${highlight ? "text-coral" : "text-cream"}`}>
+        <p className={`text-sm font-medium ${highlight ? "text-green-deep" : "text-ink"}`}>
           {label}
         </p>
-        <p className="text-sm text-cream-muted">
+        <p className="text-sm text-muted">
           {formatMin(valueMin)} – {formatMax(valueMax)}
         </p>
       </div>
@@ -44,7 +44,7 @@ export function RangeSlider({
             const next = Number(event.target.value);
             onChange(Math.min(next, valueMax), valueMax);
           }}
-          className="h-2 w-full cursor-pointer appearance-none rounded-full bg-cream/10 accent-coral"
+          className="h-2 w-full cursor-pointer appearance-none rounded-full bg-line accent-green"
           aria-label={`${label} minimum`}
         />
         <input
@@ -57,7 +57,7 @@ export function RangeSlider({
             const next = Number(event.target.value);
             onChange(valueMin, Math.max(next, valueMin));
           }}
-          className="h-2 w-full cursor-pointer appearance-none rounded-full bg-cream/10 accent-coral"
+          className="h-2 w-full cursor-pointer appearance-none rounded-full bg-line accent-green"
           aria-label={`${label} maximum`}
         />
       </div>
@@ -87,12 +87,12 @@ export function SingleSlider({
   highlight = false,
 }: SingleSliderProps) {
   return (
-    <div className={highlight ? "rounded-2xl border border-coral/20 bg-coral/5 p-4" : ""}>
+    <div className={highlight ? "rounded-2xl border border-green/20 bg-green/5 p-4" : ""}>
       <div className="mb-3 flex items-center justify-between">
-        <p className={`text-sm font-medium ${highlight ? "text-coral" : "text-cream"}`}>
+        <p className={`text-sm font-medium ${highlight ? "text-green-deep" : "text-ink"}`}>
           {label}
         </p>
-        <p className={`text-sm font-medium ${highlight ? "text-coral" : "text-cream"}`}>
+        <p className={`text-sm font-medium ${highlight ? "text-green-deep" : "text-ink"}`}>
           {format(value)}
         </p>
       </div>
@@ -103,10 +103,10 @@ export function SingleSlider({
         step={step}
         value={value}
         onChange={(event) => onChange(Number(event.target.value))}
-        className="h-2 w-full cursor-pointer appearance-none rounded-full bg-cream/10 accent-coral"
+        className="h-2 w-full cursor-pointer appearance-none rounded-full bg-line accent-green"
         aria-label={label}
       />
-      <div className="mt-2 flex justify-between text-xs text-cream-muted">
+      <div className="mt-2 flex justify-between text-xs text-muted">
         <span>{format(min)}</span>
         <span>{format(max)}+</span>
       </div>

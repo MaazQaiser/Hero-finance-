@@ -38,9 +38,9 @@ function StockIcon() {
 
 export function BuyToOrderTrust() {
   return (
-    <section className="section-padding bg-surface/40">
+    <section className="section-padding bg-mist">
       <div className="mx-auto max-w-7xl">
-        <h2 className="text-center text-lg font-medium text-cream">Why you can trust Hero</h2>
+        <h2 className="text-center text-lg font-medium text-ink">Why you can trust Hero</h2>
         <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <TrustBadge icon={<SearchIcon />} label="Soft search available" />
           <TrustBadge icon={<ShieldIcon />} label="No impact on credit score" />

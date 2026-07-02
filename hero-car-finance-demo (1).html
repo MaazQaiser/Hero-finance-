@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hero Car Finance — demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B2920;
+    --green:#00A65A;
+    --green-deep:#028A4B;
+    --green-bright:#2FD480;
+    --mist:#EAF6EF;
+    --mist-2:#F3FAF6;
+    --paper:#FFFFFF;
+    --bg:#EEF2EF;
+    --muted:#5C6B63;
+    --line:#E2ECE6;
+    --shadow:0 8px 30px rgba(11,41,32,.08);
+    --shadow-lg:0 20px 50px rgba(11,41,32,.16);
+    --r:18px;
+    --display:"Bricolage Grotesque",system-ui,sans-serif;
+    --body:"Hanken Grotesk",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--body);
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    display:flex;
+    justify-content:center;
+    padding:0;
+  }
+  /* Phone frame for desktop demo; full-bleed on real phones */
+  .phone{
+    width:100%;
+    max-width:430px;
+    background:var(--paper);
+    min-height:100vh;
+    position:relative;
+    overflow-x:hidden;
+  }
+  @media(min-width:480px){
+    body{background:radial-gradient(circle at 50% 0%,#16382c,#0B2920);padding:28px 0}
+    .phone{
+      border-radius:44px;
+      border:12px solid #08201a;
+      min-height:auto;
+      box-shadow:0 40px 90px rgba(0,0,0,.5);
+      overflow:hidden;
+    }
+    .phone::before{content:"";position:absolute;top:14px;left:50%;transform:translateX(-50%);width:118px;height:26px;background:#08201a;border-radius:0 0 16px 16px;z-index:200}
+  }
+  .scroll{overflow-y:auto;max-height:100%;}
+
+  /* ---------- type ---------- */
+  h1,h2,h3{font-family:var(--display);line-height:1.07;letter-spacing:-.02em;font-weight:800}
+  h1{font-size:33px}
+  h2{font-size:25px}
+  h3{font-size:19px;font-weight:700}
+  p{font-size:16px}
+  .eyebrow{font-family:var(--body);font-weight:700;font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--green-deep)}
+
+  /* ---------- top bar ---------- */
+  header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:11px 18px;display:flex;align-items:center;justify-content:space-between}
+  .logo{display:flex;align-items:center;gap:9px;text-decoration:none}
+  .logo-mark{width:34px;height:34px;flex:none}
+  .logo-txt{display:flex;flex-direction:column;line-height:1}
+  .logo-txt .name{font-family:var(--display);font-weight:800;font-size:20px;color:var(--ink);letter-spacing:-.03em}
+  .logo-txt .sub{font-size:8.5px;font-weight:700;letter-spacing:.22em;color:var(--green-deep);text-transform:uppercase;margin-top:2px}
+  .call{display:flex;align-items:center;gap:6px;color:var(--ink);text-decoration:none;font-weight:700;font-size:13px}
+  .call svg{width:16px;height:16px}
+
+  /* ---------- hero ---------- */
+  .hero{padding:26px 18px 30px;background:linear-gradient(180deg,#fff 0%,var(--mist-2) 100%);position:relative}
+  .soft-pill{display:inline-flex;align-items:center;gap:7px;background:var(--mist);color:var(--green-deep);font-weight:700;font-size:13px;padding:7px 13px;border-radius:99px;border:1px solid #d2ebdd;margin-bottom:16px}
+  .soft-pill svg{width:15px;height:15px}
+  .hero h1{margin-bottom:12px}
+  .hero h1 .hl{color:var(--green-deep)}
+  .hero .lede{font-size:16.5px;color:var(--muted);margin-bottom:20px;max-width:340px}
+
+  /* eligibility starter card (signature element) */
+  .starter{background:var(--paper);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:18px;position:relative;overflow:hidden}
+  .starter .step-tag{font-size:12px;font-weight:700;color:var(--green-deep);display:flex;align-items:center;gap:6px;margin-bottom:12px}
+  .starter .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(0,166,90,.18)}
+  .field{margin-bottom:11px}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--ink)}
+  .field input{width:100%;padding:14px 14px;border:1.5px solid var(--line);border-radius:13px;font-family:var(--body);font-size:16px;color:var(--ink);background:#fcfdfc;transition:border-color .15s,box-shadow .15s}
+  .field input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(0,166,90,.14)}
+  .field .help{font-size:12px;color:var(--muted);margin-top:5px}
+  .cta{width:100%;background:var(--green);color:#fff;border:none;border-radius:14px;padding:16px;font-family:var(--display);font-weight:700;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 20px rgba(0,166,90,.32);transition:transform .12s,background .15s}
+  .cta:hover{background:var(--green-deep)}
+  .cta:active{transform:scale(.98)}
+  .cta svg{width:18px;height:18px}
+  .reassure-row{display:flex;align-items:center;gap:7px;justify-content:center;margin-top:12px;font-size:12.5px;color:var(--muted);font-weight:600}
+  .reassure-row svg{width:14px;height:14px;color:var(--green)}
+
+  /* decision overlay */
+  .decision{position:absolute;inset:0;background:linear-gradient(180deg,#fff,var(--mist-2));border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .4s}
+  .decision.show{opacity:1;pointer-events:auto}
+  .gauge{width:96px;height:96px;margin-bottom:16px;position:relative}
+  .gauge svg{transform:rotate(-90deg)}
+  .gauge .tick{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:38px;color:var(--green);opacity:0;transform:scale(.5);transition:opacity .3s .5s,transform .4s .5s cubic-bezier(.34,1.56,.64,1)}
+  .gauge.done .tick{opacity:1;transform:scale(1)}
+  .decision h3{font-size:22px;margin-bottom:6px}
+  .decision p{font-size:14px;color:var(--muted);margin-bottom:16px;max-width:260px}
+  .decision .mini{font-size:11.5px;color:var(--muted);margin-top:12px;line-height:1.4}
+
+  .trust-strip{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+  .trust-item{text-align:center;flex:1}
+  .trust-item .stars{color:var(--green);font-size:13px;letter-spacing:1px}
+  .trust-item .big{font-family:var(--display);font-weight:800;font-size:17px;display:block;line-height:1.1}
+  .trust-item .sm{font-size:10.5px;color:var(--muted);font-weight:600;display:block;margin-top:2px}
+
+  /* ---------- section base ---------- */
+  section{padding:34px 18px}
+  .sec-head{margin-bottom:20px}
+  .sec-head .eyebrow{margin-bottom:9px;display:block}
+
+  /* how it works */
+  .how{background:var(--ink);color:#fff}
+  .how h2{color:#fff}
+  .how .eyebrow{color:var(--green-bright)}
+  .steps{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+  .step{display:flex;gap:14px;align-items:flex-start;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);padding:16px;border-radius:16px}
+  .step .num{font-family:var(--display);font-weight:800;font-size:18px;color:var(--green-bright);background:rgba(47,212,128,.12);width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex:none}
+  .step h3{color:#fff;margin-bottom:3px;font-size:17px}
+  .step p{color:rgba(255,255,255,.7);font-size:14px}
+
+  /* the cars — the moat */
+  .cars .sec-head h2 .hl{color:var(--green-deep)}
+  .cars-rail{display:flex;gap:14px;overflow-x:auto;padding:4px 2px 14px;margin:0 -2px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+  .cars-rail::-webkit-scrollbar{display:none}
+  .car{flex:none;width:230px;scroll-snap-align:start;background:var(--paper);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}
+  .car .img{height:130px;position:relative;background-size:cover;background-position:center}
+  .badge{position:absolute;top:10px;left:10px;background:var(--ink);color:#fff;font-size:10.5px;font-weight:700;padding:5px 9px;border-radius:8px;letter-spacing:.02em}
+  .pmt-chip{position:absolute;bottom:-1px;right:10px;transform:translateY(50%);background:var(--green);color:#fff;padding:7px 12px;border-radius:11px;box-shadow:var(--shadow);font-family:var(--display);font-weight:800;font-size:15px;line-height:1}
+  .pmt-chip small{display:block;font-family:var(--body);font-weight:600;font-size:9px;opacity:.85;letter-spacing:.04em}
+  .car .info{padding:18px 14px 14px}
+  .car .info h3{font-size:15px;margin-bottom:2px}
+  .car .info .spec{font-size:12px;color:var(--muted);margin-bottom:10px}
+  .car .info .price{font-size:13px;font-weight:700;color:var(--ink)}
+  .car .info .price s{color:var(--muted);font-weight:500;margin-left:5px}
+  .car-cta{display:block;width:100%;margin-top:11px;text-align:center;background:var(--mist);color:var(--green-deep);font-weight:700;font-size:14px;padding:11px;border-radius:11px;text-decoration:none;border:1px solid #d2ebdd}
+  .rail-note{font-size:12.5px;color:var(--muted);margin-top:4px;text-align:center;font-weight:600}
+
+  /* whatever your credit */
+  .credit{background:var(--mist-2)}
+  .rate-band{display:flex;align-items:stretch;gap:0;margin-top:18px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;box-shadow:var(--shadow)}
+  .rate-end{flex:1;padding:18px 14px;text-align:center}
+  .rate-end .lab{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+  .rate-end .val{font-family:var(--display);font-weight:800;font-size:26px;color:var(--green-deep);margin-top:4px}
+  .rate-end .desc{font-size:11.5px;color:var(--muted);margin-top:3px}
+  .rate-mid{width:1px;background:var(--line)}
+  .credit-list{margin-top:18px;display:flex;flex-direction:column;gap:9px}
+  .credit-item{display:flex;align-items:center;gap:11px;font-size:14.5px;font-weight:600}
+  .credit-item svg{width:20px;height:20px;color:var(--green);flex:none}
+
+  /* proof */
+  .proof{background:#fff}
+  .review{background:var(--mist-2);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:12px}
+  .review .stars{color:var(--green);font-size:13px;letter-spacing:1px;margin-bottom:7px}
+  .review p{font-size:14.5px;line-height:1.55}
+  .review .who{display:flex;align-items:center;gap:9px;margin-top:11px}
+  .review .av{width:32px;height:32px;border-radius:50%;background-size:cover;background-position:center;flex:none}
+  .review .who b{font-size:13px;display:block}
+  .review .who span{font-size:11.5px;color:var(--muted)}
+  .verified{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--green-deep);font-weight:700;margin-left:auto}
+  .verified svg{width:13px;height:13px}
+  .lenders{margin-top:22px;text-align:center}
+  .lenders .lab{font-size:11.5px;color:var(--muted);font-weight:600;margin-bottom:12px}
+  .lender-row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+  .lender{font-family:var(--display);font-weight:700;font-size:13px;color:var(--muted);background:var(--mist);padding:8px 13px;border-radius:9px;opacity:.8}
+
+  /* faq */
+  .faq{background:var(--mist-2)}
+  .q{background:#fff;border:1px solid var(--line);border-radius:13px;margin-top:10px;overflow:hidden}
+  .q button{width:100%;text-align:left;background:none;border:none;padding:15px 16px;font-family:var(--body);font-weight:700;font-size:14.5px;color:var(--ink);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .q button .pl{color:var(--green);font-size:20px;transition:transform .25s;flex:none}
+  .q.open button .pl{transform:rotate(45deg)}
+  .q .a{max-height:0;overflow:hidden;transition:max-height .3s ease}
+  .q .a p{padding:0 16px 15px;font-size:14px;color:var(--muted)}
+
+  /* final cta */
+  .final{background:var(--ink);color:#fff;text-align:center}
+  .final h2{color:#fff;margin-bottom:10px}
+  .final p{color:rgba(255,255,255,.72);font-size:15px;margin-bottom:20px;max-width:300px;margin-left:auto;margin-right:auto}
+  .final .cta{box-shadow:0 8px 24px rgba(0,166,90,.4)}
+  .final .reassure-row{color:rgba(255,255,255,.65);margin-top:16px}
+  .final .reassure-row svg{color:var(--green-bright)}
+
+  /* logo specimen */
+  .specimen{background:var(--mist);padding:30px 18px}
+  .specimen .eyebrow{display:block;margin-bottom:14px}
+  .spec-grid{display:flex;flex-direction:column;gap:12px}
+  .spec-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;align-items:center;gap:13px}
+  .spec-card.dark{background:var(--ink)}
+  .spec-card.dark .name{color:#fff}
+  .spec-card.green{background:var(--green)}
+  .spec-card.green .name{color:#fff}
+  .spec-card.green .sub{color:rgba(255,255,255,.85)}
+  .spec-card .label{margin-left:auto;font-size:11px;color:var(--muted);font-weight:600}
+  .spec-card.dark .label{color:rgba(255,255,255,.5)}
+  .spec-card.green .label{color:rgba(255,255,255,.7)}
+  .swatches{display:flex;gap:8px;margin-top:14px}
+  .sw{flex:1;border-radius:11px;padding:10px 8px;font-size:9.5px;font-weight:700;color:#fff;text-align:center;letter-spacing:.02em}
+
+  /* footer / compliance */
+  footer{background:#06201a;color:rgba(255,255,255,.55);padding:26px 18px 34px;font-size:11.5px;line-height:1.6}
+  footer .rep{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:14px;margin-bottom:16px;color:rgba(255,255,255,.72)}
+  footer .rep b{color:#fff}
+  footer a{color:var(--green-bright);text-decoration:none}
+  footer .flag{background:rgba(47,212,128,.1);border:1px dashed rgba(47,212,128,.4);border-radius:10px;padding:11px;color:var(--green-bright);font-size:11px;margin-top:14px}
+
+  /* reveal */
+  .rv{opacity:0;transform:translateY(18px);transition:opacity .6s,transform .6s}
+  .rv.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.cta{transition:none}}
+</style>
+</head>
+<body>
+<div class="phone">
+<div class="scroll" id="scroll">
+
+  <!-- HEADER -->
+  <header>
+    <a href="#" class="logo" aria-label="Hero Car Finance home"><svg viewBox="0 0 224 92" style="height:42px;width:auto;display:block" xmlns="http://www.w3.org/2000/svg"><path d="M27.52650927734375 50.0V14.36H36.243653076171874V50.0ZM5.08568603515625 50.0V14.36H13.802829833984374V50.0ZM10.879137207031249 35.6205751953125V28.46171240234375H31.468529052734375V35.6205751953125ZM53.84511743164063 50.756Q50.0728232421875 50.756 47.29953894042969 49.7184248046875Q44.52625463867188 48.680849609375 42.68254553222657 46.76384631347656Q40.83883642578125 44.846843017578124 39.92469921875001 42.193130615234374Q39.010562011718754 39.539418212890624 39.010562011718754 36.30714379882812Q39.010562011718754 33.04400659179687 39.91698681640625 30.205150390625Q40.823411621093754 27.366294189453125 42.60926452636719 25.241006591796875Q44.39511743164063 23.115718994140625 47.07582983398438 21.92385949707031Q49.75654223632813 20.732 53.27426123046875 20.732Q56.791980224609375 20.732 59.410980224609375 21.908431396484374Q62.029980224609375 23.08486279296875 63.688548828125 25.291150390625Q65.34711743164063 27.49743798828125 66.00668273925781 30.544578491210935Q66.666248046875 33.59171899414062 66.25738525390625 37.35628100585937L44.61884301757813 37.587712402343755V32.95913720703125L60.57963989257813 32.750849609374995L58.30396044921875 35.1345751953125Q58.65881665039063 32.527150390624996 58.084107543945315 30.826150390624996Q57.5093984375 29.125150390625 56.27511743164062 28.295862792968748Q55.04083642578125 27.4665751953125 53.335973632812504 27.4665751953125Q51.39968603515625 27.4665751953125 50.05740502929687 28.4925751953125Q48.715124023437504 29.5185751953125 48.04398681640625 31.427859497070312Q47.372849609375 33.33714379882812 47.372849609375 36.0294248046875Q47.372849609375 40.434281005859376 49.10855541992188 42.43228100585938Q50.84426123046875 44.43028100585938 53.837405029296875 44.43028100585938Q55.225973632812504 44.43028100585938 56.15168603515625 44.059996704101565Q57.0773984375 43.68971240234375 57.66368273925781 43.06871240234375Q58.24996704101562 42.447712402343754 58.54310754394531 41.63385290527344Q58.836248046875 40.819993408203125 58.93652905273438 39.93284301757812L66.68167944335937 41.07453564453125Q66.50426123046876 42.97996044921875 65.72898352050782 44.71567944335938Q64.95370581054688 46.4513984375 63.441709106445316 47.80912072753907Q61.92971240234375 49.166843017578124 59.57299340820313 49.96142150878906Q57.216274414062504 50.756 53.84511743164063 50.756ZM69.05511743164062 50.0V35.82881665039062V21.488H76.33741162109375L76.42998022460938 31.8406015625H77.26311083984376Q77.61796704101563 27.767444580078124 78.62467944335938 25.36443798828125Q79.63139184570313 22.961431396484375 81.37095385742188 21.900715698242188Q83.11051586914063 20.84 85.57135229492188 20.84Q86.23479028320313 20.84 86.97922827148437 20.97114709472656Q87.72366625976562 21.102294189453126 88.56452905273437 21.41858837890625L88.19424145507813 30.860882568359376Q87.19137866210937 30.344019775390624 86.13451916503907 30.116444580078124Q85.07765966796876 29.888869384765623 84.20594067382814 29.888869384765623Q82.26194726562501 29.888869384765623 80.87338195800783 30.768300781249998Q79.48481665039063 31.647732177734376 78.70953564453126 33.39887927246094Q77.93425463867189 35.1500263671875 77.7799736328125 37.75745776367187V50.0Z" fill="#0B2920"/><path d="M103.504548828125 50.756Q99.24626782226562 50.756 95.98312731933594 49.09357189941406Q92.71998681640625 47.431143798828124 90.8762744140625 44.09471569824218Q89.03256201171875 40.75828759765625 89.03256201171875 35.73628759765625Q89.03256201171875 30.62171240234375 90.91099011230469 27.30071240234375Q92.78941821289062 23.97971240234375 96.07955871582031 22.355856201171875Q99.36969921875 20.732 103.57398022460937 20.732Q107.878548828125 20.732 111.14554553222656 22.394428100585937Q114.41254223632812 24.056856201171875 116.24468273925781 27.377856201171873Q118.0768232421875 30.698856201171875 118.0768232421875 35.744Q118.0768232421875 40.92028759765625 116.1675389404297 44.25671569824219Q114.25825463867187 47.59314379882812 110.95268603515625 49.17457189941406Q107.64711743164062 50.756 103.504548828125 50.756ZM103.75140502929688 44.39171240234375Q105.57968603515624 44.39171240234375 106.80625463867187 43.47756860351562Q108.0328232421875 42.5634248046875 108.65767944335937 40.7274248046875Q109.28253564453125 38.8914248046875 109.28253564453125 36.260856201171876Q109.28253564453125 33.422 108.60367944335937 31.474143798828123Q107.9248232421875 29.52628759765625 106.61725463867188 28.48485949707031Q105.30968603515625 27.443431396484375 103.33483642578125 27.443431396484375Q101.56055541992188 27.443431396484375 100.31855871582032 28.3575751953125Q99.07656201171875 29.271718994140624 98.45170581054688 31.107718994140626Q97.826849609375 32.943718994140625 97.826849609375 35.628287597656254Q97.826849609375 39.9174248046875 99.3812744140625 42.15456860351563Q100.93569921875 44.39171240234375 103.75140502929688 44.39171240234375Z" fill="#00A65A"/><g stroke="#2FD480" stroke-width="2.4" stroke-linecap="round" opacity=".75"><line x1="120" y1="74" x2="134" y2="74"/><line x1="114" y1="80" x2="130" y2="80"/><line x1="126" y1="68" x2="138" y2="68"/></g><path d="M4 84 C70 80 150 80 232 82" stroke="#00A65A" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M170 64 C156 56 144 58 136 68 C144 68 150 71 156 73 C162 70 167 68 171 68 Z" fill="#2FD480"/><path d="M150 80 L150 73 Q150 69 155 69 L159 69 L165 61 L167 61 L169 70 L187 70 L190 61 L192 61 L198 69 L209 69 Q214 69 214 74 L214 77 Q214 80 209 80 Z" fill="#00A65A"/><circle cx="164" cy="80" r="7.5" fill="#0B2920"/><circle cx="164" cy="80" r="3" fill="#EAF6EF"/><circle cx="202" cy="80" r="7.5" fill="#0B2920"/><circle cx="202" cy="80" r="3" fill="#EAF6EF"/><path d="M173 70 L171 62 Q173 59 177 59 Q181 59 183 62 L181 70 Z" fill="#0B2920"/><circle cx="177" cy="54" r="6.5" fill="#FFE0BE"/><circle cx="174.6" cy="53" r="0.95" fill="#0B2920"/><circle cx="179.4" cy="53" r="0.95" fill="#0B2920"/><path d="M174 56.4 Q177 59 180 56.4" stroke="#0B2920" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></a>
+    <a href="tel:08000000000" class="call">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>
+      Call
+    </a>
+  </header>
+
+  <!-- HERO (matches "been refused before" ad) -->
+  <section class="hero">
+    <span class="soft-pill">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+      Checking won't affect your credit score
+    </span>
+    <h1>Been refused before?<br><span class="hl">You could still drive away.</span></h1>
+    <p class="lede">We consider every credit story — and unlike a broker, we've actually got the car. Get your decision in minutes.</p>
+
+    <div class="starter" id="starter">
+      <div class="step-tag"><span class="dot"></span>Step 1 of 5 · takes about 60 seconds</div>
+      <div class="field">
+        <label for="fn">First name</label>
+        <input id="fn" type="text" placeholder="e.g. Jordan" autocomplete="given-name">
+      </div>
+      <div class="field">
+        <label for="mob">Mobile number</label>
+        <input id="mob" type="tel" placeholder="07…" autocomplete="tel">
+        <div class="help">We'll text your decision — no spam, ever.</div>
+      </div>
+      <button class="cta" id="checkBtn">
+        Check my eligibility
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+      <div class="reassure-row">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Soft search only · no impact on your credit file
+      </div>
+
+      <!-- decision moment -->
+      <div class="decision" id="decision" aria-hidden="true">
+        <div class="gauge" id="gauge">
+          <svg width="96" height="96" viewBox="0 0 96 96">
+            <circle cx="48" cy="48" r="42" fill="none" stroke="#EAF6EF" stroke-width="8"/>
+            <circle id="arc" cx="48" cy="48" r="42" fill="none" stroke="#00A65A" stroke-width="8" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="264"/>
+          </svg>
+          <div class="tick">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg>
+          </div>
+        </div>
+        <h3 id="decTitle">Good news, <span id="decName">there</span>!</h3>
+        <p id="decBody">Based on what you've told us, you look likely to be accepted. Let's finish the quick bits and match you to a car.</p>
+        <button class="cta" id="continueBtn">Continue my application
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        <div class="mini">This is an eligibility indication based on a soft search, not a guaranteed offer. A full quote follows once a lender reviews your application.</div>
+      </div>
+    </div>
+
+    <div class="trust-strip">
+      <div class="trust-item">
+        <span class="stars">★★★★★</span>
+        <span class="big">4.8</span>
+        <span class="sm">2,400+ reviews</span>
+      </div>
+      <div class="trust-item">
+        <span class="big">8.9%</span>
+        <span class="sm">Rates from APR*</span>
+      </div>
+      <div class="trust-item">
+        <span class="big">AA</span>
+        <span class="sm">Assured cars</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how rv">
+    <div class="sec-head">
+      <span class="eyebrow">How it works</span>
+      <h2>Three steps. No jargon. No catch.</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <span class="num">1</span>
+        <div><h3>Apply in minutes</h3><p>A few quick questions on your phone. Soft search only — your credit score stays untouched.</p></div>
+      </div>
+      <div class="step">
+        <span class="num">2</span>
+        <div><h3>Get your decision</h3><p>See where you stand fast. Whatever your credit history, we'll tell you straight.</p></div>
+      </div>
+      <div class="step">
+        <span class="num">3</span>
+        <div><h3>Choose your car &amp; drive away</h3><p>Pick from 400+ AA-assured cars we've prepared ourselves. Finance and the car — one place.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE CARS — the moat -->
+  <section class="cars rv">
+    <div class="sec-head">
+      <span class="eyebrow">The bit other lenders can't do</span>
+      <h2>We don't just find finance.<br><span class="hl">We've got the cars.</span></h2>
+    </div>
+    <div class="cars-rail" id="rail">
+      <article class="car">
+        <div class="img" style="background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22230%22 height=%22130%22><rect width=%22230%22 height=%22130%22 fill=%22%23dfeee6%22/><text x=%2250%25%22 y=%2252%25%22 font-family=%22sans-serif%22 font-size=%2214%22 fill=%22%237fa594%22 text-anchor=%22middle%22>Vehicle photo</text></svg>')">
+          <span class="badge">Low mileage</span>
+          <span class="pmt-chip" data-price="11495">£189<small>PER MONTH</small></span>
+        </div>
+        <div class="info">
+          <h3>Volkswagen Golf</h3>
+          <p class="spec">2020 · 1.5 TSI · 28,400 mi</p>
+          <p class="price">£11,495 <s>£12,250</s></p>
+          <a href="#" class="car-cta">View deal</a>
+        </div>
+      </article>
+      <article class="car">
+        <div class="img" style="background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22230%22 height=%22130%22><rect width=%22230%22 height=%22130%22 fill=%22%23d6e8df%22/><text x=%2250%25%22 y=%2252%25%22 font-family=%22sans-serif%22 font-size=%2214%22 fill=%22%237fa594%22 text-anchor=%22middle%22>Vehicle photo</text></svg>')">
+          <span class="badge">Just in</span>
+          <span class="pmt-chip" data-price="9995">£164<small>PER MONTH</small></span>
+        </div>
+        <div class="info">
+          <h3>Ford Puma</h3>
+          <p class="spec">2021 · 1.0 EcoBoost · 19,100 mi</p>
+          <p class="price">£9,995</p>
+          <a href="#" class="car-cta">View deal</a>
+        </div>
+      </article>
+      <article class="car">
+        <div class="img" style="background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22230%22 height=%22130%22><rect width=%22230%22 height=%22130%22 fill=%22%23e0efe7%22/><text x=%2250%25%22 y=%2252%25%22 font-family=%22sans-serif%22 font-size=%2214%22 fill=%22%237fa594%22 text-anchor=%22middle%22>Vehicle photo</text></svg>')">
+          <span class="badge">Hot deal</span>
+          <span class="pmt-chip" data-price="14750">£242<small>PER MONTH</small></span>
+        </div>
+        <div class="info">
+          <h3>Nissan Qashqai</h3>
+          <p class="spec">2021 · 1.3 DiG-T · 22,800 mi</p>
+          <p class="price">£14,750</p>
+          <a href="#" class="car-cta">View deal</a>
+        </div>
+      </article>
+    </div>
+    <p class="rail-note">↔ Swipe · every price is a real monthly figure on a real car in stock</p>
+  </section>
+
+  <!-- WHATEVER YOUR CREDIT -->
+  <section class="credit rv">
+    <div class="sec-head">
+      <span class="eyebrow">For every credit story</span>
+      <h2>Good credit, bad credit, or none yet.</h2>
+    </div>
+    <div class="rate-band">
+      <div class="rate-end">
+        <div class="lab">Great credit</div>
+        <div class="val">8.9%</div>
+        <div class="desc">APR from</div>
+      </div>
+      <div class="rate-mid"></div>
+      <div class="rate-end">
+        <div class="lab">Rebuilding</div>
+        <div class="val">Considered</div>
+        <div class="desc">every application</div>
+      </div>
+    </div>
+    <div class="credit-list">
+      <div class="credit-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Refused elsewhere — still worth applying</div>
+      <div class="credit-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> CCJs, defaults or thin credit history</div>
+      <div class="credit-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Self-employed or irregular income</div>
+      <div class="credit-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> First time getting car finance</div>
+    </div>
+  </section>
+
+  <!-- PROOF -->
+  <section class="proof rv">
+    <div class="sec-head">
+      <span class="eyebrow">Real people, real keys</span>
+      <h2>You're in good company.</h2>
+    </div>
+    <div class="review">
+      <div class="stars">★★★★★</div>
+      <p>"Turned down by two places after a rough couple of years. Hero actually got me sorted and I picked the car the same week. No judgement at all."</p>
+      <div class="who">
+        <div class="av" style="background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2232%22 height=%2232%22><rect width=%2232%22 height=%2232%22 fill=%22%23c5e0d4%22/></svg>')"></div>
+        <div><b>Sarah M.</b><span>Manchester</span></div>
+        <span class="verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Verified</span>
+      </div>
+    </div>
+    <div class="review">
+      <div class="stars">★★★★★</div>
+      <p>"Did the whole thing on my phone on my lunch break. Knew where I stood in minutes and they had the exact car I wanted in stock."</p>
+      <div class="who">
+        <div class="av" style="background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2232%22 height=%2232%22><rect width=%2232%22 height=%2232%22 fill=%22%23b8d8c9%22/></svg>')"></div>
+        <div><b>Daniel R.</b><span>Leeds</span></div>
+        <span class="verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Verified</span>
+      </div>
+    </div>
+    <div class="lenders">
+      <div class="lab">We compare a panel of trusted UK lenders</div>
+      <div class="lender-row">
+        <span class="lender">Lender A</span>
+        <span class="lender">Lender B</span>
+        <span class="lender">Lender C</span>
+        <span class="lender">Lender D</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq rv">
+    <div class="sec-head">
+      <span class="eyebrow">The questions everyone asks</span>
+      <h2>No silly questions here.</h2>
+    </div>
+    <div class="q"><button>Will applying hurt my credit score?<span class="pl">+</span></button><div class="a"><p>No. The first check is a soft search, which only you can see — it leaves no mark on your credit file and lenders can't see it. You'll always be told clearly before any full check happens.</p></div></div>
+    <div class="q"><button>Can I get finance with bad credit?<span class="pl">+</span></button><div class="a"><p>Quite possibly. We consider every application, including CCJs, defaults and limited credit history. Applying is the only way to know where you stand — and it won't cost you anything or affect your score.</p></div></div>
+    <div class="q"><button>Do I need a deposit?<span class="pl">+</span></button><div class="a"><p>Not always. Many customers drive away with no deposit. Putting some money down can lower your monthly payment, but it's your choice.</p></div></div>
+    <div class="q"><button>Do I have to choose a car first?<span class="pl">+</span></button><div class="a"><p>No. Most people get their finance decision first, then choose from our 400+ AA-assured cars. You can also browse first if you prefer — either way works.</p></div></div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final rv">
+    <h2>Find out where you stand today.</h2>
+    <p>One quick form. A clear answer. Then a real car you can actually drive away.</p>
+    <button class="cta" onclick="document.getElementById('scroll').scrollTo({top:0,behavior:'smooth'})">
+      Check my eligibility
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+    <div class="reassure-row">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Soft search · no impact on your credit score
+    </div>
+  </section>
+
+  <!-- LOGO SPECIMEN (for Dan to judge the mark in isolation) -->
+  <section class="specimen">
+    <span class="eyebrow">Logo — the mark in three settings</span>
+    <div class="spec-grid">
+      <div class="spec-card"><svg viewBox="0 0 240 112" style="width:172px;height:auto" xmlns="http://www.w3.org/2000/svg"><path d="M27.52650927734375 50.0V14.36H36.243653076171874V50.0ZM5.08568603515625 50.0V14.36H13.802829833984374V50.0ZM10.879137207031249 35.6205751953125V28.46171240234375H31.468529052734375V35.6205751953125ZM53.84511743164063 50.756Q50.0728232421875 50.756 47.29953894042969 49.7184248046875Q44.52625463867188 48.680849609375 42.68254553222657 46.76384631347656Q40.83883642578125 44.846843017578124 39.92469921875001 42.193130615234374Q39.010562011718754 39.539418212890624 39.010562011718754 36.30714379882812Q39.010562011718754 33.04400659179687 39.91698681640625 30.205150390625Q40.823411621093754 27.366294189453125 42.60926452636719 25.241006591796875Q44.39511743164063 23.115718994140625 47.07582983398438 21.92385949707031Q49.75654223632813 20.732 53.27426123046875 20.732Q56.791980224609375 20.732 59.410980224609375 21.908431396484374Q62.029980224609375 23.08486279296875 63.688548828125 25.291150390625Q65.34711743164063 27.49743798828125 66.00668273925781 30.544578491210935Q66.666248046875 33.59171899414062 66.25738525390625 37.35628100585937L44.61884301757813 37.587712402343755V32.95913720703125L60.57963989257813 32.750849609374995L58.30396044921875 35.1345751953125Q58.65881665039063 32.527150390624996 58.084107543945315 30.826150390624996Q57.5093984375 29.125150390625 56.27511743164062 28.295862792968748Q55.04083642578125 27.4665751953125 53.335973632812504 27.4665751953125Q51.39968603515625 27.4665751953125 50.05740502929687 28.4925751953125Q48.715124023437504 29.5185751953125 48.04398681640625 31.427859497070312Q47.372849609375 33.33714379882812 47.372849609375 36.0294248046875Q47.372849609375 40.434281005859376 49.10855541992188 42.43228100585938Q50.84426123046875 44.43028100585938 53.837405029296875 44.43028100585938Q55.225973632812504 44.43028100585938 56.15168603515625 44.059996704101565Q57.0773984375 43.68971240234375 57.66368273925781 43.06871240234375Q58.24996704101562 42.447712402343754 58.54310754394531 41.63385290527344Q58.836248046875 40.819993408203125 58.93652905273438 39.93284301757812L66.68167944335937 41.07453564453125Q66.50426123046876 42.97996044921875 65.72898352050782 44.71567944335938Q64.95370581054688 46.4513984375 63.441709106445316 47.80912072753907Q61.92971240234375 49.166843017578124 59.57299340820313 49.96142150878906Q57.216274414062504 50.756 53.84511743164063 50.756ZM69.05511743164062 50.0V35.82881665039062V21.488H76.33741162109375L76.42998022460938 31.8406015625H77.26311083984376Q77.61796704101563 27.767444580078124 78.62467944335938 25.36443798828125Q79.63139184570313 22.961431396484375 81.37095385742188 21.900715698242188Q83.11051586914063 20.84 85.57135229492188 20.84Q86.23479028320313 20.84 86.97922827148437 20.97114709472656Q87.72366625976562 21.102294189453126 88.56452905273437 21.41858837890625L88.19424145507813 30.860882568359376Q87.19137866210937 30.344019775390624 86.13451916503907 30.116444580078124Q85.07765966796876 29.888869384765623 84.20594067382814 29.888869384765623Q82.26194726562501 29.888869384765623 80.87338195800783 30.768300781249998Q79.48481665039063 31.647732177734376 78.70953564453126 33.39887927246094Q77.93425463867189 35.1500263671875 77.7799736328125 37.75745776367187V50.0Z" fill="#0B2920"/><path d="M103.504548828125 50.756Q99.24626782226562 50.756 95.98312731933594 49.09357189941406Q92.71998681640625 47.431143798828124 90.8762744140625 44.09471569824218Q89.03256201171875 40.75828759765625 89.03256201171875 35.73628759765625Q89.03256201171875 30.62171240234375 90.91099011230469 27.30071240234375Q92.78941821289062 23.97971240234375 96.07955871582031 22.355856201171875Q99.36969921875 20.732 103.57398022460937 20.732Q107.878548828125 20.732 111.14554553222656 22.394428100585937Q114.41254223632812 24.056856201171875 116.24468273925781 27.377856201171873Q118.0768232421875 30.698856201171875 118.0768232421875 35.744Q118.0768232421875 40.92028759765625 116.1675389404297 44.25671569824219Q114.25825463867187 47.59314379882812 110.95268603515625 49.17457189941406Q107.64711743164062 50.756 103.504548828125 50.756ZM103.75140502929688 44.39171240234375Q105.57968603515624 44.39171240234375 106.80625463867187 43.47756860351562Q108.0328232421875 42.5634248046875 108.65767944335937 40.7274248046875Q109.28253564453125 38.8914248046875 109.28253564453125 36.260856201171876Q109.28253564453125 33.422 108.60367944335937 31.474143798828123Q107.9248232421875 29.52628759765625 106.61725463867188 28.48485949707031Q105.30968603515625 27.443431396484375 103.33483642578125 27.443431396484375Q101.56055541992188 27.443431396484375 100.31855871582032 28.3575751953125Q99.07656201171875 29.271718994140624 98.45170581054688 31.107718994140626Q97.826849609375 32.943718994140625 97.826849609375 35.628287597656254Q97.826849609375 39.9174248046875 99.3812744140625 42.15456860351563Q100.93569921875 44.39171240234375 103.75140502929688 44.39171240234375Z" fill="#00A65A"/><g stroke="#2FD480" stroke-width="2.4" stroke-linecap="round" opacity=".75"><line x1="120" y1="74" x2="134" y2="74"/><line x1="114" y1="80" x2="130" y2="80"/><line x1="126" y1="68" x2="138" y2="68"/></g><path d="M4 84 C70 80 150 80 232 82" stroke="#00A65A" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M170 64 C156 56 144 58 136 68 C144 68 150 71 156 73 C162 70 167 68 171 68 Z" fill="#2FD480"/><path d="M150 80 L150 73 Q150 69 155 69 L159 69 L165 61 L167 61 L169 70 L187 70 L190 61 L192 61 L198 69 L209 69 Q214 69 214 74 L214 77 Q214 80 209 80 Z" fill="#00A65A"/><circle cx="164" cy="80" r="7.5" fill="#0B2920"/><circle cx="164" cy="80" r="3" fill="#EAF6EF"/><circle cx="202" cy="80" r="7.5" fill="#0B2920"/><circle cx="202" cy="80" r="3" fill="#EAF6EF"/><path d="M173 70 L171 62 Q173 59 177 59 Q181 59 183 62 L181 70 Z" fill="#0B2920"/><circle cx="177" cy="54" r="6.5" fill="#FFE0BE"/><circle cx="174.6" cy="53" r="0.95" fill="#0B2920"/><circle cx="179.4" cy="53" r="0.95" fill="#0B2920"/><path d="M174 56.4 Q177 59 180 56.4" stroke="#0B2920" stroke-width="1.3" fill="none" stroke-linecap="round"/><path d="M9.098599731445312 103.17159838867188Q8.00960107421875 103.17159838867188 7.182402282714843 102.66999865722656Q6.355203491210937 102.16839892578125 5.893204162597656 101.26529919433594Q5.431204833984375 100.36219946289063 5.431204833984375 99.161Q5.431204833984375 97.95980053710937 5.893204162597656 97.06220080566406Q6.355203491210937 96.16460107421875 7.182402282714843 95.66300134277344Q8.00960107421875 95.16140161132813 9.098599731445312 95.16140161132813Q10.319597045898437 95.16140161132813 11.206195434570311 95.76970013427734Q12.092793823242186 96.37799865722656 12.479993286132812 97.44939624023438L11.142411010742187 97.93559033203125Q10.896009399414062 97.266787109375 10.371306579589843 96.89388549804687Q9.846603759765625 96.52098388671875 9.098599731445312 96.52098388671875Q8.416595703125 96.52098388671875 7.909492614746093 96.84218603515626Q7.4023895263671875 97.16338818359375 7.128487915039063 97.75079180908203Q6.854586303710938 98.33819543457031 6.854586303710938 99.161Q6.854586303710938 99.9838045654297 7.128487915039063 100.57670819091797Q7.4023895263671875 101.16961181640625 7.909492614746093 101.49081396484374Q8.416595703125 101.81201611328125 9.098599731445312 101.81201611328125Q9.846603759765625 101.81201611328125 10.371306579589843 101.43691436767577Q10.896009399414062 101.0618126220703 11.142411010742187 100.39740966796874L12.479993286132812 100.87920349121094Q12.092793823242186 101.93960107421876 11.206195434570311 102.55559973144531Q10.319597045898437 103.17159838867188 9.098599731445312 103.17159838867188ZM18.387004028320312 103.0 21.47139758300781 95.333H22.538385498046875L25.61617932128906 103.0H24.065199462890625L22.012591674804685 97.43177099609375L19.942384155273437 103.0ZM20.410987915039062 101.49958764648437 20.853182006835937 100.22800402832031H23.15660107421875L23.620795166015625 101.49958764648437ZM31.950005371093752 103.0V95.333H34.482195434570315Q35.41499328613281 95.333 35.98919274902344 95.60469946289062Q36.56339221191406 95.87639892578125 36.83179248046875 96.37689825439453Q37.100192749023435 96.87739758300782 37.100192749023435 97.55499731445312Q37.100192749023435 98.61099328613281 36.497394897460936 99.18629248046875Q35.894597045898436 99.76159167480469 34.783599731445314 99.83419274902344Q34.53280322265625 99.83859301757812 34.26880456542969 99.83859301757812Q34.004805908203124 99.83859301757812 33.81780456542969 99.83859301757812H33.37338684082032V103.0ZM36.114610473632816 103.0 34.18960778808594 99.67799462890625 35.648188720703125 99.50419677734375 37.76018872070313 103.0ZM33.37338684082032 98.57140966796875H34.33699731445313Q34.70440295410156 98.57140966796875 35.00580590820313 98.4889076538086Q35.30720886230469 98.40640563964844 35.49201007080079 98.18970281982422Q35.67681127929688 97.973 35.67681127929688 97.57259704589843Q35.67681127929688 97.16779382324219 35.49201007080079 96.95989086914062Q35.30720886230469 96.75198791503907 35.003605773925784 96.67828576660156Q34.70000268554688 96.60458361816406 34.33699731445313 96.60458361816406H33.37338684082032ZM52.54200537109375 103.0V95.333H57.66800134277344V96.60458361816406H53.965386840820315V98.43060913085938H57.18179919433594V99.70219274902344H53.965386840820315V103.0ZM64.18000537109374 103.0V95.333H65.6033868408203V103.0ZM72.57300537109374 103.0V95.333H74.03818737792969L77.61540161132812 101.13882470703125H77.25680725097656V95.333H78.68018872070313V103.0H77.1996064453125L73.64439221191407 97.18317529296876H73.9963868408203V103.0ZM85.0030040283203 103.0 88.0873975830078 95.333H89.15438549804686L92.23217932128905 103.0H90.68119946289062L88.62859167480468 97.43177099609375L86.55838415527343 103.0ZM87.02698791503906 101.49958764648437 87.46918200683594 100.22800402832031H89.77260107421874L90.23679516601561 101.49958764648437ZM98.56600537109374 103.0V95.333H100.03118737792968L103.60840161132812 101.13882470703125H103.24980725097656V95.333H104.67318872070312V103.0H103.19260644531249L99.63739221191406 97.18317529296876H99.9893868408203V103.0ZM115.0065997314453 103.17159838867188Q113.91760107421874 103.17159838867188 113.09040228271483 102.66999865722656Q112.26320349121093 102.16839892578125 111.80120416259766 101.26529919433594Q111.33920483398437 100.36219946289063 111.33920483398437 99.161Q111.33920483398437 97.95980053710937 111.80120416259766 97.06220080566406Q112.26320349121093 96.16460107421875 113.09040228271483 95.66300134277344Q113.91760107421874 95.16140161132813 115.0065997314453 95.16140161132813Q116.22759704589842 95.16140161132813 117.11419543457029 95.76970013427734Q118.00079382324218 96.37799865722656 118.3879932861328 97.44939624023438L117.05041101074218 97.93559033203125Q116.80400939941404 97.266787109375 116.27930657958983 96.89388549804687Q115.75460375976562 96.52098388671875 115.0065997314453 96.52098388671875Q114.32459570312498 96.52098388671875 113.81749261474607 96.84218603515626Q113.31038952636717 97.16338818359375 113.03648791503905 97.75079180908203Q112.76258630371092 98.33819543457031 112.76258630371092 99.161Q112.76258630371092 99.9838045654297 113.03648791503905 100.57670819091797Q113.31038952636717 101.16961181640625 113.81749261474607 101.49081396484374Q114.32459570312498 101.81201611328125 115.0065997314453 101.81201611328125Q115.75460375976562 101.81201611328125 116.27930657958983 101.43691436767577Q116.80400939941404 101.0618126220703 117.05041101074218 100.39740966796874L118.3879932861328 100.87920349121094Q118.00079382324218 101.93960107421876 117.11419543457029 102.55559973144531Q116.22759704589842 103.17159838867188 115.0065997314453 103.17159838867188ZM124.94400537109374 103.0V95.333H130.05240295410155V96.60458361816406H126.3673868408203V98.43060913085938H129.8037978515625V99.70219274902344H126.3673868408203V101.72841638183594H130.05240295410155V103.0Z" fill="#028A4B"/></svg><span class="label">Primary</span></div>
+      <div class="spec-card dark"><svg viewBox="0 0 240 112" style="width:172px;height:auto" xmlns="http://www.w3.org/2000/svg"><path d="M27.52650927734375 50.0V14.36H36.243653076171874V50.0ZM5.08568603515625 50.0V14.36H13.802829833984374V50.0ZM10.879137207031249 35.6205751953125V28.46171240234375H31.468529052734375V35.6205751953125ZM53.84511743164063 50.756Q50.0728232421875 50.756 47.29953894042969 49.7184248046875Q44.52625463867188 48.680849609375 42.68254553222657 46.76384631347656Q40.83883642578125 44.846843017578124 39.92469921875001 42.193130615234374Q39.010562011718754 39.539418212890624 39.010562011718754 36.30714379882812Q39.010562011718754 33.04400659179687 39.91698681640625 30.205150390625Q40.823411621093754 27.366294189453125 42.60926452636719 25.241006591796875Q44.39511743164063 23.115718994140625 47.07582983398438 21.92385949707031Q49.75654223632813 20.732 53.27426123046875 20.732Q56.791980224609375 20.732 59.410980224609375 21.908431396484374Q62.029980224609375 23.08486279296875 63.688548828125 25.291150390625Q65.34711743164063 27.49743798828125 66.00668273925781 30.544578491210935Q66.666248046875 33.59171899414062 66.25738525390625 37.35628100585937L44.61884301757813 37.587712402343755V32.95913720703125L60.57963989257813 32.750849609374995L58.30396044921875 35.1345751953125Q58.65881665039063 32.527150390624996 58.084107543945315 30.826150390624996Q57.5093984375 29.125150390625 56.27511743164062 28.295862792968748Q55.04083642578125 27.4665751953125 53.335973632812504 27.4665751953125Q51.39968603515625 27.4665751953125 50.05740502929687 28.4925751953125Q48.715124023437504 29.5185751953125 48.04398681640625 31.427859497070312Q47.372849609375 33.33714379882812 47.372849609375 36.0294248046875Q47.372849609375 40.434281005859376 49.10855541992188 42.43228100585938Q50.84426123046875 44.43028100585938 53.837405029296875 44.43028100585938Q55.225973632812504 44.43028100585938 56.15168603515625 44.059996704101565Q57.0773984375 43.68971240234375 57.66368273925781 43.06871240234375Q58.24996704101562 42.447712402343754 58.54310754394531 41.63385290527344Q58.836248046875 40.819993408203125 58.93652905273438 39.93284301757812L66.68167944335937 41.07453564453125Q66.50426123046876 42.97996044921875 65.72898352050782 44.71567944335938Q64.95370581054688 46.4513984375 63.441709106445316 47.80912072753907Q61.92971240234375 49.166843017578124 59.57299340820313 49.96142150878906Q57.216274414062504 50.756 53.84511743164063 50.756ZM69.05511743164062 50.0V35.82881665039062V21.488H76.33741162109375L76.42998022460938 31.8406015625H77.26311083984376Q77.61796704101563 27.767444580078124 78.62467944335938 25.36443798828125Q79.63139184570313 22.961431396484375 81.37095385742188 21.900715698242188Q83.11051586914063 20.84 85.57135229492188 20.84Q86.23479028320313 20.84 86.97922827148437 20.97114709472656Q87.72366625976562 21.102294189453126 88.56452905273437 21.41858837890625L88.19424145507813 30.860882568359376Q87.19137866210937 30.344019775390624 86.13451916503907 30.116444580078124Q85.07765966796876 29.888869384765623 84.20594067382814 29.888869384765623Q82.26194726562501 29.888869384765623 80.87338195800783 30.768300781249998Q79.48481665039063 31.647732177734376 78.70953564453126 33.39887927246094Q77.93425463867189 35.1500263671875 77.7799736328125 37.75745776367187V50.0Z" fill="#fff"/><path d="M103.504548828125 50.756Q99.24626782226562 50.756 95.98312731933594 49.09357189941406Q92.71998681640625 47.431143798828124 90.8762744140625 44.09471569824218Q89.03256201171875 40.75828759765625 89.03256201171875 35.73628759765625Q89.03256201171875 30.62171240234375 90.91099011230469 27.30071240234375Q92.78941821289062 23.97971240234375 96.07955871582031 22.355856201171875Q99.36969921875 20.732 103.57398022460937 20.732Q107.878548828125 20.732 111.14554553222656 22.394428100585937Q114.41254223632812 24.056856201171875 116.24468273925781 27.377856201171873Q118.0768232421875 30.698856201171875 118.0768232421875 35.744Q118.0768232421875 40.92028759765625 116.1675389404297 44.25671569824219Q114.25825463867187 47.59314379882812 110.95268603515625 49.17457189941406Q107.64711743164062 50.756 103.504548828125 50.756ZM103.75140502929688 44.39171240234375Q105.57968603515624 44.39171240234375 106.80625463867187 43.47756860351562Q108.0328232421875 42.5634248046875 108.65767944335937 40.7274248046875Q109.28253564453125 38.8914248046875 109.28253564453125 36.260856201171876Q109.28253564453125 33.422 108.60367944335937 31.474143798828123Q107.9248232421875 29.52628759765625 106.61725463867188 28.48485949707031Q105.30968603515625 27.443431396484375 103.33483642578125 27.443431396484375Q101.56055541992188 27.443431396484375 100.31855871582032 28.3575751953125Q99.07656201171875 29.271718994140624 98.45170581054688 31.107718994140626Q97.826849609375 32.943718994140625 97.826849609375 35.628287597656254Q97.826849609375 39.9174248046875 99.3812744140625 42.15456860351563Q100.93569921875 44.39171240234375 103.75140502929688 44.39171240234375Z" fill="#2FD480"/><g stroke="#2FD480" stroke-width="2.4" stroke-linecap="round" opacity=".75"><line x1="120" y1="74" x2="134" y2="74"/><line x1="114" y1="80" x2="130" y2="80"/><line x1="126" y1="68" x2="138" y2="68"/></g><path d="M4 84 C70 80 150 80 232 82" stroke="#2FD480" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M170 64 C156 56 144 58 136 68 C144 68 150 71 156 73 C162 70 167 68 171 68 Z" fill="#2FD480"/><path d="M150 80 L150 73 Q150 69 155 69 L159 69 L165 61 L167 61 L169 70 L187 70 L190 61 L192 61 L198 69 L209 69 Q214 69 214 74 L214 77 Q214 80 209 80 Z" fill="#00A65A"/><circle cx="164" cy="80" r="7.5" fill="#FFFFFF"/><circle cx="164" cy="80" r="3" fill="#0B2920"/><circle cx="202" cy="80" r="7.5" fill="#FFFFFF"/><circle cx="202" cy="80" r="3" fill="#0B2920"/><path d="M173 70 L171 62 Q173 59 177 59 Q181 59 183 62 L181 70 Z" fill="#0B2920"/><circle cx="177" cy="54" r="6.5" fill="#FFE0BE"/><circle cx="174.6" cy="53" r="0.95" fill="#0B2920"/><circle cx="179.4" cy="53" r="0.95" fill="#0B2920"/><path d="M174 56.4 Q177 59 180 56.4" stroke="#0B2920" stroke-width="1.3" fill="none" stroke-linecap="round"/><path d="M9.098599731445312 103.17159838867188Q8.00960107421875 103.17159838867188 7.182402282714843 102.66999865722656Q6.355203491210937 102.16839892578125 5.893204162597656 101.26529919433594Q5.431204833984375 100.36219946289063 5.431204833984375 99.161Q5.431204833984375 97.95980053710937 5.893204162597656 97.06220080566406Q6.355203491210937 96.16460107421875 7.182402282714843 95.66300134277344Q8.00960107421875 95.16140161132813 9.098599731445312 95.16140161132813Q10.319597045898437 95.16140161132813 11.206195434570311 95.76970013427734Q12.092793823242186 96.37799865722656 12.479993286132812 97.44939624023438L11.142411010742187 97.93559033203125Q10.896009399414062 97.266787109375 10.371306579589843 96.89388549804687Q9.846603759765625 96.52098388671875 9.098599731445312 96.52098388671875Q8.416595703125 96.52098388671875 7.909492614746093 96.84218603515626Q7.4023895263671875 97.16338818359375 7.128487915039063 97.75079180908203Q6.854586303710938 98.33819543457031 6.854586303710938 99.161Q6.854586303710938 99.9838045654297 7.128487915039063 100.57670819091797Q7.4023895263671875 101.16961181640625 7.909492614746093 101.49081396484374Q8.416595703125 101.81201611328125 9.098599731445312 101.81201611328125Q9.846603759765625 101.81201611328125 10.371306579589843 101.43691436767577Q10.896009399414062 101.0618126220703 11.142411010742187 100.39740966796874L12.479993286132812 100.87920349121094Q12.092793823242186 101.93960107421876 11.206195434570311 102.55559973144531Q10.319597045898437 103.17159838867188 9.098599731445312 103.17159838867188ZM18.387004028320312 103.0 21.47139758300781 95.333H22.538385498046875L25.61617932128906 103.0H24.065199462890625L22.012591674804685 97.43177099609375L19.942384155273437 103.0ZM20.410987915039062 101.49958764648437 20.853182006835937 100.22800402832031H23.15660107421875L23.620795166015625 101.49958764648437ZM31.950005371093752 103.0V95.333H34.482195434570315Q35.41499328613281 95.333 35.98919274902344 95.60469946289062Q36.56339221191406 95.87639892578125 36.83179248046875 96.37689825439453Q37.100192749023435 96.87739758300782 37.100192749023435 97.55499731445312Q37.100192749023435 98.61099328613281 36.497394897460936 99.18629248046875Q35.894597045898436 99.76159167480469 34.783599731445314 99.83419274902344Q34.53280322265625 99.83859301757812 34.26880456542969 99.83859301757812Q34.004805908203124 99.83859301757812 33.81780456542969 99.83859301757812H33.37338684082032V103.0ZM36.114610473632816 103.0 34.18960778808594 99.67799462890625 35.648188720703125 99.50419677734375 37.76018872070313 103.0ZM33.37338684082032 98.57140966796875H34.33699731445313Q34.70440295410156 98.57140966796875 35.00580590820313 98.4889076538086Q35.30720886230469 98.40640563964844 35.49201007080079 98.18970281982422Q35.67681127929688 97.973 35.67681127929688 97.57259704589843Q35.67681127929688 97.16779382324219 35.49201007080079 96.95989086914062Q35.30720886230469 96.75198791503907 35.003605773925784 96.67828576660156Q34.70000268554688 96.60458361816406 34.33699731445313 96.60458361816406H33.37338684082032ZM52.54200537109375 103.0V95.333H57.66800134277344V96.60458361816406H53.965386840820315V98.43060913085938H57.18179919433594V99.70219274902344H53.965386840820315V103.0ZM64.18000537109374 103.0V95.333H65.6033868408203V103.0ZM72.57300537109374 103.0V95.333H74.03818737792969L77.61540161132812 101.13882470703125H77.25680725097656V95.333H78.68018872070313V103.0H77.1996064453125L73.64439221191407 97.18317529296876H73.9963868408203V103.0ZM85.0030040283203 103.0 88.0873975830078 95.333H89.15438549804686L92.23217932128905 103.0H90.68119946289062L88.62859167480468 97.43177099609375L86.55838415527343 103.0ZM87.02698791503906 101.49958764648437 87.46918200683594 100.22800402832031H89.77260107421874L90.23679516601561 101.49958764648437ZM98.56600537109374 103.0V95.333H100.03118737792968L103.60840161132812 101.13882470703125H103.24980725097656V95.333H104.67318872070312V103.0H103.19260644531249L99.63739221191406 97.18317529296876H99.9893868408203V103.0ZM115.0065997314453 103.17159838867188Q113.91760107421874 103.17159838867188 113.09040228271483 102.66999865722656Q112.26320349121093 102.16839892578125 111.80120416259766 101.26529919433594Q111.33920483398437 100.36219946289063 111.33920483398437 99.161Q111.33920483398437 97.95980053710937 111.80120416259766 97.06220080566406Q112.26320349121093 96.16460107421875 113.09040228271483 95.66300134277344Q113.91760107421874 95.16140161132813 115.0065997314453 95.16140161132813Q116.22759704589842 95.16140161132813 117.11419543457029 95.76970013427734Q118.00079382324218 96.37799865722656 118.3879932861328 97.44939624023438L117.05041101074218 97.93559033203125Q116.80400939941404 97.266787109375 116.27930657958983 96.89388549804687Q115.75460375976562 96.52098388671875 115.0065997314453 96.52098388671875Q114.32459570312498 96.52098388671875 113.81749261474607 96.84218603515626Q113.31038952636717 97.16338818359375 113.03648791503905 97.75079180908203Q112.76258630371092 98.33819543457031 112.76258630371092 99.161Q112.76258630371092 99.9838045654297 113.03648791503905 100.57670819091797Q113.31038952636717 101.16961181640625 113.81749261474607 101.49081396484374Q114.32459570312498 101.81201611328125 115.0065997314453 101.81201611328125Q115.75460375976562 101.81201611328125 116.27930657958983 101.43691436767577Q116.80400939941404 101.0618126220703 117.05041101074218 100.39740966796874L118.3879932861328 100.87920349121094Q118.00079382324218 101.93960107421876 117.11419543457029 102.55559973144531Q116.22759704589842 103.17159838867188 115.0065997314453 103.17159838867188ZM124.94400537109374 103.0V95.333H130.05240295410155V96.60458361816406H126.3673868408203V98.43060913085938H129.8037978515625V99.70219274902344H126.3673868408203V101.72841638183594H130.05240295410155V103.0Z" fill="#2FD480"/></svg><span class="label">On ink</span></div>
+      <div class="spec-card"><svg viewBox="0 0 64 64" style="width:46px;height:46px;flex:none" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="64" rx="15" fill="#00A65A"/><path d="M36.908525390625 46.0V19.599999999999998H43.3656689453125V46.0ZM20.285693359375 46.0V19.599999999999998H26.7428369140625V46.0ZM24.577138671874998 35.34857421875V30.045712890624998H39.8285400390625V35.34857421875Z" fill="#fff"/></svg><svg viewBox="108 44 118 50" style="width:118px;height:auto;margin-left:12px" xmlns="http://www.w3.org/2000/svg"><g stroke="#2FD480" stroke-width="2.4" stroke-linecap="round" opacity=".75"><line x1="120" y1="74" x2="134" y2="74"/><line x1="114" y1="80" x2="130" y2="80"/><line x1="126" y1="68" x2="138" y2="68"/></g><path d="M4 84 C70 80 150 80 232 82" stroke="#00A65A" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M170 64 C156 56 144 58 136 68 C144 68 150 71 156 73 C162 70 167 68 171 68 Z" fill="#2FD480"/><path d="M150 80 L150 73 Q150 69 155 69 L159 69 L165 61 L167 61 L169 70 L187 70 L190 61 L192 61 L198 69 L209 69 Q214 69 214 74 L214 77 Q214 80 209 80 Z" fill="#00A65A"/><circle cx="164" cy="80" r="7.5" fill="#0B2920"/><circle cx="164" cy="80" r="3" fill="#EAF6EF"/><circle cx="202" cy="80" r="7.5" fill="#0B2920"/><circle cx="202" cy="80" r="3" fill="#EAF6EF"/><path d="M173 70 L171 62 Q173 59 177 59 Q181 59 183 62 L181 70 Z" fill="#0B2920"/><circle cx="177" cy="54" r="6.5" fill="#FFE0BE"/><circle cx="174.6" cy="53" r="0.95" fill="#0B2920"/><circle cx="179.4" cy="53" r="0.95" fill="#0B2920"/><path d="M174 56.4 Q177 59 180 56.4" stroke="#0B2920" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg><span class="label">Icon + mascot</span></div>
+    </div>
+    <div class="swatches">
+      <div class="sw" style="background:#0B2920">Ink<br>#0B2920</div>
+      <div class="sw" style="background:#00A65A">Go green<br>#00A65A</div>
+      <div class="sw" style="background:#2FD480;color:#06201a">Bright<br>#2FD480</div>
+      <div class="sw" style="background:#EAF6EF;color:#0B2920">Mist<br>#EAF6EF</div>
+    </div>
+  </section>
+
+  <!-- FOOTER / COMPLIANCE -->
+  <footer>
+    <div class="rep">
+      <b>Representative example (illustrative — placeholder).</b> Borrowing £10,000 over 60 months at 8.9% APR representative. 60 monthly payments of £206. Total amount payable £12,360. Rates depend on circumstances and the vehicle.
+    </div>
+    Hero Car Finance is a trading style of Oakwood Motor Company. Hero is a credit broker, not a lender. Finance subject to status and affordability. Applicants must be 18+ and a UK resident. We may receive a commission from lenders. <a href="#">Privacy</a> · <a href="#">Cookies</a> · <a href="#">Terms</a>
+    <div class="flag">⚠︎ Demo placeholder — all FCA wording, the firm reference number, "soft search / no impact" and "instant decision" claims, the representative example and commission disclosure must be checked and signed off by compliance before going live.</div>
+  </footer>
+
+</div>
+</div>
+
+<script>
+(function(){
+  // reveal on scroll
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12,root:document.getElementById('scroll')});
+  document.querySelectorAll('.rv').forEach(function(el){io.observe(el);});
+
+  // FAQ
+  document.querySelectorAll('.q button').forEach(function(b){
+    b.addEventListener('click',function(){
+      var q=b.parentElement, a=q.querySelector('.a');
+      var open=q.classList.contains('open');
+      document.querySelectorAll('.q').forEach(function(o){o.classList.remove('open');o.querySelector('.a').style.maxHeight=null;});
+      if(!open){q.classList.add('open');a.style.maxHeight=a.scrollHeight+'px';}
+    });
+  });
+
+  // monthly payment auto-calc from price (10% dep, 84mo, 10.9% APR) — demonstrates the live chip logic
+  function monthly(price){
+    var dep=price*0.10, loan=price-dep, r=0.109/12, n=84;
+    var m=loan*r/(1-Math.pow(1+r,-n));
+    return Math.round(m);
+  }
+  document.querySelectorAll('.pmt-chip').forEach(function(c){
+    var p=parseFloat(c.getAttribute('data-price'));
+    if(p){c.firstChild.textContent='£'+monthly(p);}
+  });
+
+  // instant decision moment
+  var btn=document.getElementById('checkBtn'),
+      dec=document.getElementById('decision'),
+      gauge=document.getElementById('gauge'),
+      arc=document.getElementById('arc'),
+      nameEl=document.getElementById('decName'),
+      cont=document.getElementById('continueBtn');
+  btn.addEventListener('click',function(){
+    var fn=document.getElementById('fn').value.trim();
+    if(fn) nameEl.textContent=fn;
+    dec.classList.add('show');
+    dec.setAttribute('aria-hidden','false');
+    // animate gauge
+    setTimeout(function(){arc.style.transition='stroke-dashoffset 1s cubic-bezier(.4,0,.2,1)';arc.style.strokeDashoffset='40';},60);
+    setTimeout(function(){gauge.classList.add('done');},900);
+  });
+  cont.addEventListener('click',function(){
+    cont.textContent='Loading next step…';
+    setTimeout(function(){
+      dec.classList.remove('show');dec.setAttribute('aria-hidden','true');
+      gauge.classList.remove('done');arc.style.strokeDashoffset='264';
+      cont.innerHTML='Continue my application <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+    },700);
+  });
+})();
+</script>
+</body>
+</html>

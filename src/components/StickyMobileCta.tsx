@@ -18,17 +18,17 @@ export function StickyMobileCta() {
 
   return (
     <div
-      className={`fixed inset-x-0 bottom-0 z-50 border-t border-cream/10 bg-charcoal/95 p-4 backdrop-blur-md transition-transform duration-300 md:hidden ${
+      className={`fixed inset-x-0 bottom-0 z-50 border-t border-line bg-paper/95 p-4 shadow-[0_-12px_32px_rgba(11,41,32,0.1)] backdrop-blur-md transition-transform duration-300 md:hidden ${
         visible ? "translate-y-0" : "translate-y-full"
       }`}
     >
       <div className="flex gap-3">
-        <Button fullWidth size="lg" href="/apply" className="shadow-lg shadow-coral/20">
+        <Button fullWidth size="lg" href="/apply" className="bg-green-bright text-ink hover:bg-green-bright/90">
           Check Eligibility
         </Button>
         <a
           href="tel:08001234567"
-          className="inline-flex min-h-[3rem] shrink-0 items-center justify-center rounded-full border border-cream/25 px-5 text-sm font-medium text-cream transition-colors hover:border-cream/50"
+          className="btn-outline-mist min-h-[3rem] shrink-0 px-5 text-sm"
         >
           Call Now
         </a>

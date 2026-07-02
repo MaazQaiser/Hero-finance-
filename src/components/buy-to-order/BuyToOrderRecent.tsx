@@ -19,7 +19,7 @@ export function BuyToOrderRecent() {
               key={vehicle.id}
               className="w-[85vw] shrink-0 snap-center sm:w-[300px]"
             >
-              <div className="overflow-hidden rounded-[var(--radius-card)] border border-cream/10 bg-surface shadow-lg shadow-black/10">
+              <div className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-paper shadow-lg shadow-black/10">
                 <div className="relative aspect-[4/3]">
                   <Image
                     src={vehicle.image}
@@ -33,15 +33,15 @@ export function BuyToOrderRecent() {
                   </div>
                 </div>
                 <div className="p-5">
-                  <h3 className="font-medium text-cream">
+                  <h3 className="font-medium text-ink">
                     {vehicle.make} {vehicle.model}
                   </h3>
-                  <p className="mt-1 text-xs text-cream-muted">{vehicle.sourcedFor}</p>
+                  <p className="mt-1 text-xs text-muted">{vehicle.sourcedFor}</p>
                   <div className="mt-3 flex items-baseline justify-between">
-                    <p className="text-lg font-medium text-cream">{formatPrice(vehicle.price)}</p>
-                    <p className="text-lg font-medium text-coral">
+                    <p className="text-lg font-medium text-ink">{formatPrice(vehicle.price)}</p>
+                    <p className="text-lg font-medium text-green-deep">
                       {formatPrice(vehicle.monthlyHp)}
-                      <span className="text-sm font-normal text-cream-muted">/mo</span>
+                      <span className="text-sm font-normal text-muted">/mo</span>
                     </p>
                   </div>
                 </div>

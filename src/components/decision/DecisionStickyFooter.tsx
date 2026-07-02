@@ -28,7 +28,7 @@ export function DecisionStickyFooter({ state }: DecisionStickyFooterProps) {
   const config = ctaConfig[state];
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-cream/10 bg-charcoal/95 backdrop-blur-2xl">
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper/95 backdrop-blur-2xl">
       <div className="mx-auto max-w-lg px-5 py-4">
         {config.secondary && (
           <Button

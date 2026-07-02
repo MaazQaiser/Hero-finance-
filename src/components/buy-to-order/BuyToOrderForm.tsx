@@ -68,8 +68,8 @@ export function BuyToOrderForm() {
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-success/15 text-2xl text-success">
             ✓
           </div>
-          <h2 className="mt-6 text-2xl font-medium text-cream">We&apos;re on it</h2>
-          <p className="mt-3 text-cream-muted">
+          <h2 className="mt-6 text-2xl font-medium text-ink">We&apos;re on it</h2>
+          <p className="mt-3 text-muted">
             Thanks{form.name ? `, ${form.name.split(" ")[0]}` : ""}. A sourcing specialist will
             contact you within 24 hours to discuss your requirements.
           </p>
@@ -86,16 +86,16 @@ export function BuyToOrderForm() {
       <section id="request-form" className="section-padding scroll-mt-24 pb-32 md:pb-24">
         <div className="mx-auto max-w-2xl">
           <p className="eyebrow">Your brief</p>
-          <h2 className="mt-3 text-2xl font-medium text-cream md:text-3xl">
+          <h2 className="mt-3 text-2xl font-medium text-ink md:text-3xl">
             Tell us what you&apos;re looking for
           </h2>
-          <p className="mt-3 text-sm text-cream-muted">
+          <p className="mt-3 text-sm text-muted">
             The more detail you share, the better we can match your perfect car.
           </p>
 
           <div className="mt-8 space-y-6">
-            <div className="rounded-[var(--radius-card)] border border-cream/10 bg-surface p-5 md:p-6">
-              <p className="mb-4 text-sm font-medium text-cream">Your details</p>
+            <div className="rounded-[var(--radius-card)] border border-line bg-paper p-5 md:p-6">
+              <p className="mb-4 text-sm font-medium text-ink">Your details</p>
               <div className="space-y-4">
                 <ApplyInput
                   id="bto-name"
@@ -129,8 +129,8 @@ export function BuyToOrderForm() {
               </div>
             </div>
 
-            <div className="rounded-[var(--radius-card)] border border-cream/10 bg-surface p-5 md:p-6">
-              <p className="mb-4 text-sm font-medium text-cream">Vehicle requirements</p>
+            <div className="rounded-[var(--radius-card)] border border-line bg-paper p-5 md:p-6">
+              <p className="mb-4 text-sm font-medium text-ink">Vehicle requirements</p>
               <div className="space-y-4">
                 <ApplySelect
                   id="bto-type"
@@ -184,18 +184,18 @@ export function BuyToOrderForm() {
               </div>
             </div>
 
-            <div className="rounded-[var(--radius-card)] border border-cream/10 bg-surface p-5 md:p-6">
+            <div className="rounded-[var(--radius-card)] border border-line bg-paper p-5 md:p-6">
               <button
                 type="button"
                 onClick={() => setShowPreferences((value) => !value)}
-                className="flex min-h-11 w-full items-center justify-between text-sm font-medium text-cream"
+                className="flex min-h-11 w-full items-center justify-between text-sm font-medium text-ink"
               >
                 <span>More preferences (optional)</span>
-                <span className="text-coral">{showPreferences ? "−" : "+"}</span>
+                <span className="text-green-deep">{showPreferences ? "−" : "+"}</span>
               </button>
 
               {showPreferences && (
-                <div className="mt-4 space-y-4 border-t border-cream/10 pt-4">
+                <div className="mt-4 space-y-4 border-t border-line pt-4">
                   <ApplySelect
                     id="bto-fuel"
                     label="Fuel type"
@@ -223,7 +223,7 @@ export function BuyToOrderForm() {
                     ))}
                   </ApplySelect>
                   <div>
-                    <label htmlFor="bto-notes" className="mb-2 block text-sm font-medium text-cream">
+                    <label htmlFor="bto-notes" className="mb-2 block text-sm font-medium text-ink">
                       Notes & preferences
                     </label>
                     <textarea
@@ -232,7 +232,7 @@ export function BuyToOrderForm() {
                       value={form.notes}
                       onChange={(e) => update({ notes: e.target.value })}
                       placeholder="Colour, mileage, must-have features..."
-                      className="w-full rounded-2xl border border-cream/15 bg-charcoal/40 px-4 py-3 text-base text-cream placeholder:text-cream-muted focus:border-coral/40 focus:outline-none focus:ring-2 focus:ring-coral/20"
+                      className="w-full rounded-2xl border border-line bg-mist px-4 py-3 text-base text-ink placeholder:text-muted focus:border-green/40 focus:outline-none focus:ring-2 focus:ring-green/20"
                     />
                   </div>
                 </div>
@@ -248,7 +248,7 @@ export function BuyToOrderForm() {
         </div>
       </section>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-cream/10 bg-charcoal/95 p-4 backdrop-blur-2xl md:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper/95 p-4 backdrop-blur-2xl md:hidden">
         <Button fullWidth size="lg" onClick={handleSubmit}>
           Find My Car
         </Button>

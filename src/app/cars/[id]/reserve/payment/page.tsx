@@ -14,7 +14,7 @@ export default async function ReservePaymentPage({ params }: ReservePaymentPageP
   if (!vehicle) notFound();
 
   return (
-    <Suspense fallback={<div className="min-h-[100svh] bg-charcoal" />}>
+    <Suspense fallback={<div className="min-h-[100svh] bg-paper" />}>
       <ReserveStripeLoading vehicleId={id} />
     </Suspense>
   );

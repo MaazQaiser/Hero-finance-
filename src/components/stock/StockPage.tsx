@@ -111,7 +111,7 @@ export function StockPage() {
   };
 
   return (
-    <>
+    <div className="min-h-[100svh] bg-mist-2">
       <StockSearchHeader
         searchQuery={searchQuery}
         onSearchChange={(value) => {
@@ -214,6 +214,6 @@ export function StockPage() {
           setVisibleCount(PAGE_SIZE);
         }}
       />
-    </>
+    </div>
   );
 }

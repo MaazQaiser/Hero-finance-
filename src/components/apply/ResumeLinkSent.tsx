@@ -26,10 +26,10 @@ export function ResumeLinkSent({ onContinue }: ResumeLinkSentProps) {
         </div>
       </div>
 
-      <h1 className="text-2xl font-medium text-cream md:text-3xl">
+      <h1 className="text-2xl font-medium text-ink md:text-3xl">
         Your resume link has been sent.
       </h1>
-      <p className="mt-3 max-w-sm text-sm leading-relaxed text-cream-muted">
+      <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted">
         Check your phone and continue where you left off.
       </p>
 
@@ -42,9 +42,9 @@ export function ResumeLinkSent({ onContinue }: ResumeLinkSentProps) {
         </Button>
       </div>
 
-      <p className="mt-8 text-xs text-cream-muted">
+      <p className="mt-8 text-xs text-muted">
         Didn&apos;t receive it?{" "}
-        <Link href="mailto:support@herocarfinance.co.uk" className="text-coral hover:underline">
+        <Link href="mailto:support@herocarfinance.co.uk" className="text-green-deep hover:underline">
           Contact support
         </Link>
       </p>

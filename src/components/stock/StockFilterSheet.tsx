@@ -84,7 +84,7 @@ export function StockFilterSheet({
     <BottomSheet open={open} onClose={onClose} title="Filters" footer={footer}>
       <div className="space-y-6 pb-2">
         <div>
-          <p className="mb-3 text-sm font-medium text-cream">Make</p>
+          <p className="mb-3 text-sm font-medium text-ink">Make</p>
           <div className="flex flex-wrap gap-2">
             {filterOptions.makes.map((make) => (
               <Chip
@@ -98,9 +98,9 @@ export function StockFilterSheet({
         </div>
 
         <div>
-          <p className="mb-3 text-sm font-medium text-cream">Model</p>
+          <p className="mb-3 text-sm font-medium text-ink">Model</p>
           {availableModels.length === 0 ? (
-            <p className="text-sm text-cream-muted">Select a make to see models</p>
+            <p className="text-sm text-muted">Select a make to see models</p>
           ) : (
             <div className="flex flex-wrap gap-2">
               {availableModels.map((model) => (
@@ -116,7 +116,7 @@ export function StockFilterSheet({
         </div>
 
         <div>
-          <p className="mb-3 text-sm font-medium text-cream">Fuel type</p>
+          <p className="mb-3 text-sm font-medium text-ink">Fuel type</p>
           <div className="flex flex-wrap gap-2">
             {filterOptions.fuelTypes.map((fuel) => (
               <Chip
@@ -130,7 +130,7 @@ export function StockFilterSheet({
         </div>
 
         <div>
-          <p className="mb-3 text-sm font-medium text-cream">Transmission</p>
+          <p className="mb-3 text-sm font-medium text-ink">Transmission</p>
           <div className="flex flex-wrap gap-2">
             {filterOptions.transmissions.map((transmission) => (
               <Chip

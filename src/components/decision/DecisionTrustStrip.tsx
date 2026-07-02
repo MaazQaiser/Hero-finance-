@@ -10,7 +10,7 @@ export function DecisionTrustStrip() {
       {items.map((item) => (
         <span
           key={item}
-          className="rounded-full border border-cream/10 bg-surface/60 px-3 py-1.5 text-xs text-cream-muted"
+          className="rounded-full border border-line bg-mist px-3 py-1.5 text-xs text-muted"
         >
           {item}
         </span>

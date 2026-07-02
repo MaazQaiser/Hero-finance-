@@ -24,7 +24,7 @@ export function StockVehicleCard({ vehicle, searchMode }: StockVehicleCardProps)
   const monthlyFirst = searchMode === "monthly";
 
   return (
-    <article className="overflow-hidden rounded-[var(--radius-card)] border border-cream/10 bg-surface">
+    <article className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-paper">
       <div className="relative aspect-[16/10] overflow-hidden">
         <div className="carousel-snap absolute inset-0 h-full">
           {vehicle.images.map((image, index) => (
@@ -48,11 +48,11 @@ export function StockVehicleCard({ vehicle, searchMode }: StockVehicleCardProps)
       </div>
 
       <div className="p-4 md:p-5">
-        <h3 className="text-lg font-medium text-cream">
+        <h3 className="text-lg font-medium text-ink">
           {vehicle.make} {vehicle.model}
         </h3>
 
-        <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm text-cream-muted">
+        <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted">
           <span>{vehicle.year}</span>
           <span>·</span>
           <span>{formatMileage(vehicle.mileage)}</span>
@@ -63,25 +63,25 @@ export function StockVehicleCard({ vehicle, searchMode }: StockVehicleCardProps)
         </div>
 
         <div
-          className={`mt-4 rounded-2xl border border-cream/10 bg-charcoal/40 p-4 ${
+          className={`mt-4 rounded-2xl border border-line bg-mist p-4 ${
             monthlyFirst ? "flex flex-col-reverse" : ""
           }`}
         >
           <div className={monthlyFirst ? "mt-3" : ""}>
-            <p className="text-xs uppercase tracking-wide text-cream-muted">Vehicle price</p>
-            <p className="text-lg font-medium text-cream">{formatPrice(vehicle.price)}</p>
+            <p className="text-xs tracking-wide text-muted">Vehicle price</p>
+            <p className="text-lg font-medium text-ink">{formatPrice(vehicle.price)}</p>
           </div>
 
-          <div className={monthlyFirst ? "" : "mt-3 border-t border-cream/10 pt-3"}>
-            <p className="text-xs uppercase tracking-wide text-cream-muted">Monthly HP</p>
-            <p className="text-2xl font-medium text-coral md:text-3xl">
+          <div className={monthlyFirst ? "" : "mt-3 border-t border-line pt-3"}>
+            <p className="text-xs tracking-wide text-muted">Monthly HP</p>
+            <p className="text-2xl font-medium text-green-deep md:text-3xl">
               {formatPrice(vehicle.monthlyHp)}
-              <span className="text-sm font-normal text-cream-muted">/mo</span>
+              <span className="text-sm font-normal text-muted">/mo</span>
             </p>
           </div>
         </div>
 
-        <p className="mt-3 text-[11px] leading-relaxed text-cream-muted">
+        <p className="mt-3 text-[11px] leading-relaxed text-muted">
           Representative HP example. Subject to status and affordability checks.
         </p>
 

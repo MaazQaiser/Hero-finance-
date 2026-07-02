@@ -14,10 +14,10 @@ export function StockPriceBar({
   onApply,
 }: StockPriceBarProps) {
   return (
-    <section className="border-b border-cream/10 bg-surface/40 px-5 py-5 md:px-8 lg:px-12">
+    <section className="border-b border-line bg-mist px-5 py-5 md:px-8 lg:px-12">
       <div className="mx-auto max-w-7xl">
-        <div className="rounded-[var(--radius-card)] border border-cream/10 bg-cream p-5 text-charcoal shadow-lg shadow-black/10 md:p-6">
-          <p className="text-xs font-medium uppercase tracking-wide text-charcoal/50">
+        <div className="rounded-[var(--radius-card)] border border-line bg-cream p-5 text-charcoal shadow-lg shadow-black/10 md:p-6">
+          <p className="text-xs font-medium tracking-wide text-charcoal/50">
             Price search
           </p>
           <h2 className="mt-1 text-xl font-medium md:text-2xl">

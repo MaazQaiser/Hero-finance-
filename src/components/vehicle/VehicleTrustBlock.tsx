@@ -40,7 +40,7 @@ export function VehicleTrustBlock() {
   return (
     <section className="px-5 md:px-8 lg:px-12">
       <div className="mx-auto max-w-7xl">
-        <h2 className="text-lg font-medium text-cream">Why buy with Hero</h2>
+        <h2 className="text-lg font-medium text-ink">Why buy with Hero</h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <TrustBadge icon={<SearchIcon />} label="Soft search — no credit score impact" />
           <TrustBadge icon={<ShieldIcon />} label="AA inspected vehicle" />

@@ -47,7 +47,7 @@ export function DecisionFlow({ stateOverride }: DecisionFlowProps) {
   if (!decision) {
     return (
       <div className="flex min-h-[100svh] items-center justify-center px-5 text-center">
-        <p className="text-cream-muted">Loading your decision...</p>
+        <p className="text-muted">Loading your decision...</p>
       </div>
     );
   }
@@ -56,12 +56,12 @@ export function DecisionFlow({ stateOverride }: DecisionFlowProps) {
 
   return (
     <>
-      <header className="border-b border-cream/10 bg-charcoal/25 px-5 py-4 backdrop-blur-2xl">
+      <header className="border-b border-line bg-paper/90 px-5 py-4 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-lg items-center justify-between">
-          <Link href="/" className="text-sm text-cream-muted hover:text-cream">
+          <Link href="/" className="text-sm text-muted hover:text-ink">
             Hero Car Finance
           </Link>
-          <p className="text-xs uppercase tracking-wide text-cream-muted">
+          <p className="text-xs tracking-wide text-muted">
             {state === "approved" ? "Approved" : state === "pending" ? "Processing" : "Under review"}
           </p>
         </div>

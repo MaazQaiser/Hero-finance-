@@ -14,10 +14,11 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-coral text-cream hover:bg-coral-hover border border-transparent",
+    "bg-green text-white hover:bg-green-deep border border-transparent shadow-[0_4px_14px_rgba(0,166,90,0.25)] active:scale-[0.98]",
   secondary:
-    "bg-transparent text-cream border border-cream/30 hover:border-cream/60",
-  ghost: "bg-transparent text-cream hover:text-coral border border-transparent",
+    "bg-mist-2 text-ink border-2 border-line hover:border-green/30 hover:bg-mist active:scale-[0.98]",
+  ghost:
+    "bg-transparent text-ink hover:text-green-deep border border-transparent",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -34,7 +35,7 @@ export function Button({
   href,
   ...props
 }: ButtonProps) {
-  const classes = `inline-flex items-center justify-center rounded-full font-medium transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-coral disabled:opacity-50 ${variantClasses[variant]} ${sizeClasses[size]} ${fullWidth ? "w-full" : ""} ${className}`;
+  const classes = `inline-flex items-center justify-center rounded-full font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green disabled:opacity-50 ${variantClasses[variant]} ${sizeClasses[size]} ${fullWidth ? "w-full" : ""} ${className}`;
 
   if (href) {
     return (

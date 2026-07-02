@@ -11,12 +11,12 @@ interface StockBudgetBarProps {
 
 export function StockBudgetBar({ budget, onChange, onApply }: StockBudgetBarProps) {
   return (
-    <section className="border-b border-cream/10 bg-surface/40 px-5 py-5 md:px-8 lg:px-12">
+    <section className="border-b border-line bg-mist px-5 py-5 md:px-8 lg:px-12">
       <div className="mx-auto max-w-7xl">
-        <div className="rounded-[var(--radius-card)] border border-coral/20 bg-cream p-5 text-charcoal shadow-lg shadow-black/10 md:p-6">
+        <div className="rounded-[var(--radius-card)] border border-green/20 bg-cream p-5 text-charcoal shadow-lg shadow-black/10 md:p-6">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-charcoal/50">
+              <p className="text-xs font-medium tracking-wide text-charcoal/50">
                 Affordability-first search
               </p>
               <h2 className="mt-1 text-xl font-medium md:text-2xl">
@@ -27,7 +27,7 @@ export function StockBudgetBar({ budget, onChange, onApply }: StockBudgetBarProp
                 matching cars.
               </p>
             </div>
-            <div className="hidden rounded-full bg-coral/10 px-3 py-1 text-xs font-medium text-coral md:block">
+            <div className="hidden rounded-full bg-green/10 px-3 py-1 text-xs font-medium text-green-deep md:block">
               HP finance
             </div>
           </div>
@@ -92,7 +92,7 @@ export function StockBudgetBar({ budget, onChange, onApply }: StockBudgetBarProp
           </div>
 
           <div className="mt-5 rounded-2xl border border-charcoal/10 bg-white p-4">
-            <p className="text-xs uppercase tracking-wide text-charcoal/50">Example</p>
+            <p className="text-xs tracking-wide text-charcoal/50">Example</p>
             <p className="mt-1 text-sm text-charcoal">
               Monthly budget: <strong>£{budget.monthly}</strong> · Deposit:{" "}
               <strong>£{budget.deposit.toLocaleString("en-GB")}</strong> · Term:{" "}

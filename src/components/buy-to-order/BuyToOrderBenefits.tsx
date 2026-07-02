@@ -22,7 +22,7 @@ const benefits = [
 
 export function BuyToOrderBenefits() {
   return (
-    <section className="section-padding bg-surface/40">
+    <section className="section-padding bg-mist">
       <div className="mx-auto max-w-7xl">
         <SectionHeading
           eyebrow="Why Hero"
@@ -33,8 +33,8 @@ export function BuyToOrderBenefits() {
         <div className="mt-12 grid gap-5 sm:grid-cols-2">
           {benefits.map((benefit) => (
             <Card key={benefit.title} variant="elevated">
-              <h3 className="text-lg font-medium text-cream">{benefit.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-cream-muted">
+              <h3 className="text-lg font-medium text-ink">{benefit.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted">
                 {benefit.description}
               </p>
             </Card>
