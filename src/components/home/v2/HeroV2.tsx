@@ -13,7 +13,7 @@ export function HeroV2() {
   }, []);
 
   return (
-    <section className="bg-white pb-6 pt-3 md:pb-8 md:pt-4">
+    <section className="bg-paper pb-6 pt-3 md:pb-8 md:pt-4">
       <div className="w-full px-5">
         <div
           className={`relative min-h-[clamp(420px,calc(100svh-7.5rem),680px)] overflow-hidden rounded-[28px] transition-opacity duration-700 md:rounded-[32px] ${
@@ -31,11 +31,11 @@ export function HeroV2() {
 
           <div
             aria-hidden
-            className="absolute inset-0 bg-gradient-to-r from-ink/88 via-ink/50 to-ink/10 lg:from-ink/80 lg:via-ink/45 lg:to-transparent"
+            className="absolute inset-0 bg-gradient-to-r from-green-deep/90 via-green/55 to-green/10 lg:from-green-deep/85 lg:via-green/40 lg:to-transparent"
           />
           <div
             aria-hidden
-            className="absolute inset-0 bg-gradient-to-t from-ink/30 via-transparent to-transparent"
+            className="absolute inset-0 bg-gradient-to-t from-green-deep/40 via-transparent to-transparent"
           />
 
           <div className="relative flex min-h-[clamp(420px,calc(100svh-7.5rem),680px)] items-end">

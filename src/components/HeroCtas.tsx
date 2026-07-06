@@ -15,7 +15,7 @@ export function HeroCtas() {
       <button type="button" onClick={scrollToForm} className="btn-cyclix-primary sm:min-w-[220px]">
         Check my eligibility
       </button>
-      <Link href="/cars" className="btn-cyclix-secondary text-center sm:min-w-[200px]">
+      <Link href="/cars" className="btn-hero-outline text-center sm:min-w-[200px]">
         Browse cars first
       </Link>
     </div>

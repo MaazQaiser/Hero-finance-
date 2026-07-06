@@ -26,7 +26,7 @@ export function FinalCta() {
             <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-black/25 via-black/10 to-transparent" />
 
             <div className="relative flex h-full min-h-[480px] items-center p-5 sm:p-8 md:min-h-[520px] md:p-10 lg:p-14">
-              <div className="w-full max-w-[500px] rounded-[24px] bg-white p-7 shadow-[0_24px_64px_rgba(11,41,32,0.18)] md:p-9 lg:p-10">
+              <div className="w-full max-w-[500px] rounded-[24px] bg-white p-7 shadow-[0_24px_64px_rgba(30,22,53,0.18)] md:p-9 lg:p-10">
                 <span className="inline-flex rounded-full bg-mist px-4 py-2 text-sm font-semibold text-ink">
                   Get started today
                 </span>
@@ -47,7 +47,7 @@ export function FinalCta() {
                 <div className="mt-8 space-y-3">
                   <Link
                     href="/apply"
-                    className="flex w-full items-center justify-between rounded-full bg-green-bright px-6 py-4 text-base font-bold text-ink shadow-[0_8px_24px_rgba(47,212,128,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-green-bright/90 hover:shadow-[0_12px_32px_rgba(47,212,128,0.42)]"
+                    className="flex w-full items-center justify-between rounded-full bg-green-bright px-6 py-4 text-base font-bold text-ink shadow-[0_8px_24px_rgba(223,255,77,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-green-bright/90 hover:shadow-[0_12px_32px_rgba(223,255,77,0.42)]"
                   >
                     <span>Check my eligibility</span>
                     <ArrowIcon />

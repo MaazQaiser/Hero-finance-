@@ -13,7 +13,7 @@ export function Hero() {
   }, []);
 
   return (
-    <section className="relative flex min-h-svh flex-col overflow-hidden bg-[#fafcfb]">
+    <section className="relative flex min-h-svh flex-col overflow-hidden bg-paper">
       <div className="relative z-10 mx-auto flex w-full max-w-[1320px] flex-1 flex-col px-5 pt-[72px] md:px-8 md:pt-[88px] lg:px-10">
         <div className="flex flex-1 items-center py-8 md:py-10 lg:py-12">
           <div
@@ -24,7 +24,7 @@ export function Hero() {
             <div className={mounted ? "hero-fade-up" : ""}>
               <h1 className="cyclix-headline max-w-[640px] font-normal">
                 Been refused before?{" "}
-                <span className="bg-gradient-to-r from-green-deep to-green bg-clip-text text-transparent">
+                <span className="hero-headline-accent">
                   You could still drive away.
                 </span>
               </h1>

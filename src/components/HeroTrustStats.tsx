@@ -7,7 +7,7 @@ function AAAssuredCarsBadge() {
     <div className="flex items-center gap-2.5">
       <div
         aria-hidden
-        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-white bg-[#FEDD00] shadow-[0_0_0_1px_rgba(11,41,32,0.1)] sm:h-9 sm:w-9"
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-white bg-[#FEDD00] shadow-[0_0_0_1px_rgba(30,22,53,0.1)] sm:h-9 sm:w-9"
       >
         <span className="select-none font-display text-[11px] font-extrabold italic leading-none text-ink sm:text-xs">
           AA

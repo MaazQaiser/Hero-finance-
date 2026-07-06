@@ -66,7 +66,7 @@ export function HowItWorksV2() {
                     aria-current={isActive ? "step" : undefined}
                     className={`shrink-0 rounded-full px-5 py-3 text-left text-sm font-semibold transition-all duration-300 lg:w-full lg:px-6 lg:py-4 lg:text-base ${
                       isActive
-                        ? "bg-green text-white shadow-[0_8px_24px_rgba(0,166,90,0.3)]"
+                        ? "bg-green text-white shadow-[0_8px_24px_rgba(91,43,212,0.3)]"
                         : "text-muted hover:text-ink"
                     }`}
                   >

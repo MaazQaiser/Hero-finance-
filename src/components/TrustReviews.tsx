@@ -136,7 +136,7 @@ export function TrustReviews() {
                     aria-label={`Read review from ${item.name}`}
                     className={`flex min-w-[100px] flex-1 flex-col items-center rounded-[20px] px-3 py-4 transition-all duration-300 sm:min-w-[120px] sm:max-w-[140px] ${
                       isActive
-                        ? "bg-green-bright shadow-[0_8px_28px_rgba(47,212,128,0.25)]"
+                        ? "bg-green-bright shadow-[0_8px_28px_rgba(223,255,77,0.25)]"
                         : "bg-mist hover:bg-mist/80"
                     }`}
                   >

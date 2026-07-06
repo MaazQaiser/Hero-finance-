@@ -24,7 +24,7 @@ export function WhyHeroV2() {
 
         <div className="mt-10 grid gap-5 md:grid-cols-3 lg:mt-12 lg:gap-6">
           <ScrollReveal delay={80}>
-            <div className="flex h-full min-h-[240px] flex-col justify-between rounded-[28px] bg-paper p-6 shadow-[0_8px_32px_rgba(11,41,32,0.06)] sm:min-h-[280px] md:min-h-[320px] md:p-8">
+            <div className="flex h-full min-h-[240px] flex-col justify-between rounded-[28px] bg-paper p-6 shadow-[0_8px_32px_rgba(30,22,53,0.06)] sm:min-h-[280px] md:min-h-[320px] md:p-8">
               <div>
                 <p className="text-base font-semibold text-ink">Customer satisfaction</p>
                 <div className="mt-4">

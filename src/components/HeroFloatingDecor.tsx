@@ -10,7 +10,7 @@ export function HeroFloatingDecor() {
       {floatingCards.map((card) => (
         <div
           key={card.label}
-          className={`glass-chip absolute ${card.className} px-4 py-2.5 text-xs font-bold text-ink shadow-[0_8px_24px_rgba(11,41,32,0.08)]`}
+          className={`glass-chip absolute ${card.className} px-4 py-2.5 text-xs font-bold text-ink shadow-[0_8px_24px_rgba(30,22,53,0.08)]`}
         >
           {card.label}
         </div>

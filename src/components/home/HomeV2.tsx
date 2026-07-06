@@ -1,9 +1,9 @@
+import { FinalCta } from "@/components/FinalCta";
 import { FooterV2 } from "@/components/home/v2/FooterV2";
 import { Faqs } from "@/components/Faqs";
 import { StickyMobileCta } from "@/components/StickyMobileCta";
 import { BudgetSearchV2 } from "@/components/home/v2/BudgetSearchV2";
 import { FeaturedCarsV2 } from "@/components/home/v2/FeaturedCarsV2";
-import { FinalCtaV2 } from "@/components/home/v2/FinalCtaV2";
 import { FinanceExplainedV2 } from "@/components/home/v2/FinanceExplainedV2";
 import { HowItWorksV2 } from "@/components/home/v2/HowItWorksV2";
 import { TrustReviewsV2 } from "@/components/home/v2/TrustReviewsV2";
@@ -23,7 +23,7 @@ export function HomeV2() {
         <FinanceExplainedV2 />
         <TrustReviewsV2 />
         <Faqs />
-        <FinalCtaV2 />
+        <FinalCta />
       </main>
       <FooterV2 />
       <StickyMobileCta />

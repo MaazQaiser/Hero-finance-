@@ -159,7 +159,7 @@ export function TrustReviewsV2() {
                   aria-label={`Read review from ${item.name}`}
                   className={`relative h-24 w-24 shrink-0 overflow-hidden rounded-[20px] transition-all duration-300 sm:h-28 sm:w-28 ${
                     isActive
-                      ? "border-2 border-green shadow-[0_8px_24px_rgba(0,166,90,0.2)]"
+                      ? "border-2 border-green shadow-[0_8px_24px_rgba(91,43,212,0.2)]"
                       : "border-2 border-transparent grayscale opacity-75 hover:opacity-100"
                   }`}
                 >
@@ -170,7 +170,7 @@ export function TrustReviewsV2() {
           </div>
 
           <article
-            className="relative flex h-auto min-h-[280px] flex-col overflow-hidden rounded-[28px] bg-paper p-6 shadow-[0_20px_60px_rgba(11,41,32,0.08)] sm:p-8 md:p-10 lg:h-[min(420px,72vh)] lg:p-12"
+            className="relative flex h-auto min-h-[280px] flex-col overflow-hidden rounded-[28px] bg-paper p-6 shadow-[0_20px_60px_rgba(30,22,53,0.08)] sm:p-8 md:p-10 lg:h-[min(420px,72vh)] lg:p-12"
             aria-live="polite"
           >
             <span

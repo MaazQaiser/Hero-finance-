@@ -10,7 +10,7 @@ const stockAvatars = [
 
 export function HeroStockCard() {
   return (
-    <div className="w-full max-w-[280px] rounded-2xl border border-line bg-mist-2 p-4 shadow-[0_12px_40px_rgba(11,41,32,0.12)] sm:max-w-[300px]">
+    <div className="w-full max-w-[280px] rounded-2xl border border-line bg-mist-2 p-4 shadow-[0_12px_40px_rgba(30,22,53,0.12)] sm:max-w-[300px]">
       <p className="font-display text-sm font-extrabold tracking-wide text-green-deep">
         In stock now
       </p>

@@ -13,7 +13,7 @@ export function HeroVisualPanel({ children }: HeroVisualPanelProps) {
         className="hero-diagonal-accent absolute -left-3 top-4 bottom-4 right-2 rounded-[24px] bg-green-bright lg:-left-5 lg:top-6 lg:bottom-6"
       />
 
-      <div className="hero-diagonal-image relative min-h-[280px] overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(11,41,32,0.15)] sm:min-h-[340px] lg:min-h-[520px]">
+      <div className="hero-diagonal-image relative min-h-[280px] overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(30,22,53,0.15)] sm:min-h-[340px] lg:min-h-[520px]">
         <Image
           src="/images/dealer/customer-keys.jpg"
           alt="Happy customer receiving keys at a used car dealership"

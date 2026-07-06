@@ -33,7 +33,7 @@ export function BuyToOrderHero() {
     <section className="relative min-h-[70svh] overflow-hidden bg-gradient-to-b from-paper via-mist-2 to-mist md:min-h-[75svh]">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_70%_-10%,rgba(0,166,90,0.1),transparent_55%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_70%_-10%,rgba(91,43,212,0.1),transparent_55%)]"
       />
 
       <div className="relative z-10 mx-auto flex min-h-[70svh] max-w-7xl flex-col justify-end px-5 pb-16 pt-24 md:min-h-[75svh] md:px-8 md:pb-20 lg:px-12">

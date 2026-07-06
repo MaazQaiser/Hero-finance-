@@ -24,7 +24,7 @@ export function HowItWorks() {
           <ScrollReveal>
             <div className="grid overflow-hidden rounded-[28px] bg-green-bright lg:grid-cols-[1fr_auto] lg:items-stretch lg:gap-10">
               <div className="flex flex-col p-8 lg:p-10 lg:pr-4">
-                <span className="inline-flex w-fit items-center rounded-full border border-white/80 bg-white px-4 py-2 text-[13px] font-bold text-ink shadow-[0_4px_16px_rgba(11,41,32,0.08)]">
+                <span className="inline-flex w-fit items-center rounded-full border border-white/80 bg-white px-4 py-2 text-[13px] font-bold text-ink shadow-[0_4px_16px_rgba(30,22,53,0.08)]">
                   How it works
                 </span>
                 <h2 className="cyclix-headline mt-6 max-w-[640px] text-ink">

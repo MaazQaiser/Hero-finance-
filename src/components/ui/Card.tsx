@@ -9,7 +9,7 @@ interface CardProps {
 const variantClasses = {
   default: "bg-paper border border-line text-ink",
   elevated:
-    "bg-paper border border-line text-ink shadow-[0_8px_32px_rgba(11,41,32,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(11,41,32,0.12)]",
+    "bg-paper border border-line text-ink shadow-[0_8px_32px_rgba(30,22,53,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(30,22,53,0.12)]",
   light: "bg-mist-2 text-ink border border-line",
 };
 

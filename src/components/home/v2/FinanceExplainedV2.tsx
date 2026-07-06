@@ -1,7 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const cards = [
+type CardIcon = "document" | "payment" | "car";
+
+const cards: {
+  label: string;
+  title: string;
+  description: string;
+  image: string;
+  imageAlt: string;
+  featured: boolean;
+  icon: CardIcon;
+}[] = [
   {
     label: "HP basics",
     title: "What is HP?",
@@ -10,12 +20,7 @@ const cards = [
     image: "/images/dealer/keys-handover.jpg",
     imageAlt: "Salesperson handing over car keys to a customer",
     featured: false,
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden>
-        <path d="M4 19V5a2 2 0 012-2h12a2 2 0 012 2v14" strokeLinecap="round" />
-        <path d="M8 7h8M8 11h8M8 15h5" strokeLinecap="round" />
-      </svg>
-    ),
+    icon: "document",
   },
   {
     label: "Fixed payments",
@@ -25,11 +30,7 @@ const cards = [
     image: "/images/finance/fixed-payments.jpg",
     imageAlt: "Customer and dealer shaking hands after agreeing finance",
     featured: true,
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden>
-        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
+    icon: "payment",
   },
   {
     label: "Own your car",
@@ -39,16 +40,37 @@ const cards = [
     image: "/images/finance/own-car.jpg",
     imageAlt: "Customer celebrating with keys on a used car forecourt",
     featured: false,
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden>
-        <path d="M5 17h14l-1-7H6l-1 7z" strokeLinecap="round" strokeLinejoin="round" />
-        <circle cx="7.5" cy="17.5" r="1.5" />
-        <circle cx="16.5" cy="17.5" r="1.5" />
-        <path d="M3 17h18M5 10l2-4h10l2 4" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
+    icon: "car",
   },
 ];
+
+function CardIconGlyph({ icon }: { icon: CardIcon }) {
+  if (icon === "document") {
+    return (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden>
+        <path d="M4 19V5a2 2 0 012-2h12a2 2 0 012 2v14" strokeLinecap="round" />
+        <path d="M8 7h8M8 11h8M8 15h5" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  if (icon === "payment") {
+    return (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden>
+        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden>
+      <path d="M5 17h14l-1-7H6l-1 7z" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="7.5" cy="17.5" r="1.5" />
+      <circle cx="16.5" cy="17.5" r="1.5" />
+      <path d="M3 17h18M5 10l2-4h10l2 4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 function CardArrow() {
   return (
@@ -76,7 +98,7 @@ function FinanceCard({
     <article
       className={`flex h-full flex-col rounded-[28px] p-6 md:p-7 ${
         featured
-          ? "bg-ink text-white lg:-mt-4 lg:pb-10 lg:pt-9"
+          ? "bg-green-deep text-white lg:-mt-4 lg:pb-10 lg:pt-9"
           : "bg-mist-2 text-ink"
       }`}
     >
@@ -86,7 +108,9 @@ function FinanceCard({
             featured ? "text-white/70" : "text-muted"
           }`}
         >
-          <span className={featured ? "text-green-bright" : "text-green-deep"}>{icon}</span>
+          <span className={featured ? "text-green-bright" : "text-green-deep"}>
+            <CardIconGlyph icon={icon} />
+          </span>
           {label}
         </div>
         <CardArrow />

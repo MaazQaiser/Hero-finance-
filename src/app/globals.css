@@ -1,29 +1,32 @@
 @import "tailwindcss";
 
 @theme {
-  --color-charcoal: #181717;
-  --color-surface: #262424;
-  --color-cream: #f8f5ee;
-  --color-cream-muted: rgba(248, 245, 238, 0.5);
+  --color-charcoal: #1e1635;
+  --color-surface: #2d2450;
+  --color-cream: #f8f5ff;
+  --color-cream-muted: rgba(248, 245, 255, 0.5);
   --color-coral: #ff4438;
   --color-coral-hover: #e63d32;
-  --color-success: #2d9d6f;
+  --color-success: #5b2bd4;
 
-  --color-ink: #0b2920;
-  --color-green: #00a65a;
-  --color-green-deep: #028a4b;
-  --color-green-bright: #2fd480;
-  --color-mist: #eaf6ef;
-  --color-mist-2: #f3faf6;
+  --color-ink: #1e1635;
+  --color-green: #5b2bd4;
+  --color-green-deep: #4a1fa8;
+  --color-green-bright: #dfff4d;
+  --color-mist: #f0ebff;
+  --color-mist-2: #f8f5ff;
   --color-paper: #ffffff;
-  --color-muted: #5c6b63;
-  --color-line: #e2ece6;
+  --color-muted: #6e6a7c;
+  --color-line: #e8e0f5;
+
+  --color-brand: #00a65a;
+  --color-brand-deep: #028a4b;
 
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-display: var(--font-inter), system-ui, sans-serif;
 
-  --radius-card: 1.25rem;
-  --radius-image: 1.5rem;
+  --radius-card: 1.75rem;
+  --radius-image: 2rem;
 }
 
 @layer base {
@@ -111,11 +114,11 @@
   }
 
   .hero-soft-pill {
-    @apply inline-flex items-center gap-2 rounded-full border border-[#d2ebdd] bg-mist px-4 py-2 text-[13px] font-bold text-green-deep;
+    @apply inline-flex items-center gap-2 rounded-full border border-[#e0d4ff] bg-mist px-4 py-2 text-[13px] font-bold text-green-deep;
   }
 
   .card-elevated {
-    @apply rounded-[20px] border border-line bg-paper shadow-[0_8px_32px_rgba(11,41,32,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(11,41,32,0.12)];
+    @apply rounded-[24px] border border-line bg-paper shadow-[0_8px_32px_rgba(91,43,212,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(91,43,212,0.12)];
   }
 
   .card-glass-dark {
@@ -123,7 +126,7 @@
   }
 
   .btn-lime {
-    @apply inline-flex items-center justify-center rounded-full bg-green-bright px-8 py-3.5 text-base font-bold text-ink shadow-[0_4px_16px_rgba(47,212,128,0.35)] transition-all duration-200 hover:scale-[1.02] hover:bg-green-bright/90 active:scale-[0.98];
+    @apply inline-flex items-center justify-center rounded-full bg-green-bright px-8 py-3.5 text-base font-bold text-ink shadow-[0_4px_16px_rgba(223,255,77,0.4)] transition-all duration-200 hover:scale-[1.02] hover:bg-green-bright/90 active:scale-[0.98];
   }
 
   .btn-outline-mist {
@@ -151,7 +154,7 @@
   }
 
   .glass-pill {
-    @apply rounded-full border border-white/70 bg-white/50 px-4 py-2.5 text-[13px] font-bold text-green-deep shadow-[0_4px_20px_rgba(11,41,32,0.06)] backdrop-blur-md;
+    @apply rounded-full border border-white/70 bg-white/50 px-4 py-2.5 text-[13px] font-bold text-green-deep shadow-[0_4px_20px_rgba(91,43,212,0.08)] backdrop-blur-md;
   }
 
   .glass-chip {
@@ -159,17 +162,17 @@
   }
 
   .glass-stat-card {
-    @apply rounded-[18px] border border-white/70 bg-white/55 shadow-[0_8px_28px_rgba(11,41,32,0.07)] backdrop-blur-md;
+    @apply rounded-[20px] border border-white/70 bg-white/55 shadow-[0_8px_28px_rgba(91,43,212,0.08)] backdrop-blur-md;
   }
 
   .glass-form-card {
-    @apply rounded-[24px] border border-white/90 bg-white/88 p-8 shadow-[0_24px_80px_rgba(11,41,32,0.18)] backdrop-blur-2xl;
+    @apply rounded-[28px] border border-white/90 bg-white/88 p-8 shadow-[0_24px_80px_rgba(91,43,212,0.14)] backdrop-blur-2xl;
   }
 
   .hero-v2-glass-card {
-    @apply relative overflow-hidden rounded-[28px] border border-white/80 bg-white/88 p-5 shadow-[0_24px_64px_rgba(11,41,32,0.2)] backdrop-blur-md sm:p-6;
+    @apply relative overflow-hidden rounded-[32px] border border-white/80 bg-white/88 p-5 shadow-[0_24px_64px_rgba(91,43,212,0.16)] backdrop-blur-md sm:p-6;
     box-shadow:
-      0 24px 64px rgba(11, 41, 32, 0.2),
+      0 24px 64px rgba(91, 43, 212, 0.16),
       inset 0 1px 0 rgba(255, 255, 255, 0.9);
   }
 
@@ -192,15 +195,23 @@
   }
 
   .header-cta-pill {
-    @apply rounded-full bg-green px-6 py-3 text-sm font-bold text-white shadow-[0_8px_24px_rgba(0,166,90,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-green-deep hover:shadow-[0_12px_32px_rgba(0,166,90,0.4)];
+    @apply rounded-full bg-green px-6 py-3 text-sm font-bold text-white shadow-[0_8px_24px_rgba(91,43,212,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-green-deep hover:shadow-[0_12px_32px_rgba(91,43,212,0.4)];
   }
 
   .btn-cyclix-primary {
-    @apply inline-flex items-center justify-center rounded-full bg-gradient-to-r from-green to-green-deep px-8 py-3.5 text-base font-bold text-white shadow-[0_8px_28px_rgba(0,166,90,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_36px_rgba(0,166,90,0.42)] active:scale-[0.98];
+    @apply inline-flex items-center justify-center rounded-full bg-gradient-to-r from-green to-green-deep px-8 py-3.5 text-base font-bold text-white shadow-[0_8px_28px_rgba(91,43,212,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_36px_rgba(91,43,212,0.42)] active:scale-[0.98];
   }
 
   .btn-cyclix-secondary {
     @apply inline-flex items-center justify-center rounded-full border border-line/80 bg-white/60 px-8 py-3.5 text-base font-semibold text-ink backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-green/30 hover:bg-white active:scale-[0.98];
+  }
+
+  .btn-hero-outline {
+    @apply inline-flex items-center justify-center rounded-full border-2 border-[#DFFF4D] bg-[#DFFF4D] px-8 py-3.5 text-base font-semibold text-ink transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#DFFF4D]/90 active:scale-[0.98];
+  }
+
+  .hero-headline-accent {
+    @apply text-[#AFD507];
   }
 
   .cyclix-input {
@@ -208,7 +219,15 @@
   }
 
   .cyclix-cta {
-    @apply font-display flex w-full min-h-14 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-green to-green-deep text-base font-bold text-white shadow-[0_10px_32px_rgba(0,166,90,0.38)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_40px_rgba(0,166,90,0.45)] active:scale-[0.98] disabled:opacity-70;
+    @apply font-display flex w-full min-h-14 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-green to-green-deep text-base font-bold text-white shadow-[0_10px_32px_rgba(91,43,212,0.38)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_16px_40px_rgba(91,43,212,0.45)] active:scale-[0.98] disabled:opacity-70;
+  }
+
+  .saas-section-gradient {
+    @apply bg-gradient-to-b from-mist-2 via-paper to-mist-2;
+  }
+
+  .saas-glow {
+    background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(91, 43, 212, 0.12), transparent 55%);
   }
 
   .hero-fade-up {

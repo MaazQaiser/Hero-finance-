@@ -63,7 +63,7 @@ function ProgressGauge({ active }: { active: boolean }) {
           active ? "scale-100 opacity-100 delay-700" : "scale-50 opacity-0"
         }`}
       >
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green text-white shadow-[0_8px_24px_rgba(0,166,90,0.4)]">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green text-white shadow-[0_8px_24px_rgba(91,43,212,0.4)]">
           <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="3">
             <path d="M5 13l4 4L19 7" />
           </svg>
@@ -122,7 +122,7 @@ export function HeroEligibilityCard({ variant = "default" }: HeroEligibilityCard
     : isCyclix
       ? "glass-form-card relative"
       : isFloating
-        ? "overflow-hidden rounded-[20px] border border-line bg-paper shadow-[0_24px_64px_rgba(11,41,32,0.18)]"
+        ? "overflow-hidden rounded-[20px] border border-line bg-paper shadow-[0_24px_64px_rgba(30,22,53,0.18)]"
         : "hero-glass-card relative overflow-hidden p-5 md:p-6 lg:p-7";
 
   const inputClass = isV2
@@ -267,7 +267,7 @@ export function HeroEligibilityCard({ variant = "default" }: HeroEligibilityCard
                 ? "flex w-full items-center justify-center gap-2 rounded-full bg-green-bright py-4 text-base font-bold text-ink transition-colors hover:bg-green-bright/90 disabled:opacity-70"
                 : isCyclix
                   ? "cyclix-cta"
-                  : "font-display flex w-full items-center justify-center gap-2 rounded-[14px] bg-green px-4 py-3.5 text-base font-bold text-white shadow-[0_8px_20px_rgba(0,166,90,0.32)] transition-[transform,background-color] hover:bg-green-deep active:scale-[0.98] disabled:opacity-70"
+                  : "font-display flex w-full items-center justify-center gap-2 rounded-[14px] bg-green px-4 py-3.5 text-base font-bold text-white shadow-[0_8px_20px_rgba(91,43,212,0.32)] transition-[transform,background-color] hover:bg-green-deep active:scale-[0.98] disabled:opacity-70"
             }
           >
             {submitting ? "Checking…" : "Check my eligibility"}
@@ -301,7 +301,7 @@ export function HeroEligibilityCard({ variant = "default" }: HeroEligibilityCard
         }`}
       >
         <div
-          className={`w-full max-w-sm rounded-[20px] p-8 shadow-[0_0_60px_rgba(0,166,90,0.15)] ${
+          className={`w-full max-w-sm rounded-[20px] p-8 shadow-[0_0_60px_rgba(91,43,212,0.15)] ${
             isV2
               ? "border border-line/80 bg-white"
               : "border border-green/20 bg-white/90"

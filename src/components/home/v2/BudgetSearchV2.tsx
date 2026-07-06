@@ -35,7 +35,7 @@ export function BudgetSearchV2() {
 
           <ScrollReveal delay={120}>
             <div className="relative mt-8 lg:-mt-[min(320px,34vh)]">
-              <div className="rounded-[24px] bg-paper p-6 shadow-[0_24px_80px_rgba(11,41,32,0.12)] md:p-8">
+              <div className="rounded-[24px] bg-paper p-6 shadow-[0_24px_80px_rgba(30,22,53,0.12)] md:p-8">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label htmlFor="v2-monthly-budget" className="mb-2 block text-sm font-semibold text-ink">
