@@ -50,13 +50,9 @@ export function ApplyStepContent({
             inputMode="tel"
             value={data.mobile}
             onChange={(e) => onChange({ mobile: e.target.value })}
-            hint="We'll only use this to update you on your application"
             autoComplete="tel"
             placeholder="07XXX XXXXXX"
           />
-          <p className="rounded-2xl border border-line bg-mist px-4 py-3 text-sm text-muted">
-            We never ask for bank details at this stage.
-          </p>
         </div>
       );
 

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ApplyEntryScreen } from "@/components/apply/entry/ApplyEntryScreen";
 import { ApplyLoadingScreen } from "@/components/apply/ApplyLoadingScreen";
 import { ApplyNetworkError } from "@/components/apply/ApplyNetworkError";
 import { ApplyProgressHeader } from "@/components/apply/ApplyProgressHeader";
@@ -30,7 +31,20 @@ interface ApplyFlowProps {
   simulateNetworkError?: boolean;
 }
 
-type FlowPhase = "form" | "loading" | "session-expired" | "network-error" | "resume-sent";
+type FlowPhase = "entry" | "form" | "loading" | "session-expired" | "network-error" | "resume-sent";
+
+function shouldSkipEntry(resume: boolean, sessionExpired: boolean): boolean {
+  if (sessionExpired) return true;
+  if (!resume) return false;
+
+  const saved = loadProgress();
+  if (!saved) return false;
+
+  const age = getProgressAgeMs();
+  if (age !== null && age > SESSION_TIMEOUT_MS) return true;
+
+  return saved.stepId !== "basic-details" || Boolean(saved.data.firstName || saved.data.mobile);
+}
 
 export function ApplyFlow({
   vehicleId,
@@ -45,14 +59,10 @@ export function ApplyFlow({
     mergeInitialData(vehicleId, resume),
   );
   const [stepIndex, setStepIndex] = useState(0);
-  const [phase, setPhase] = useState<FlowPhase>(() => {
-    if (sessionExpired) return "session-expired";
-    if (!sessionExpired && resume) {
-      const age = getProgressAgeMs();
-      if (age !== null && age > SESSION_TIMEOUT_MS) return "session-expired";
-    }
-    return "form";
-  });
+  const [phase, setPhase] = useState<FlowPhase>(() =>
+    sessionExpired ? "session-expired" : "entry",
+  );
+  const [entryResolved, setEntryResolved] = useState(sessionExpired);
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [exitOpen, setExitOpen] = useState(false);
   const [saveMobile, setSaveMobile] = useState("");
@@ -62,6 +72,28 @@ export function ApplyFlow({
   const currentStepId = steps[stepIndex] ?? "basic-details";
   const meta = stepMeta[currentStepId];
   const isReview = currentStepId === "review";
+
+  useEffect(() => {
+    if (sessionExpired) {
+      setEntryResolved(true);
+      return;
+    }
+
+    if (resume) {
+      const age = getProgressAgeMs();
+      if (age !== null && age > SESSION_TIMEOUT_MS) {
+        setPhase("session-expired");
+        setEntryResolved(true);
+        return;
+      }
+    }
+
+    if (shouldSkipEntry(resume, sessionExpired)) {
+      setPhase("form");
+    }
+
+    setEntryResolved(true);
+  }, [resume, sessionExpired]);
 
   useEffect(() => {
     if (!resume) return;
@@ -79,13 +111,13 @@ export function ApplyFlow({
   }, [data.mobile, saveMobile]);
 
   useEffect(() => {
-    if (phase !== "form") return;
+    if (phase !== "form" && phase !== "entry") return;
     saveProgress(data, currentStepId);
   }, [data, currentStepId, phase]);
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (phase !== "form") return;
+      if (phase !== "form" && phase !== "entry") return;
       event.preventDefault();
       event.returnValue = "";
     };
@@ -100,7 +132,7 @@ export function ApplyFlow({
 
   const goBack = useCallback(() => {
     if (stepIndex === 0) {
-      setExitOpen(true);
+      setPhase("entry");
       return;
     }
 
@@ -176,8 +208,12 @@ export function ApplyFlow({
     clearProgress();
     setData(mergeInitialData(vehicleId, false));
     setStepIndex(0);
-    setPhase("form");
+    setPhase("entry");
   }, [vehicleId]);
+
+  const handleContinueFromEntry = useCallback(() => {
+    setPhase("form");
+  }, []);
 
   const handleNetworkRetry = useCallback(() => {
     setPhase("form");
@@ -200,6 +236,30 @@ export function ApplyFlow({
 
   if (phase === "resume-sent") {
     return <ResumeLinkSent onContinue={() => setPhase("form")} />;
+  }
+
+  if (!entryResolved && resume) {
+    return <div className="min-h-[100svh] bg-paper" aria-busy="true" />;
+  }
+
+  if (phase === "entry") {
+    return (
+      <>
+        <ApplyEntryScreen
+          onContinue={handleContinueFromEntry}
+          onSaveLater={handleSaveClick}
+        />
+
+        <SaveProgressModal
+          open={saveModalOpen}
+          mobile={saveMobile}
+          onMobileChange={setSaveMobile}
+          onSendResume={handleSendFromSaveModal}
+          onContinue={() => setSaveModalOpen(false)}
+          sending={sendingResume}
+        />
+      </>
+    );
   }
 
   return (

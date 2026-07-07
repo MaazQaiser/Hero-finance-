@@ -35,41 +35,44 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
         </p>
       </section>
 
-      <section className="rounded-[var(--radius-card)] border border-green/20 bg-gradient-to-br from-coral/10 via-surface to-surface p-6">
-        <p className="text-xs font-medium tracking-wide text-muted">
+      <section className="rounded-[var(--radius-card)] border border-green/30 bg-gradient-to-br from-green to-green-deep p-6 text-white">
+        <p className="text-xs font-medium tracking-wide text-white/70">
           Your finance summary
         </p>
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div>
-            <p className="text-xs tracking-wide text-muted">Approved amount</p>
-            <p className="mt-1 text-2xl font-medium text-ink">
+            <p className="text-xs tracking-wide text-white/70">Approved amount</p>
+            <p className="mt-1 text-2xl font-medium text-white">
               {formatPrice(decision.approvedAmount ?? 0)}
             </p>
           </div>
           <div>
-            <p className="text-xs tracking-wide text-muted">Est. monthly</p>
-            <p className="mt-1 text-2xl font-medium text-green-deep">
+            <p className="text-xs tracking-wide text-white/70">Est. monthly</p>
+            <p className="mt-1 text-2xl font-medium text-green-bright">
               {formatPrice(decision.estimatedMonthly ?? 0)}
-              <span className="text-sm font-normal text-muted">/mo</span>
+              <span className="text-sm font-normal text-white/70">/mo</span>
             </p>
           </div>
           <div>
-            <p className="text-xs tracking-wide text-muted">Representative APR</p>
-            <p className="mt-1 text-lg font-medium text-ink">{decision.apr}% fixed</p>
+            <p className="text-xs tracking-wide text-white/70">Representative APR</p>
+            <p className="mt-1 text-lg font-medium text-white">{decision.apr}% fixed</p>
           </div>
           <div>
-            <p className="text-xs tracking-wide text-muted">Term</p>
-            <p className="mt-1 text-lg font-medium text-ink">
+            <p className="text-xs tracking-wide text-white/70">Term</p>
+            <p className="mt-1 text-lg font-medium text-white">
               {decision.termMonths} months
             </p>
           </div>
         </div>
 
         {decision.lenderName && (
-          <p className="mt-5 border-t border-line pt-4 text-sm text-muted">
-            Finance partner: <span className="text-ink">{decision.lenderName}</span>
-          </p>
+          <div className="mt-5 rounded-2xl bg-green-bright px-4 py-3">
+            <p className="text-sm font-medium text-ink/70">
+              Finance partner:{" "}
+              <span className="font-semibold text-ink">{decision.lenderName}</span>
+            </p>
+          </div>
         )}
       </section>
 
