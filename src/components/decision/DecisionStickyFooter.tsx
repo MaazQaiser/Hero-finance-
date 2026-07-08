@@ -12,7 +12,6 @@ const ctaConfig: Record<
   approved: {
     label: "View Cars",
     href: "/cars",
-    secondary: { label: "Reserve a Vehicle", href: "/cars" },
   },
   declined: {
     label: "Browse Cars",

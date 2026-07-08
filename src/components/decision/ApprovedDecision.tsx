@@ -129,16 +129,6 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
         </div>
       </section>
 
-      <section className="rounded-[var(--radius-card)] border border-line bg-paper p-6 text-center">
-        <h2 className="text-lg font-medium text-ink">Found one you love?</h2>
-        <p className="mt-2 text-sm text-muted">
-          Reserve it today for £99 — fully refundable if you change your mind.
-        </p>
-        <Button size="lg" href="/cars" className="mt-5">
-          Reserve a Vehicle
-        </Button>
-      </section>
-
       <DecisionTrustStrip />
       <DecisionSupportCard />
     </div>

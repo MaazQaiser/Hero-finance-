@@ -5,7 +5,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { initialApplicationData } from "@/lib/apply/types";
 import { saveProgress } from "@/lib/apply/storage";
 
-const ukMobileRegex = /^(\+44|0)7\d{9}$/;
 const TOTAL_STEPS = 5;
 
 interface HeroEligibilityCardProps {
@@ -36,7 +35,7 @@ function ProgressGauge({ active }: { active: boolean }) {
   const circumference = 2 * Math.PI * 48;
 
   return (
-    <div className="relative mb-6 h-28 w-28" aria-hidden>
+    <div className="relative mx-auto mb-6 h-28 w-28" aria-hidden>
       <svg className="h-full w-full -rotate-90" viewBox="0 0 112 112">
         <circle cx="56" cy="56" r="48" fill="none" stroke="#EAF6EF" strokeWidth="6" />
         <circle
@@ -89,9 +88,7 @@ export function HeroEligibilityCard({ variant = "default" }: HeroEligibilityCard
   const validate = useCallback(() => {
     const next: { firstName?: string; mobile?: string } = {};
     if (!firstName.trim()) next.firstName = "Please enter your first name";
-    const cleaned = cleanMobile(mobile);
-    if (!cleaned) next.mobile = "Please enter your mobile number";
-    else if (!ukMobileRegex.test(cleaned)) next.mobile = "Please enter a valid UK mobile number";
+    if (!cleanMobile(mobile)) next.mobile = "Please enter your mobile number";
     setErrors(next);
     return Object.keys(next).length === 0;
   }, [firstName, mobile]);
@@ -139,190 +136,184 @@ export function HeroEligibilityCard({ variant = "default" }: HeroEligibilityCard
 
   return (
     <div className={`${shellClass} relative`}>
-      {!showDecision && !isV2 && (
-        <div className={isCyclix ? "mb-6" : isFloating ? "border-b border-line/60 px-5 py-4 md:px-6" : "mb-5"}>
-          {isFloating && !isCyclix && (
-            <div className="flex items-center gap-4 bg-green px-5 py-4">
-              <p className="font-display text-sm font-extrabold tracking-wide text-white">
-                Get approved in 60 seconds
-              </p>
+      {!showDecision ? (
+        <>
+          {!isV2 && (
+            <div className={isCyclix ? "mb-6" : isFloating ? "border-b border-line/60 px-5 py-4 md:px-6" : "mb-5"}>
+              {isFloating && !isCyclix && (
+                <div className="flex items-center gap-4 bg-green px-5 py-4">
+                  <p className="font-display text-sm font-extrabold tracking-wide text-white">
+                    Get approved in 60 seconds
+                  </p>
+                </div>
+              )}
+
+              <div className={isFloating && !isCyclix ? "p-5 md:p-6" : ""}>
+                {isCyclix && (
+                  <p className="mb-3 text-xs font-semibold tracking-wide text-green-deep">
+                    Quick eligibility check
+                  </p>
+                )}
+
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <span className="flex items-center gap-2 text-xs font-bold text-green-deep">
+                    <span className="relative flex h-2 w-2">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green opacity-40" />
+                      <span className="relative inline-flex h-2 w-2 rounded-full bg-green" />
+                    </span>
+                    Step 1 of {TOTAL_STEPS}
+                  </span>
+                  <span className="text-xs font-semibold text-muted">~60 seconds</span>
+                </div>
+
+                <div
+                  className="h-1.5 overflow-hidden rounded-full bg-mist"
+                  role="progressbar"
+                  aria-valuenow={1}
+                  aria-valuemin={0}
+                  aria-valuemax={TOTAL_STEPS}
+                  aria-label="Application progress"
+                >
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-green to-green-bright transition-all duration-700"
+                    style={{ width: `${(1 / TOTAL_STEPS) * 100}%` }}
+                  />
+                </div>
+              </div>
             </div>
           )}
 
-          <div className={isFloating && !isCyclix ? "p-5 md:p-6" : ""}>
-            {isCyclix && (
-              <p className="mb-3 text-xs font-semibold tracking-wide text-green-deep">
-                Quick eligibility check
-              </p>
-            )}
+          <div className={isFloating && !isCyclix && !isV2 ? "px-5 pb-5 md:px-6 md:pb-6" : isV2 ? "pt-2" : ""}>
+            <form onSubmit={handleSubmit} noValidate>
+              {isV2 && (
+                <>
+                  <div className="mb-4 flex items-center justify-between gap-3 text-xs font-semibold text-muted">
+                    <span className="flex items-center gap-2">
+                      <span className="relative flex h-2 w-2">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green opacity-40" />
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-green" />
+                      </span>
+                      Step 1 of {TOTAL_STEPS}
+                    </span>
+                    <span>~60 seconds</span>
+                  </div>
+                  <div
+                    className="mb-6 h-1.5 overflow-hidden rounded-full bg-mist"
+                    role="progressbar"
+                    aria-valuenow={1}
+                    aria-valuemin={0}
+                    aria-valuemax={TOTAL_STEPS}
+                    aria-label="Application progress"
+                  >
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-green to-green-bright transition-all duration-700"
+                      style={{ width: `${(1 / TOTAL_STEPS) * 100}%` }}
+                    />
+                  </div>
+                </>
+              )}
 
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <span className="flex items-center gap-2 text-xs font-bold text-green-deep">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green opacity-40" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-green" />
-                </span>
-                Step 1 of {TOTAL_STEPS}
-              </span>
-              <span className="text-xs font-semibold text-muted">~60 seconds</span>
-            </div>
+              <div className={isCyclix || isV2 ? "mb-5" : "mb-3"}>
+                <label
+                  htmlFor="hero-first-name"
+                  className={`mb-2 block font-semibold text-ink ${isV2 ? "text-[13px]" : "text-sm"}`}
+                >
+                  First name
+                </label>
+                <input
+                  id="hero-first-name"
+                  type="text"
+                  autoComplete="given-name"
+                  placeholder="e.g. Jordan"
+                  value={firstName}
+                  onChange={(e) => {
+                    setFirstName(e.target.value);
+                    if (errors.firstName) setErrors((prev) => ({ ...prev, firstName: undefined }));
+                  }}
+                  className={inputClass(!!errors.firstName)}
+                />
+                {errors.firstName && <p className="mt-1.5 text-xs text-coral">{errors.firstName}</p>}
+              </div>
 
-            <div
-              className="h-1.5 overflow-hidden rounded-full bg-mist"
-              role="progressbar"
-              aria-valuenow={1}
-              aria-valuemin={0}
-              aria-valuemax={TOTAL_STEPS}
-              aria-label="Application progress"
-            >
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-green to-green-bright transition-all duration-700"
-                style={{ width: `${(1 / TOTAL_STEPS) * 100}%` }}
-              />
-            </div>
+              <div className={isCyclix || isV2 ? "mb-6" : "mb-4"}>
+                <label
+                  htmlFor="hero-mobile"
+                  className={`mb-2 block font-semibold text-ink ${isV2 ? "text-[13px]" : "text-sm"}`}
+                >
+                  Mobile number
+                </label>
+                <input
+                  id="hero-mobile"
+                  type="tel"
+                  autoComplete="tel"
+                  placeholder="07…"
+                  value={mobile}
+                  onChange={(e) => {
+                    setMobile(e.target.value);
+                    if (errors.mobile) setErrors((prev) => ({ ...prev, mobile: undefined }));
+                  }}
+                  className={inputClass(!!errors.mobile)}
+                />
+                <p className="mt-2 text-xs text-muted">We&apos;ll text your decision — no spam, ever.</p>
+                {errors.mobile && <p className="mt-1.5 text-xs text-coral">{errors.mobile}</p>}
+              </div>
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className={
+                  isV2
+                    ? "flex w-full items-center justify-center gap-2 rounded-full bg-green-bright py-4 text-base font-bold text-ink transition-colors hover:bg-green-bright/90 disabled:opacity-70"
+                    : isCyclix
+                      ? "cyclix-cta"
+                      : "font-display flex w-full items-center justify-center gap-2 rounded-[14px] bg-green px-4 py-3.5 text-base font-bold text-white shadow-[0_8px_20px_rgba(91,43,212,0.32)] transition-[transform,background-color] hover:bg-green-deep active:scale-[0.98] disabled:opacity-70"
+                }
+              >
+                {submitting ? "Checking…" : "Check my eligibility"}
+                {!submitting && <ArrowIcon className="h-[18px] w-[18px]" />}
+              </button>
+
+              {!isV2 && (
+                <p className="mt-4 flex items-center justify-center gap-1.5 text-center text-xs font-semibold text-muted">
+                  <ShieldIcon className="h-3.5 w-3.5 shrink-0 text-green" />
+                  Soft search only · no impact on your credit file
+                </p>
+              )}
+            </form>
+          </div>
+        </>
+      ) : (
+        <div
+          ref={decisionRef}
+          tabIndex={-1}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="hero-decision-title"
+          className="flex flex-col items-center px-1 py-2 text-center sm:px-2 sm:py-3"
+        >
+          <div
+            className={`w-full max-w-sm rounded-[20px] p-6 shadow-[0_0_60px_rgba(91,43,212,0.15)] sm:p-8 ${
+              isV2 ? "border border-line/80 bg-white" : "border border-green/20 bg-white/90"
+            }`}
+          >
+            <ProgressGauge active={gaugeActive} />
+            <h3 id="hero-decision-title" className="font-display mb-2 text-2xl font-bold text-ink">
+              Good news, {displayName}!
+            </h3>
+            <p className="mb-6 text-sm leading-relaxed text-muted">
+              Based on what you&apos;ve told us, you look likely to be accepted. Let&apos;s finish the
+              quick bits and match you to a car.
+            </p>
+            <Link href="/apply?resume=true" className="cyclix-cta">
+              Continue my application
+              <ArrowIcon className="h-[18px] w-[18px]" />
+            </Link>
+            <p className="mt-4 text-[11.5px] leading-snug text-muted">
+              This is an eligibility indication based on a soft search, not a guaranteed offer.
+            </p>
           </div>
         </div>
       )}
-
-      <div className={isFloating && !isCyclix && !isV2 && !showDecision ? "px-5 pb-5 md:px-6 md:pb-6" : isV2 ? "pt-2" : ""}>
-        <form onSubmit={handleSubmit} className={showDecision ? "invisible" : ""} noValidate>
-          {isV2 && !showDecision && (
-            <>
-              <div className="mb-4 flex items-center justify-between gap-3 text-xs font-semibold text-muted">
-                <span className="flex items-center gap-2">
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green opacity-40" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-green" />
-                  </span>
-                  Step 1 of {TOTAL_STEPS}
-                </span>
-                <span>~60 seconds</span>
-              </div>
-              <div
-                className="mb-6 h-1.5 overflow-hidden rounded-full bg-mist"
-                role="progressbar"
-                aria-valuenow={1}
-                aria-valuemin={0}
-                aria-valuemax={TOTAL_STEPS}
-                aria-label="Application progress"
-              >
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-green to-green-bright transition-all duration-700"
-                  style={{ width: `${(1 / TOTAL_STEPS) * 100}%` }}
-                />
-              </div>
-            </>
-          )}
-
-          <div className={isCyclix || isV2 ? "mb-5" : "mb-3"}>
-            <label
-              htmlFor="hero-first-name"
-              className={`mb-2 block font-semibold text-ink ${isV2 ? "text-[13px]" : "text-sm"}`}
-            >
-              First name
-            </label>
-            <input
-              id="hero-first-name"
-              type="text"
-              autoComplete="given-name"
-              placeholder="e.g. Jordan"
-              value={firstName}
-              onChange={(e) => {
-                setFirstName(e.target.value);
-                if (errors.firstName) setErrors((prev) => ({ ...prev, firstName: undefined }));
-              }}
-              className={inputClass(!!errors.firstName)}
-            />
-            {errors.firstName && <p className="mt-1.5 text-xs text-coral">{errors.firstName}</p>}
-          </div>
-
-          <div className={isCyclix || isV2 ? "mb-6" : "mb-4"}>
-            <label
-              htmlFor="hero-mobile"
-              className={`mb-2 block font-semibold text-ink ${isV2 ? "text-[13px]" : "text-sm"}`}
-            >
-              Mobile number
-            </label>
-            <input
-              id="hero-mobile"
-              type="tel"
-              autoComplete="tel"
-              placeholder="07…"
-              value={mobile}
-              onChange={(e) => {
-                setMobile(e.target.value);
-                if (errors.mobile) setErrors((prev) => ({ ...prev, mobile: undefined }));
-              }}
-              className={inputClass(!!errors.mobile)}
-            />
-            <p className="mt-2 text-xs text-muted">We&apos;ll text your decision — no spam, ever.</p>
-            {errors.mobile && <p className="mt-1.5 text-xs text-coral">{errors.mobile}</p>}
-          </div>
-
-          <button
-            type="submit"
-            disabled={submitting}
-            className={
-              isV2
-                ? "flex w-full items-center justify-center gap-2 rounded-full bg-green-bright py-4 text-base font-bold text-ink transition-colors hover:bg-green-bright/90 disabled:opacity-70"
-                : isCyclix
-                  ? "cyclix-cta"
-                  : "font-display flex w-full items-center justify-center gap-2 rounded-[14px] bg-green px-4 py-3.5 text-base font-bold text-white shadow-[0_8px_20px_rgba(91,43,212,0.32)] transition-[transform,background-color] hover:bg-green-deep active:scale-[0.98] disabled:opacity-70"
-            }
-          >
-            {submitting ? "Checking…" : "Check my eligibility"}
-            {!submitting && <ArrowIcon className="h-[18px] w-[18px]" />}
-          </button>
-
-          {!isV2 && (
-            <p className="mt-4 flex items-center justify-center gap-1.5 text-center text-xs font-semibold text-muted">
-              <ShieldIcon className="h-3.5 w-3.5 shrink-0 text-green" />
-              Soft search only · no impact on your credit file
-            </p>
-          )}
-        </form>
-      </div>
-
-      <div
-        ref={decisionRef}
-        tabIndex={-1}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="hero-decision-title"
-        aria-hidden={!showDecision}
-        className={`absolute inset-0 flex flex-col items-center justify-center p-8 text-center transition-all duration-500 ${
-          isCyclix ? "rounded-[24px]" : isV2 ? "rounded-[20px]" : "rounded-[20px]"
-        } ${
-          showDecision
-            ? isV2
-              ? "pointer-events-auto bg-white/92 opacity-100 backdrop-blur-sm"
-              : "pointer-events-auto bg-white/90 opacity-100 backdrop-blur-xl"
-            : "pointer-events-none opacity-0"
-        }`}
-      >
-        <div
-          className={`w-full max-w-sm rounded-[20px] p-8 shadow-[0_0_60px_rgba(91,43,212,0.15)] ${
-            isV2
-              ? "border border-line/80 bg-white"
-              : "border border-green/20 bg-white/90"
-          }`}
-        >
-          <ProgressGauge active={gaugeActive} />
-          <h3 id="hero-decision-title" className="font-display mb-2 text-2xl font-bold text-ink">
-            Good news, {displayName}!
-          </h3>
-          <p className="mb-6 text-sm leading-relaxed text-muted">
-            Based on what you&apos;ve told us, you look likely to be accepted. Let&apos;s finish the quick bits and match you to a car.
-          </p>
-          <Link href="/apply?resume=true" className="cyclix-cta">
-            Continue my application
-            <ArrowIcon className="h-[18px] w-[18px]" />
-          </Link>
-          <p className="mt-4 text-[11.5px] leading-snug text-muted">
-            This is an eligibility indication based on a soft search, not a guaranteed offer.
-          </p>
-        </div>
-      </div>
     </div>
   );
 }
