@@ -1,59 +1,193 @@
 "use client";
 
 import { type ApplicationData, type StepId } from "@/lib/apply/types";
-import { lookupAddresses } from "@/lib/apply/mockAddresses";
 import { getVehicleById } from "@/data/vehicles";
+import { AddressLookup } from "@/components/apply/AddressLookup";
 import { ApplyInput, ApplySelect } from "@/components/apply/ApplyField";
+import { ApplyReviewSummary } from "@/components/apply/ApplyReviewSummary";
 import { OptionCard } from "@/components/apply/OptionCard";
 import { VehicleSearchInput } from "@/components/apply/VehicleSearchInput";
+import { Checkbox } from "@/components/ui/checkbox";
+import { type FieldErrors } from "@/lib/apply/validation";
 
 interface ApplyStepContentProps {
   stepId: StepId;
   data: ApplicationData;
   onChange: (updates: Partial<ApplicationData>) => void;
+  onAutoAdvance?: () => void;
+  fieldErrors?: FieldErrors;
 }
 
 export function ApplyStepContent({
   stepId,
   data,
   onChange,
+  onAutoAdvance,
+  fieldErrors = {},
 }: ApplyStepContentProps) {
-  const prefilledVehicle = data.vehicleId ? getVehicleById(data.vehicleId) : null;
-  const addressOptions = lookupAddresses(data.postcode);
-  const previousAddressOptions = lookupAddresses(data.previousPostcode);
+  const handleOptionSelect = (updates: Partial<ApplicationData>) => {
+    onChange(updates);
+    onAutoAdvance?.();
+  };
 
   switch (stepId) {
-    case "basic-details":
+    case "mobile":
       return (
-        <div className="space-y-4">
-          <ApplyInput
-            id="firstName"
-            label="First name"
-            required
-            value={data.firstName}
-            onChange={(e) => onChange({ firstName: e.target.value })}
-            autoComplete="given-name"
+        <ApplyInput
+          id="mobile"
+          label="Mobile number"
+          required
+          type="tel"
+          inputMode="tel"
+          value={data.mobile}
+          onChange={(e) => onChange({ mobile: e.target.value })}
+          hint="We'll text your result and save your progress."
+          autoComplete="tel"
+          placeholder="07XXX XXXXXX"
+        />
+      );
+
+    case "joint-choice":
+      return (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <OptionCard
+            label="Just me"
+            description="Apply on my own"
+            selected={!data.jointApplicant}
+            onClick={() => handleOptionSelect({ jointApplicant: false })}
           />
-          <ApplyInput
-            id="lastName"
-            label="Last name"
-            required
-            value={data.lastName}
-            onChange={(e) => onChange({ lastName: e.target.value })}
-            autoComplete="family-name"
-          />
-          <ApplyInput
-            id="mobile"
-            label="Mobile number"
-            required
-            type="tel"
-            inputMode="tel"
-            value={data.mobile}
-            onChange={(e) => onChange({ mobile: e.target.value })}
-            autoComplete="tel"
-            placeholder="07XXX XXXXXX"
+          <OptionCard
+            label="Apply with someone else"
+            description="Joint application"
+            selected={data.jointApplicant}
+            onClick={() => handleOptionSelect({ jointApplicant: true })}
           />
         </div>
+      );
+
+    case "employment-duration":
+      return (
+        <div className="space-y-3">
+          {[
+            { value: "less-than-3-months", label: "Less than 3 months" },
+            { value: "3-6-months", label: "3–6 months" },
+            { value: "6-12-months", label: "6–12 months" },
+            { value: "1-3-years", label: "1–3 years" },
+            { value: "more-than-3-years", label: "More than 3 years" },
+          ].map((option) => (
+            <OptionCard
+              key={option.value}
+              label={option.label}
+              selected={data.employmentDuration === option.value}
+              onClick={() =>
+                onChange({
+                  employmentDuration: option.value as ApplicationData["employmentDuration"],
+                })
+              }
+            />
+          ))}
+          {fieldErrors.employmentDuration && (
+            <p className="text-sm text-coral">{fieldErrors.employmentDuration}</p>
+          )}
+        </div>
+      );
+
+    case "previous-employer":
+      return (
+        <ApplyInput
+          id="previousEmployerName"
+          label="Employer name"
+          required
+          value={data.previousEmployerName}
+          onChange={(e) => onChange({ previousEmployerName: e.target.value })}
+          error={fieldErrors.previousEmployerName}
+          placeholder="Company name"
+          className={data.previousEmployerName.trim() ? "border-green/40 bg-white" : ""}
+        />
+      );
+
+    case "previous-employment-duration":
+      return (
+        <div className="space-y-3">
+          {[
+            { value: "less-than-1-year", label: "Less than 1 year" },
+            { value: "1-2-years", label: "1–2 years" },
+            { value: "2-3-years", label: "2–3 years" },
+            { value: "more-than-3-years", label: "More than 3 years" },
+          ].map((option) => (
+            <OptionCard
+              key={option.value}
+              label={option.label}
+              selected={data.previousEmploymentDuration === option.value}
+              onClick={() =>
+                onChange({
+                  previousEmploymentDuration:
+                    option.value as ApplicationData["previousEmploymentDuration"],
+                })
+              }
+            />
+          ))}
+          {fieldErrors.previousEmploymentDuration && (
+            <p className="text-sm text-coral">{fieldErrors.previousEmploymentDuration}</p>
+          )}
+        </div>
+      );
+
+    case "address":
+      return (
+        <AddressLookup
+          postcodeId="postcode"
+          addressId="address"
+          postcode={data.postcode}
+          address={data.address}
+          onPostcodeChange={(postcode) => onChange({ postcode, address: "" })}
+          onAddressChange={(address) => onChange({ address })}
+          errors={{
+            postcode: fieldErrors.postcode,
+            address: fieldErrors.address,
+          }}
+        />
+      );
+
+    case "address-duration":
+      return (
+        <div className="space-y-3">
+          {[
+            { value: "less-than-1-year", label: "Less than 1 year" },
+            { value: "1-2-years", label: "1–2 years" },
+            { value: "2-3-years", label: "2–3 years" },
+            { value: "3-5-years", label: "3–5 years" },
+            { value: "more-than-5-years", label: "More than 5 years" },
+          ].map((option) => (
+            <OptionCard
+              key={option.value}
+              label={option.label}
+              selected={data.yearsAtAddress === option.value}
+              onClick={() => onChange({ yearsAtAddress: option.value })}
+            />
+          ))}
+          {fieldErrors.yearsAtAddress && (
+            <p className="text-sm text-coral">{fieldErrors.yearsAtAddress}</p>
+          )}
+        </div>
+      );
+
+    case "previous-address":
+      return (
+        <AddressLookup
+          postcodeId="previousPostcode"
+          addressId="previousAddress"
+          postcode={data.previousPostcode}
+          address={data.previousAddress}
+          onPostcodeChange={(previousPostcode) =>
+            onChange({ previousPostcode, previousAddress: "" })
+          }
+          onAddressChange={(previousAddress) => onChange({ previousAddress })}
+          errors={{
+            postcode: fieldErrors.previousPostcode,
+            address: fieldErrors.previousAddress,
+          }}
+        />
       );
 
     case "email":
@@ -80,63 +214,12 @@ export function ApplyStepContent({
           required
           value={data.dateOfBirth}
           onChange={(e) => onChange({ dateOfBirth: e.target.value })}
+          error={fieldErrors.dateOfBirth}
+          className={data.dateOfBirth ? "border-green/40 bg-white" : ""}
           max={new Date(new Date().setFullYear(new Date().getFullYear() - 18))
             .toISOString()
             .split("T")[0]}
         />
-      );
-
-    case "address":
-      return (
-        <div className="space-y-4">
-          <ApplyInput
-            id="postcode"
-            label="Postcode"
-            required
-            value={data.postcode}
-            onChange={(e) => onChange({ postcode: e.target.value.toUpperCase(), address: "" })}
-            autoComplete="postal-code"
-            placeholder="M1 1AA"
-          />
-
-          {addressOptions.length > 0 ? (
-            <ApplySelect
-              id="address"
-              label="Select your address"
-              required
-              value={data.address}
-              onChange={(e) => onChange({ address: e.target.value })}
-            >
-              <option value="">Choose an address</option>
-              {addressOptions.map((address) => (
-                <option key={address} value={address}>
-                  {address}
-                </option>
-              ))}
-            </ApplySelect>
-          ) : (
-            data.postcode.trim() && (
-              <p className="text-sm text-muted">
-                Try M1 1AA, B1 1BB, LS1 1CC, E1 1DD, or SW1A 1AA to see sample addresses.
-              </p>
-            )
-          )}
-
-          <ApplySelect
-            id="yearsAtAddress"
-            label="How long have you lived here?"
-            required
-            value={data.yearsAtAddress}
-            onChange={(e) => onChange({ yearsAtAddress: e.target.value })}
-          >
-            <option value="">Select duration</option>
-            <option value="1">Less than 1 year</option>
-            <option value="2">1–2 years</option>
-            <option value="3">2–3 years</option>
-            <option value="5">3–5 years</option>
-            <option value="10">5+ years</option>
-          </ApplySelect>
-        </div>
       );
 
     case "residential":
@@ -153,7 +236,11 @@ export function ApplyStepContent({
               label={option.label}
               description={option.description}
               selected={data.residentialStatus === option.value}
-              onClick={() => onChange({ residentialStatus: option.value as ApplicationData["residentialStatus"] })}
+              onClick={() =>
+                handleOptionSelect({
+                  residentialStatus: option.value as ApplicationData["residentialStatus"],
+                })
+              }
             />
           ))}
         </div>
@@ -173,7 +260,11 @@ export function ApplyStepContent({
               label={option.label}
               description={option.description}
               selected={data.employmentStatus === option.value}
-              onClick={() => onChange({ employmentStatus: option.value as ApplicationData["employmentStatus"] })}
+              onClick={() =>
+                handleOptionSelect({
+                  employmentStatus: option.value as ApplicationData["employmentStatus"],
+                })
+              }
             />
           ))}
         </div>
@@ -251,41 +342,6 @@ export function ApplyStepContent({
         </div>
       );
 
-    case "address-history":
-      return (
-        <div className="space-y-4">
-          <p className="text-sm text-muted">
-            Because you&apos;ve lived at your current address for less than 3 years, we need your
-            previous address.
-          </p>
-          <ApplyInput
-            id="previousPostcode"
-            label="Previous postcode"
-            required
-            value={data.previousPostcode}
-            onChange={(e) =>
-              onChange({ previousPostcode: e.target.value.toUpperCase(), previousAddress: "" })
-            }
-          />
-          {previousAddressOptions.length > 0 && (
-            <ApplySelect
-              id="previousAddress"
-              label="Previous address"
-              required
-              value={data.previousAddress}
-              onChange={(e) => onChange({ previousAddress: e.target.value })}
-            >
-              <option value="">Choose an address</option>
-              {previousAddressOptions.map((address) => (
-                <option key={address} value={address}>
-                  {address}
-                </option>
-              ))}
-            </ApplySelect>
-          )}
-        </div>
-      );
-
     case "licence":
       return (
         <div className="space-y-3">
@@ -299,7 +355,11 @@ export function ApplyStepContent({
               label={option.label}
               description={option.description}
               selected={data.drivingLicence === option.value}
-              onClick={() => onChange({ drivingLicence: option.value as ApplicationData["drivingLicence"] })}
+              onClick={() =>
+                handleOptionSelect({
+                  drivingLicence: option.value as ApplicationData["drivingLicence"],
+                })
+              }
             />
           ))}
         </div>
@@ -350,222 +410,122 @@ export function ApplyStepContent({
     case "joint":
       return (
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
-            <OptionCard
-              label="Just me"
-              description="Apply on my own"
-              selected={!data.jointApplicant}
-              onClick={() => onChange({ jointApplicant: false })}
-            />
-            <OptionCard
-              label="Apply with someone else"
-              description="Joint application"
-              selected={data.jointApplicant}
-              onClick={() => onChange({ jointApplicant: true })}
-            />
-          </div>
-
-          {data.jointApplicant && (
-            <details open className="group rounded-[var(--radius-card)] border border-line bg-paper">
-              <summary className="cursor-pointer list-none px-4 py-4 [&::-webkit-details-marker]:hidden">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-sm font-medium text-ink">Joint applicant details</p>
-                    <p className="mt-0.5 text-xs text-muted">
-                      {data.jointFirstName || data.jointLastName
-                        ? `${data.jointFirstName} ${data.jointLastName}`.trim()
-                        : "Add their details below"}
-                    </p>
-                  </div>
-                  <span className="text-muted transition-transform group-open:rotate-180">
-                    ▾
-                  </span>
-                </div>
-              </summary>
-
-              <div className="space-y-4 border-t border-line px-4 pb-4 pt-2">
-                <ApplyInput
-                  id="jointFirstName"
-                  label="Joint applicant first name"
-                  required
-                  value={data.jointFirstName}
-                  onChange={(e) => onChange({ jointFirstName: e.target.value })}
-                  autoComplete="given-name"
-                />
-                <ApplyInput
-                  id="jointLastName"
-                  label="Joint applicant last name"
-                  required
-                  value={data.jointLastName}
-                  onChange={(e) => onChange({ jointLastName: e.target.value })}
-                  autoComplete="family-name"
-                />
-                <ApplyInput
-                  id="jointMobile"
-                  label="Mobile number"
-                  required
-                  type="tel"
-                  inputMode="tel"
-                  value={data.jointMobile}
-                  onChange={(e) => onChange({ jointMobile: e.target.value })}
-                  placeholder="07XXX XXXXXX"
-                  autoComplete="tel"
-                />
-                <ApplyInput
-                  id="jointDateOfBirth"
-                  label="Date of birth"
-                  type="date"
-                  required
-                  value={data.jointDateOfBirth}
-                  onChange={(e) => onChange({ jointDateOfBirth: e.target.value })}
-                  max={new Date(new Date().setFullYear(new Date().getFullYear() - 18))
-                    .toISOString()
-                    .split("T")[0]}
-                />
-                <ApplySelect
-                  id="jointEmploymentStatus"
-                  label="Employment status"
-                  required
-                  value={data.jointEmploymentStatus}
-                  onChange={(e) =>
-                    onChange({
-                      jointEmploymentStatus: e.target.value as ApplicationData["jointEmploymentStatus"],
-                    })
-                  }
-                >
-                  <option value="">Select status</option>
-                  <option value="employed">Employed</option>
-                  <option value="self-employed">Self-employed</option>
-                  <option value="retired">Retired</option>
-                  <option value="other">Other</option>
-                </ApplySelect>
-                <ApplyInput
-                  id="jointMonthlyIncome"
-                  label="Monthly income"
-                  required
-                  type="number"
-                  inputMode="decimal"
-                  value={data.jointMonthlyIncome}
-                  onChange={(e) => onChange({ jointMonthlyIncome: e.target.value })}
-                  placeholder="e.g. 2500"
-                  hint="Before tax, in pounds"
-                />
-              </div>
-            </details>
-          )}
+          <ApplyInput
+            id="jointFirstName"
+            label="Joint applicant first name"
+            required
+            value={data.jointFirstName}
+            onChange={(e) => onChange({ jointFirstName: e.target.value })}
+            autoComplete="given-name"
+          />
+          <ApplyInput
+            id="jointLastName"
+            label="Joint applicant last name"
+            required
+            value={data.jointLastName}
+            onChange={(e) => onChange({ jointLastName: e.target.value })}
+            autoComplete="family-name"
+          />
+          <ApplyInput
+            id="jointMobile"
+            label="Mobile number"
+            required
+            type="tel"
+            inputMode="tel"
+            value={data.jointMobile}
+            onChange={(e) => onChange({ jointMobile: e.target.value })}
+            placeholder="07XXX XXXXXX"
+            autoComplete="tel"
+          />
+          <ApplyInput
+            id="jointDateOfBirth"
+            label="Date of birth"
+            type="date"
+            required
+            value={data.jointDateOfBirth}
+            onChange={(e) => onChange({ jointDateOfBirth: e.target.value })}
+            max={new Date(new Date().setFullYear(new Date().getFullYear() - 18))
+              .toISOString()
+              .split("T")[0]}
+          />
+          <ApplySelect
+            id="jointEmploymentStatus"
+            label="Employment status"
+            required
+            value={data.jointEmploymentStatus}
+            onChange={(e) =>
+              onChange({
+                jointEmploymentStatus: e.target.value as ApplicationData["jointEmploymentStatus"],
+              })
+            }
+          >
+            <option value="">Select status</option>
+            <option value="employed">Employed</option>
+            <option value="self-employed">Self-employed</option>
+            <option value="retired">Retired</option>
+            <option value="other">Other</option>
+          </ApplySelect>
+          <ApplyInput
+            id="jointMonthlyIncome"
+            label="Monthly income"
+            required
+            type="number"
+            inputMode="decimal"
+            value={data.jointMonthlyIncome}
+            onChange={(e) => onChange({ jointMonthlyIncome: e.target.value })}
+            placeholder="e.g. 2500"
+            hint="Before tax, in pounds"
+          />
         </div>
       );
 
     case "consent":
       return (
-        <div className="space-y-4">
-          <label className="flex min-h-12 cursor-pointer items-start gap-3 rounded-2xl border border-line bg-paper p-4">
-            <input
-              type="checkbox"
-              checked={data.termsAccepted}
-              onChange={(e) => onChange({ termsAccepted: e.target.checked })}
-              className="mt-1 h-5 w-5 accent-coral"
-            />
-            <span className="text-sm text-ink">
-              I agree to the Terms & Conditions and understand this is a finance application.
-            </span>
-          </label>
-
-          <label className="flex min-h-12 cursor-pointer items-start gap-3 rounded-2xl border border-line bg-paper p-4">
-            <input
-              type="checkbox"
-              checked={data.privacyAccepted}
-              onChange={(e) => onChange({ privacyAccepted: e.target.checked })}
-              className="mt-1 h-5 w-5 accent-coral"
-            />
-            <span className="text-sm text-ink">
-              I have read and accept the Privacy Policy.
-            </span>
-          </label>
-
-          <label className="flex min-h-12 cursor-pointer items-start gap-3 rounded-2xl border border-line bg-mist p-4">
-            <input
-              type="checkbox"
-              checked={data.marketingConsent}
-              onChange={(e) => onChange({ marketingConsent: e.target.checked })}
-              className="mt-1 h-5 w-5 accent-coral"
-            />
-            <span className="text-sm text-muted">
-              Send me updates about cars and offers (optional)
-            </span>
-          </label>
-        </div>
-      );
-
-    case "review": {
-      const vehicle = prefilledVehicle;
-      return (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {[
             {
-              title: "Personal details",
-              items: [
-                `${data.firstName} ${data.lastName}`,
-                data.mobile,
-                data.email || "No email provided",
-                data.dateOfBirth,
-              ],
+              id: "termsAccepted",
+              checked: data.termsAccepted,
+              onCheckedChange: (checked: boolean) => onChange({ termsAccepted: checked }),
+              label: "I agree to the Terms & Conditions and understand this is a finance application.",
+              optional: false,
             },
             {
-              title: "Address",
-              items: [data.address, `Lived here: ${data.yearsAtAddress} years`],
+              id: "privacyAccepted",
+              checked: data.privacyAccepted,
+              onCheckedChange: (checked: boolean) => onChange({ privacyAccepted: checked }),
+              label: "I have read and accept the Privacy Policy.",
+              optional: false,
             },
             {
-              title: "Employment",
-              items: [
-                data.employmentStatus,
-                data.monthlyIncome ? `£${data.monthlyIncome}/month` : "",
-              ].filter(Boolean),
+              id: "marketingConsent",
+              checked: data.marketingConsent,
+              onCheckedChange: (checked: boolean) => onChange({ marketingConsent: checked }),
+              label: "Send me updates about cars and offers (optional)",
+              optional: true,
             },
-            {
-              title: "Vehicle",
-              items: [
-                vehicle
-                  ? `${vehicle.make} ${vehicle.model}`
-                  : data.vehicleSearch || "Not selected yet",
-              ],
-            },
-            ...(data.jointApplicant
-              ? [
-                  {
-                    title: "Joint applicant",
-                    items: [
-                      `${data.jointFirstName} ${data.jointLastName}`,
-                      data.jointMobile,
-                      data.jointDateOfBirth,
-                      data.jointEmploymentStatus,
-                      data.jointMonthlyIncome ? `£${data.jointMonthlyIncome}/month` : "",
-                    ].filter(Boolean),
-                  },
-                ]
-              : []),
-          ].map((section) => (
-            <div
-              key={section.title}
-              className="rounded-[var(--radius-card)] border border-line bg-paper p-4"
+          ].map((item) => (
+            <label
+              key={item.id}
+              htmlFor={item.id}
+              className="flex min-h-12 cursor-pointer items-start gap-3 rounded-2xl border border-line bg-mist-2 p-4 transition-colors hover:border-green/25"
             >
-              <p className="text-xs tracking-wide text-muted">{section.title}</p>
-              <ul className="mt-2 space-y-1">
-                {section.items.map((item) => (
-                  <li key={item} className="text-sm text-ink">
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
+              <Checkbox
+                id={item.id}
+                checked={item.checked}
+                onCheckedChange={(value) => item.onCheckedChange(value === true)}
+                className="mt-0.5"
+              />
+              <span className={`text-sm leading-relaxed ${item.optional ? "text-muted" : "text-ink"}`}>
+                {item.label}
+              </span>
+            </label>
           ))}
-
-          <p className="rounded-2xl border border-green/20 bg-green/10 px-4 py-3 text-sm text-ink">
-            Soft search only — no impact on your credit score at this stage.
-          </p>
         </div>
       );
-    }
+
+    case "review":
+      return <ApplyReviewSummary data={data} />;
 
     default:
       return null;

@@ -2,7 +2,6 @@ import { type ApplicationData, type StepId } from "./types";
 
 export type FieldErrors = Partial<Record<keyof ApplicationData, string>>;
 
-const ukMobileRegex = /^(\+44|0)7\d{9}$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const postcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2}$/i;
 
@@ -14,14 +13,13 @@ export function validateStep(stepId: StepId, data: ApplicationData): FieldErrors
   const errors: FieldErrors = {};
 
   switch (stepId) {
-    case "basic-details":
-      if (!data.firstName.trim()) errors.firstName = "Please enter your first name";
-      if (!data.lastName.trim()) errors.lastName = "Please enter your last name";
+    case "mobile":
       if (!cleanMobile(data.mobile)) {
         errors.mobile = "Please enter your mobile number";
-      } else if (!ukMobileRegex.test(cleanMobile(data.mobile))) {
-        errors.mobile = "Please enter a valid mobile number";
       }
+      break;
+
+    case "joint-choice":
       break;
 
     case "email":
@@ -40,13 +38,44 @@ export function validateStep(stepId: StepId, data: ApplicationData): FieldErrors
       }
       break;
 
+    case "employment-duration":
+      if (!data.employmentDuration) {
+        errors.employmentDuration = "Select how long you've been with your employer";
+      }
+      break;
+
+    case "previous-employer":
+      if (!data.previousEmployerName.trim()) {
+        errors.previousEmployerName = "Enter your previous employer name";
+      }
+      break;
+
+    case "previous-employment-duration":
+      if (!data.previousEmploymentDuration) {
+        errors.previousEmploymentDuration = "Select how long you were with your previous employer";
+      }
+      break;
+
     case "address":
       if (!data.postcode.trim()) errors.postcode = "Enter your postcode";
       else if (!postcodeRegex.test(data.postcode.trim())) {
         errors.postcode = "Enter a valid UK postcode";
       }
       if (!data.address.trim()) errors.address = "Select your address";
-      if (!data.yearsAtAddress) errors.yearsAtAddress = "Tell us how long you've lived here";
+      break;
+
+    case "address-duration":
+      if (!data.yearsAtAddress) {
+        errors.yearsAtAddress = "Tell us how long you've lived here";
+      }
+      break;
+
+    case "previous-address":
+      if (!data.previousPostcode.trim()) errors.previousPostcode = "Enter your previous postcode";
+      else if (!postcodeRegex.test(data.previousPostcode.trim())) {
+        errors.previousPostcode = "Enter a valid UK postcode";
+      }
+      if (!data.previousAddress.trim()) errors.previousAddress = "Select your previous address";
       break;
 
     case "residential":
@@ -76,11 +105,6 @@ export function validateStep(stepId: StepId, data: ApplicationData): FieldErrors
       }
       break;
 
-    case "address-history":
-      if (!data.previousPostcode.trim()) errors.previousPostcode = "Enter your previous postcode";
-      if (!data.previousAddress.trim()) errors.previousAddress = "Select your previous address";
-      break;
-
     case "licence":
       if (!data.drivingLicence) errors.drivingLicence = "Select an option";
       break;
@@ -89,31 +113,11 @@ export function validateStep(stepId: StepId, data: ApplicationData): FieldErrors
       break;
 
     case "joint":
-      if (data.jointApplicant) {
-        if (!data.jointFirstName.trim()) errors.jointFirstName = "Please enter their first name";
-        if (!data.jointLastName.trim()) errors.jointLastName = "Please enter their last name";
-        if (!cleanMobile(data.jointMobile)) {
-          errors.jointMobile = "Please enter their mobile number";
-        } else if (!ukMobileRegex.test(cleanMobile(data.jointMobile))) {
-          errors.jointMobile = "Please enter a valid mobile number";
-        }
-        if (!data.jointDateOfBirth) {
-          errors.jointDateOfBirth = "Please enter their date of birth";
-        }
-        if (!data.jointEmploymentStatus) {
-          errors.jointEmploymentStatus = "Please select their employment status";
-        }
-        if (!data.jointMonthlyIncome.trim()) {
-          errors.jointMonthlyIncome = "Please enter their monthly income";
-        } else if (Number(data.jointMonthlyIncome) <= 0) {
-          errors.jointMonthlyIncome = "Please enter a valid monthly income";
-        }
-      }
+      // Mock-friendly: allow any entered details through without format checks
       break;
 
     case "consent":
-      if (!data.termsAccepted) errors.termsAccepted = "You must accept the terms";
-      if (!data.privacyAccepted) errors.privacyAccepted = "You must accept the privacy policy";
+      // Mock-friendly: don't block Continue on consent checkboxes
       break;
 
     case "review":
@@ -125,4 +129,8 @@ export function validateStep(stepId: StepId, data: ApplicationData): FieldErrors
 
 export function hasErrors(errors: FieldErrors): boolean {
   return Object.keys(errors).length > 0;
+}
+
+export function isStepComplete(stepId: StepId, data: ApplicationData): boolean {
+  return !hasErrors(validateStep(stepId, data));
 }

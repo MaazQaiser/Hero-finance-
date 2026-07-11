@@ -1,6 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { useLandingVariant } from "@/components/landing/LandingVariantProvider";
 
 function ArrowIcon() {
   return (
@@ -11,6 +14,8 @@ function ArrowIcon() {
 }
 
 export function FinalCta() {
+  const { variant, applyHref } = useLandingVariant();
+
   return (
     <section className="section-padding bg-mist-2">
       <div className="container-site">
@@ -37,19 +42,19 @@ export function FinalCta() {
 
                 <div className="mt-5 space-y-1 text-sm font-medium text-ink">
                   <p>Takes about 60 seconds</p>
-                  <p>Soft search · No hard search · FCA regulated</p>
+                  <p>{variant.trustMessage}</p>
                 </div>
 
                 <p className="mt-5 text-base leading-relaxed text-muted">
-                  Soft search. No impact on your credit score.
+                  {variant.reassuranceBody}
                 </p>
 
                 <div className="mt-8 space-y-3">
                   <Link
-                    href="/apply"
+                    href={applyHref}
                     className="flex w-full items-center justify-between rounded-full bg-green-bright px-6 py-4 text-base font-bold text-ink shadow-[0_8px_24px_rgba(223,255,77,0.35)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-green-bright/90 hover:shadow-[0_12px_32px_rgba(223,255,77,0.42)]"
                   >
-                    <span>Check my eligibility</span>
+                    <span>{variant.cta}</span>
                     <ArrowIcon />
                   </Link>
 

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { useLandingVariant } from "@/components/landing/LandingVariantProvider";
 
 const steps = [
   {
@@ -37,6 +38,7 @@ const steps = [
 
 export function HowItWorksV2() {
   const [activeStep, setActiveStep] = useState(0);
+  const { variant } = useLandingVariant();
   const step = steps[activeStep];
 
   return (
@@ -122,8 +124,9 @@ export function HowItWorksV2() {
                 Soft search
               </p>
               <h3 className="mt-4 font-display text-2xl font-extrabold tracking-tight text-white md:text-3xl">
-                Check without hurting your score
+                {variant.reassuranceHeadline}
               </h3>
+              <p className="mt-3 text-sm leading-relaxed text-white/85">{variant.reassuranceBody}</p>
             </div>
           </ScrollReveal>
         </div>

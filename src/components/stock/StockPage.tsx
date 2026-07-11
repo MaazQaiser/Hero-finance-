@@ -44,6 +44,31 @@ export function StockPage() {
     return () => window.clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const mode = params.get("mode");
+    const monthly = Number(params.get("monthly"));
+    const depositParam = Number(params.get("deposit"));
+    const term = Number(params.get("term"));
+    const maxPrice = Number(params.get("maxPrice"));
+
+    if (mode === "monthly" && monthly > 0) {
+      setSearchMode("monthly");
+      setBudget({
+        monthly,
+        deposit: depositParam > 0 ? depositParam : 0,
+        term: term > 0 ? term : 48,
+      });
+      setBudgetApplied(true);
+      return;
+    }
+
+    if (maxPrice > 0) {
+      setSearchMode("price");
+      setMaxPrice(maxPrice);
+    }
+  }, []);
+
   const filteredVehicles = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
 

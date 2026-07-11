@@ -21,9 +21,12 @@ function AAAssuredCarsBadge() {
   );
 }
 
-export function HeroTrustStats() {
+export function HeroTrustStats({ trustMessage }: { trustMessage?: string }) {
   return (
     <div className="border-t border-line/50 pt-8 md:pt-10">
+      {trustMessage && (
+        <p className="mb-6 text-center text-sm font-medium text-muted">{trustMessage}</p>
+      )}
       <div className="flex flex-col items-stretch gap-8 sm:flex-row sm:items-center sm:justify-center sm:gap-0">
         <div className="flex flex-1 items-center justify-center sm:px-8">
           <div className="w-full max-w-[320px]">

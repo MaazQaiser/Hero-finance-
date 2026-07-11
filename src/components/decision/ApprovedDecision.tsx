@@ -1,46 +1,103 @@
-import Image from "next/image";
-import Link from "next/link";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
-import { type FinanceDecision, getMatchedVehicles } from "@/lib/apply/decision";
-import { formatPrice } from "@/data/vehicles";
-import { DecisionSupportCard } from "@/components/decision/DecisionSupportCard";
-import { DecisionTrustStrip } from "@/components/decision/DecisionTrustStrip";
+"use client";
 
-const badgeVariantMap = {
-  "Hot Deal": "coral",
-  "Just In": "neutral",
-  "Low Mileage": "success",
-} as const;
+import { type ReactNode } from "react";
+import { type FinanceDecision } from "@/lib/apply/decision";
+import { formatPrice } from "@/data/vehicles";
 
 interface ApprovedDecisionProps {
   decision: FinanceDecision;
 }
 
-export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
-  const matches = getMatchedVehicles(decision.approvedAmount ?? 25000);
+function TrustRowIcon({ children }: { children: ReactNode }) {
+  return (
+    <svg
+      className="h-4 w-4"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      aria-hidden
+    >
+      {children}
+    </svg>
+  );
+}
 
+const trustRows = [
+  {
+    icon: (
+      <TrustRowIcon>
+        <path d="M12 22s8-4 8-10V6l-8-4-8 4v6c0 6 8 10 8 10z" />
+      </TrustRowIcon>
+    ),
+    title: "Every vehicle is AA inspected.",
+    description: "Checked before you collect.",
+  },
+  {
+    icon: (
+      <TrustRowIcon>
+        <path d="M13 2L3 14h9l-1 8 11-12h-9l1-8z" />
+      </TrustRowIcon>
+    ),
+    title: "Battery health verified on EVs.",
+    description: "Know exactly what you're buying.",
+  },
+  {
+    icon: (
+      <TrustRowIcon>
+        <path d="M12 21s7-4.5 7-11a7 7 0 1 0-14 0c0 6.5 7 11 7 11z" />
+        <circle cx="12" cy="10" r="2" />
+      </TrustRowIcon>
+    ),
+    title: "Free delivery within 30 miles.",
+    description: "Delivered to your door.",
+  },
+  {
+    icon: (
+      <TrustRowIcon>
+        <path d="M5 13l4 4L19 7" />
+      </TrustRowIcon>
+    ),
+    title: "14-day money-back guarantee.",
+    description: "Buy with confidence.",
+  },
+];
+
+const staggerClasses = [
+  "hero-fade-up-delay-4",
+  "hero-fade-up-delay-5",
+  "hero-fade-up-delay-6",
+  "hero-fade-up-delay-7",
+];
+
+export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
   return (
     <div className="space-y-8 pb-36">
       <section className="text-center">
-        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-success/15 text-3xl text-success">
-          ✓
+        <div
+          className="hero-success-in mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-success/15 text-success"
+          aria-hidden
+        >
+          <svg
+            className="h-10 w-10"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+          >
+            <path d="M5 13l4 4L19 7" />
+          </svg>
         </div>
-        <h1 className="mt-6 text-3xl font-medium text-ink">
-          You&apos;re approved — let&apos;s find your car
-        </h1>
-        <p className="mx-auto mt-3 max-w-md text-muted">
-          Great news{decision.applicantName ? `, ${decision.applicantName}` : ""}. Your soft
-          search is complete and you&apos;re ready to browse vehicles within your budget.
+
+        <h1 className="hero-fade-up-delay mt-6 text-3xl font-medium text-ink">You&apos;re approved.</h1>
+        <p className="hero-fade-up-delay-2 mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted">
+          Great news{decision.applicantName ? `, ${decision.applicantName}` : ""}. We&apos;ve found
+          finance options and we&apos;ve got real cars ready for you.
         </p>
       </section>
 
-      <section className="rounded-[var(--radius-card)] border border-green/30 bg-gradient-to-br from-green to-green-deep p-6 text-white">
-        <p className="text-xs font-medium tracking-wide text-white/70">
-          Your finance summary
-        </p>
-
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+      <section className="hero-fade-up-delay-3 rounded-[var(--radius-card)] border border-green/30 bg-gradient-to-br from-green to-green-deep p-6 text-white">
+        <div className="grid gap-5">
           <div>
             <p className="text-xs tracking-wide text-white/70">Approved amount</p>
             <p className="mt-1 text-2xl font-medium text-white">
@@ -48,7 +105,7 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
             </p>
           </div>
           <div>
-            <p className="text-xs tracking-wide text-white/70">Est. monthly</p>
+            <p className="text-xs tracking-wide text-white/70">Estimated monthly payment</p>
             <p className="mt-1 text-2xl font-medium text-green-bright">
               {formatPrice(decision.estimatedMonthly ?? 0)}
               <span className="text-sm font-normal text-white/70">/mo</span>
@@ -56,81 +113,30 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
           </div>
           <div>
             <p className="text-xs tracking-wide text-white/70">Representative APR</p>
-            <p className="mt-1 text-lg font-medium text-white">{decision.apr}% fixed</p>
-          </div>
-          <div>
-            <p className="text-xs tracking-wide text-white/70">Term</p>
-            <p className="mt-1 text-lg font-medium text-white">
-              {decision.termMonths} months
-            </p>
+            <p className="mt-1 text-xl font-medium text-white">{decision.apr}% fixed</p>
           </div>
         </div>
 
         {decision.lenderName && (
-          <div className="mt-5 rounded-2xl bg-green-bright px-4 py-3">
-            <p className="text-sm font-medium text-ink/70">
-              Finance partner:{" "}
-              <span className="font-semibold text-ink">{decision.lenderName}</span>
-            </p>
-          </div>
+          <p className="mt-5 text-xs text-white/60">
+            Finance partner: <span className="text-white/80">{decision.lenderName}</span>
+          </p>
         )}
       </section>
 
-      <section>
-        <div className="mb-4 flex items-end justify-between gap-4">
-          <div>
-            <h2 className="text-lg font-medium text-ink">Cars within your budget</h2>
-            <p className="mt-1 text-sm text-muted">
-              Hand-picked matches based on your approval
-            </p>
+      <section className="space-y-5 border-t border-line pt-6">
+        {trustRows.map((row, index) => (
+          <div key={row.title} className={`flex gap-3 ${staggerClasses[index]}`}>
+            <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green/10 text-green-deep">
+              {row.icon}
+            </span>
+            <div className="min-w-0 text-left">
+              <p className="text-sm font-medium text-ink">{row.title}</p>
+              <p className="mt-0.5 text-xs leading-relaxed text-muted">{row.description}</p>
+            </div>
           </div>
-          <Link href="/cars" className="text-sm text-green-deep hover:underline">
-            View all
-          </Link>
-        </div>
-
-        <div className="carousel-snap -mx-5 px-5">
-          {matches.map((vehicle) => (
-            <article
-              key={vehicle.id}
-              className="w-[78vw] shrink-0 snap-center sm:w-[280px]"
-            >
-              <div className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-paper">
-                <div className="relative aspect-[4/3]">
-                  <Image
-                    src={vehicle.images[0]}
-                    alt={`${vehicle.make} ${vehicle.model}`}
-                    fill
-                    className="object-cover"
-                    sizes="280px"
-                  />
-                  <div className="absolute left-3 top-3">
-                    <Badge variant={badgeVariantMap[vehicle.badge]}>{vehicle.badge}</Badge>
-                  </div>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-medium text-ink">
-                    {vehicle.make} {vehicle.model}
-                  </h3>
-                  <p className="mt-2 text-xl font-medium text-green-deep">
-                    {formatPrice(vehicle.monthlyHp)}
-                    <span className="text-sm font-normal text-muted">/mo</span>
-                  </p>
-                  <p className="text-sm text-muted">{formatPrice(vehicle.price)}</p>
-                  <Link href={`/cars/${vehicle.id}`} className="mt-4 block">
-                    <Button variant="secondary" fullWidth>
-                      View Car
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
+        ))}
       </section>
-
-      <DecisionTrustStrip />
-      <DecisionSupportCard />
     </div>
   );
 }

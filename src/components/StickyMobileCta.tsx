@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { useLandingVariant } from "@/components/landing/LandingVariantProvider";
 
 export function StickyMobileCta() {
   const [visible, setVisible] = useState(false);
+  const { variant, applyHref } = useLandingVariant();
 
   useEffect(() => {
     const onScroll = () => {
@@ -23,8 +25,8 @@ export function StickyMobileCta() {
       }`}
     >
       <div className="flex gap-3">
-        <Button fullWidth size="lg" href="/apply" className="bg-green-bright text-ink hover:bg-green-bright/90">
-          Check Eligibility
+        <Button fullWidth size="lg" href={applyHref} className="bg-green-bright text-ink hover:bg-green-bright/90">
+          {variant.cta}
         </Button>
         <a
           href="tel:08001234567"

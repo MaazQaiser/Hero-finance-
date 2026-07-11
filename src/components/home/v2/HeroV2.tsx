@@ -4,9 +4,11 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { HeroTrustStats } from "@/components/HeroTrustStats";
 import { HeroV2FormPanel } from "@/components/home/v2/HeroV2FormPanel";
+import { useLandingVariant } from "@/components/landing/LandingVariantProvider";
 
 export function HeroV2() {
   const [mounted, setMounted] = useState(false);
+  const { variant } = useLandingVariant();
 
   useEffect(() => {
     setMounted(true);
@@ -44,12 +46,11 @@ export function HeroV2() {
                 className={`min-w-0 max-w-xl text-white ${mounted ? "hero-fade-up" : ""}`}
               >
                 <h1 className="font-display max-w-[12ch] text-[2rem] font-medium leading-[1.06] tracking-tight sm:max-w-none sm:text-[2.35rem] lg:text-[2.85rem] xl:text-[3.15rem]">
-                  Been refused before? You could still drive away.
+                  {variant.headline}
                 </h1>
 
                 <p className="mt-5 max-w-[38ch] text-base leading-[1.65] text-white/88 md:text-[17px] lg:mt-6 lg:max-w-[42ch]">
-                  We consider every credit story. Unlike brokers, we&apos;ve got real cars ready
-                  with decisions in under a minute with finance options tailored for you.
+                  {variant.subtitle}
                 </p>
               </div>
 
@@ -61,7 +62,7 @@ export function HeroV2() {
         </div>
 
         <div className="mx-auto mt-6 max-w-[980px] md:mt-8">
-          <HeroTrustStats />
+          <HeroTrustStats trustMessage={variant.trustMessage} />
         </div>
       </div>
     </section>

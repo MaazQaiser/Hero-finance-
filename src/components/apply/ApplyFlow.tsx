@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ApplyEntryScreen } from "@/components/apply/entry/ApplyEntryScreen";
+import { ApplyBridgeScreen } from "@/components/apply/entry/ApplyBridgeScreen";
+import { ApplyWelcomeScreen } from "@/components/apply/entry/ApplyWelcomeScreen";
 import { ApplyLoadingScreen } from "@/components/apply/ApplyLoadingScreen";
 import { ApplyNetworkError } from "@/components/apply/ApplyNetworkError";
 import { ApplyProgressHeader } from "@/components/apply/ApplyProgressHeader";
@@ -13,6 +14,7 @@ import { ExitIntentModal } from "@/components/apply/ExitIntentModal";
 import { ResumeLinkSent } from "@/components/apply/ResumeLinkSent";
 import { SaveProgressModal } from "@/components/apply/SaveProgressModal";
 import { stepMeta } from "@/lib/apply/stepMeta";
+import { getStepReassurance } from "@/lib/apply/stepReassurance";
 import {
   clearProgress,
   getProgressAgeMs,
@@ -21,19 +23,45 @@ import {
   saveProgress,
   SESSION_TIMEOUT_MS,
 } from "@/lib/apply/storage";
-import { type ApplicationData, getActiveSteps } from "@/lib/apply/types";
+import {
+  type ApplicationData,
+  type StepId,
+  getPostBridgeSteps,
+  getPreBridgeSteps,
+  getTotalStepCount,
+  INTRO_SCREEN_COUNT,
+  isAutoAdvanceStep,
+  normalizeStepId,
+} from "@/lib/apply/types";
 import { generateDecision, saveDecision } from "@/lib/apply/decision";
+import { isStepComplete, validateStep } from "@/lib/apply/validation";
+import { resolveLandingVariant } from "@/lib/landing/resolveVariant";
+import { loadLandingCampaign, saveLandingCampaign } from "@/lib/landing/storage";
 
 interface ApplyFlowProps {
   vehicleId?: string;
   resume?: boolean;
   sessionExpired?: boolean;
   simulateNetworkError?: boolean;
+  campaign?: string;
 }
 
-type FlowPhase = "entry" | "form" | "loading" | "session-expired" | "network-error" | "resume-sent";
+type FlowPhase =
+  | "welcome"
+  | "qualifying"
+  | "bridge"
+  | "form"
+  | "loading"
+  | "session-expired"
+  | "network-error"
+  | "resume-sent";
 
-function shouldSkipEntry(resume: boolean, sessionExpired: boolean): boolean {
+function getPhaseForStep(stepId: StepId): FlowPhase {
+  if (getPreBridgeSteps().includes(stepId)) return "qualifying";
+  return "form";
+}
+
+function shouldSkipWelcome(resume: boolean, sessionExpired: boolean): boolean {
   if (sessionExpired) return true;
   if (!resume) return false;
 
@@ -43,7 +71,13 @@ function shouldSkipEntry(resume: boolean, sessionExpired: boolean): boolean {
   const age = getProgressAgeMs();
   if (age !== null && age > SESSION_TIMEOUT_MS) return true;
 
-  return saved.stepId !== "basic-details" || Boolean(saved.data.firstName || saved.data.mobile);
+  const stepId = normalizeStepId(saved.stepId);
+  return Boolean(
+    saved.data.mobile ||
+      saved.data.residentialStatus ||
+      saved.data.employmentStatus ||
+      stepId !== "mobile",
+  );
 }
 
 export function ApplyFlow({
@@ -51,27 +85,63 @@ export function ApplyFlow({
   resume = false,
   sessionExpired = false,
   simulateNetworkError = false,
+  campaign,
 }: ApplyFlowProps) {
   const router = useRouter();
   const networkRetried = useRef(false);
 
+  const [landingVariant, setLandingVariant] = useState(() => resolveLandingVariant(campaign));
+
+  useEffect(() => {
+    if (campaign) {
+      setLandingVariant(resolveLandingVariant(campaign));
+      saveLandingCampaign(campaign);
+      return;
+    }
+
+    const stored = loadLandingCampaign();
+    setLandingVariant(resolveLandingVariant(stored));
+  }, [campaign]);
+
   const [data, setData] = useState<ApplicationData>(() =>
     mergeInitialData(vehicleId, resume),
   );
-  const [stepIndex, setStepIndex] = useState(0);
   const [phase, setPhase] = useState<FlowPhase>(() =>
-    sessionExpired ? "session-expired" : "entry",
+    sessionExpired ? "session-expired" : "welcome",
   );
+  const [qualifyingIndex, setQualifyingIndex] = useState(0);
+  const [formIndex, setFormIndex] = useState(0);
   const [entryResolved, setEntryResolved] = useState(sessionExpired);
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [exitOpen, setExitOpen] = useState(false);
   const [saveMobile, setSaveMobile] = useState("");
   const [sendingResume, setSendingResume] = useState(false);
 
-  const steps = useMemo(() => getActiveSteps(data), [data]);
-  const currentStepId = steps[stepIndex] ?? "basic-details";
+  const preBridgeSteps = useMemo(() => getPreBridgeSteps(), []);
+  const postBridgeSteps = useMemo(() => getPostBridgeSteps(data), [data]);
+  const totalSteps = useMemo(() => getTotalStepCount(data), [data]);
+
+  const currentQualifyingStepId = preBridgeSteps[qualifyingIndex] ?? "residential";
+  const currentFormStepId = postBridgeSteps[formIndex] ?? "email";
+  const currentStepId =
+    phase === "qualifying" ? currentQualifyingStepId : phase === "form" ? currentFormStepId : "mobile";
   const meta = stepMeta[currentStepId];
-  const isReview = currentStepId === "review";
+  const isReview = currentFormStepId === "review";
+  const isMobileStep = phase === "qualifying" && currentQualifyingStepId === "mobile";
+  const showStickyFooter = phase === "form" || isMobileStep;
+  const fieldErrors = useMemo(
+    () => (phase === "form" || isMobileStep ? validateStep(currentStepId, data) : {}),
+    [currentStepId, data, isMobileStep, phase],
+  );
+  const canContinue = phase === "form" || isMobileStep ? isStepComplete(currentStepId, data) : true;
+  const stepReassurance = phase === "form" ? getStepReassurance(currentStepId) : null;
+
+  const progressStepNumber =
+    phase === "qualifying"
+      ? qualifyingIndex + 2
+      : phase === "bridge"
+        ? INTRO_SCREEN_COUNT
+        : INTRO_SCREEN_COUNT + formIndex + 1;
 
   useEffect(() => {
     if (sessionExpired) {
@@ -88,36 +158,73 @@ export function ApplyFlow({
       }
     }
 
-    if (shouldSkipEntry(resume, sessionExpired)) {
-      setPhase("form");
+    if (shouldSkipWelcome(resume, sessionExpired)) {
+      const saved = loadProgress();
+      if (saved) {
+        const stepId = normalizeStepId(saved.stepId);
+        const nextPhase = getPhaseForStep(stepId);
+        const preIndex = preBridgeSteps.indexOf(stepId);
+        const postIndex = getPostBridgeSteps(saved.data).indexOf(stepId);
+
+        if (preIndex >= 0) {
+          setQualifyingIndex(preIndex);
+          setPhase("qualifying");
+        } else if (postIndex >= 0) {
+          setFormIndex(postIndex);
+          setPhase("form");
+        } else {
+          setPhase(nextPhase);
+        }
+      } else {
+        setPhase("qualifying");
+      }
     }
 
     setEntryResolved(true);
-  }, [resume, sessionExpired]);
+  }, [preBridgeSteps, resume, sessionExpired]);
 
   useEffect(() => {
     if (!resume) return;
     const saved = loadProgress();
     if (!saved) return;
 
+    const stepId = normalizeStepId(saved.stepId);
     setData((current) => ({ ...current, ...saved.data }));
     setSaveMobile(saved.data.mobile || "");
-    const savedIndex = getActiveSteps(saved.data).indexOf(saved.stepId);
-    if (savedIndex >= 0) setStepIndex(savedIndex);
-  }, [resume]);
+
+    const preIndex = preBridgeSteps.indexOf(stepId);
+    if (preIndex >= 0) {
+      setQualifyingIndex(preIndex);
+      setPhase("qualifying");
+      return;
+    }
+
+    const postIndex = getPostBridgeSteps(saved.data).indexOf(stepId);
+    if (postIndex >= 0) {
+      setFormIndex(postIndex);
+      setPhase("form");
+    }
+  }, [preBridgeSteps, resume]);
+
+  useEffect(() => {
+    if (phase !== "form") return;
+    if (formIndex >= postBridgeSteps.length) {
+      setFormIndex(Math.max(postBridgeSteps.length - 1, 0));
+    }
+  }, [formIndex, phase, postBridgeSteps.length]);
 
   useEffect(() => {
     if (data.mobile && !saveMobile) setSaveMobile(data.mobile);
   }, [data.mobile, saveMobile]);
 
   useEffect(() => {
-    if (phase !== "form" && phase !== "entry") return;
+    if (!["welcome", "qualifying", "bridge", "form"].includes(phase)) return;
     saveProgress(data, currentStepId);
-  }, [data, currentStepId, phase]);
+  }, [currentStepId, data, phase]);
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (phase !== "form" && phase !== "entry") return;
+      if (!["welcome", "qualifying", "bridge", "form"].includes(phase)) return;
       event.preventDefault();
       event.returnValue = "";
     };
@@ -131,13 +238,29 @@ export function ApplyFlow({
   }, []);
 
   const goBack = useCallback(() => {
-    if (stepIndex === 0) {
-      setPhase("entry");
+    if (phase === "form") {
+      if (formIndex === 0) {
+        setPhase("bridge");
+        return;
+      }
+      setFormIndex((index) => Math.max(index - 1, 0));
       return;
     }
 
-    setStepIndex((index) => Math.max(index - 1, 0));
-  }, [stepIndex]);
+    if (phase === "bridge") {
+      setPhase("qualifying");
+      setQualifyingIndex(preBridgeSteps.length - 1);
+      return;
+    }
+
+    if (phase === "qualifying") {
+      if (qualifyingIndex === 0) {
+        setPhase("welcome");
+        return;
+      }
+      setQualifyingIndex((index) => Math.max(index - 1, 0));
+    }
+  }, [formIndex, phase, preBridgeSteps.length, qualifyingIndex]);
 
   const submitApplication = useCallback(() => {
     setPhase("loading");
@@ -150,7 +273,18 @@ export function ApplyFlow({
     }, 4000);
   }, [data, router]);
 
-  const goNext = useCallback(() => {
+  const goNextQualifying = useCallback(() => {
+    if (qualifyingIndex < preBridgeSteps.length - 1) {
+      setQualifyingIndex((index) => index + 1);
+      return;
+    }
+
+    setPhase("bridge");
+  }, [preBridgeSteps.length, qualifyingIndex]);
+
+  const goNextForm = useCallback(() => {
+    if (!isStepComplete(currentFormStepId, data)) return;
+
     if (isReview) {
       if (simulateNetworkError && !networkRetried.current) {
         networkRetried.current = true;
@@ -162,9 +296,25 @@ export function ApplyFlow({
       return;
     }
 
-    const nextSteps = getActiveSteps(data);
-    setStepIndex((index) => Math.min(index + 1, nextSteps.length - 1));
-  }, [data, isReview, simulateNetworkError, submitApplication]);
+    setFormIndex((index) => Math.min(index + 1, postBridgeSteps.length - 1));
+  }, [currentFormStepId, data, isReview, postBridgeSteps.length, simulateNetworkError, submitApplication]);
+
+  const goNext = useCallback(() => {
+    if (phase === "qualifying") {
+      if (isMobileStep && !isStepComplete("mobile", data)) return;
+      goNextQualifying();
+      return;
+    }
+
+    if (phase === "form") {
+      goNextForm();
+    }
+  }, [data, goNextForm, goNextQualifying, isMobileStep, phase]);
+
+  const handleAutoAdvance = useCallback(() => {
+    if (phase !== "qualifying" || !isAutoAdvanceStep(currentQualifyingStepId)) return;
+    window.setTimeout(() => goNextQualifying(), 280);
+  }, [currentQualifyingStepId, goNextQualifying, phase]);
 
   const handleSaveClick = useCallback(() => {
     setSaveMobile(data.mobile || saveMobile);
@@ -183,7 +333,7 @@ export function ApplyFlow({
         setPhase("resume-sent");
       }, 800);
     },
-    [data, currentStepId],
+    [currentStepId, data],
   );
 
   const handleSendFromSaveModal = useCallback(() => {
@@ -197,28 +347,57 @@ export function ApplyFlow({
   const handleResumeFromTimeout = useCallback(() => {
     const saved = loadProgress();
     if (saved) {
+      const stepId = normalizeStepId(saved.stepId);
       setData((current) => ({ ...current, ...saved.data }));
-      const savedIndex = getActiveSteps(saved.data).indexOf(saved.stepId);
-      if (savedIndex >= 0) setStepIndex(savedIndex);
+      const preIndex = preBridgeSteps.indexOf(stepId);
+      const postIndex = getPostBridgeSteps(saved.data).indexOf(stepId);
+      if (preIndex >= 0) {
+        setQualifyingIndex(preIndex);
+        setPhase("qualifying");
+        return;
+      }
+      if (postIndex >= 0) {
+        setFormIndex(postIndex);
+        setPhase("form");
+        return;
+      }
     }
-    setPhase("form");
-  }, []);
+    setPhase("welcome");
+  }, [preBridgeSteps]);
 
   const handleStartAgain = useCallback(() => {
     clearProgress();
     setData(mergeInitialData(vehicleId, false));
-    setStepIndex(0);
-    setPhase("entry");
+    setQualifyingIndex(0);
+    setFormIndex(0);
+    setPhase("welcome");
   }, [vehicleId]);
 
-  const handleContinueFromEntry = useCallback(() => {
+  const handleContinueFromWelcome = useCallback(() => {
+    setPhase("qualifying");
+    setQualifyingIndex(0);
+  }, []);
+
+  const handleContinueFromBridge = useCallback(() => {
     setPhase("form");
+    setFormIndex(0);
   }, []);
 
   const handleNetworkRetry = useCallback(() => {
     setPhase("form");
     submitApplication();
   }, [submitApplication]);
+
+  const saveModal = (
+    <SaveProgressModal
+      open={saveModalOpen}
+      mobile={saveMobile}
+      onMobileChange={setSaveMobile}
+      onSendResume={handleSendFromSaveModal}
+      onContinue={() => setSaveModalOpen(false)}
+      sending={sendingResume}
+    />
+  );
 
   if (phase === "loading") {
     return <ApplyLoadingScreen />;
@@ -242,77 +421,91 @@ export function ApplyFlow({
     return <div className="min-h-[100svh] bg-paper" aria-busy="true" />;
   }
 
-  if (phase === "entry") {
+  if (phase === "welcome") {
     return (
       <>
-        <ApplyEntryScreen
-          onContinue={handleContinueFromEntry}
+        <ApplyWelcomeScreen
+          onContinue={handleContinueFromWelcome}
           onSaveLater={handleSaveClick}
+          headline={landingVariant.applicationHeadline}
+          body={landingVariant.applicationBody}
+          ctaLabel={landingVariant.applicationCta}
+          trustMessage={landingVariant.trustMessage}
         />
-
-        <SaveProgressModal
-          open={saveModalOpen}
-          mobile={saveMobile}
-          onMobileChange={setSaveMobile}
-          onSendResume={handleSendFromSaveModal}
-          onContinue={() => setSaveModalOpen(false)}
-          sending={sendingResume}
-        />
+        {saveModal}
       </>
     );
   }
 
-  return (
-    <div className="min-h-[100svh] bg-paper">
-      <ApplyProgressHeader
-        stepNumber={stepIndex + 1}
-        totalSteps={steps.length}
-        onBack={goBack}
-        canGoBack
-      />
-
-      <main className="mx-auto max-w-lg px-5 pb-40 pt-6">
-        <p className="eyebrow">Finance application</p>
-        <h1 className="mt-3 text-2xl font-medium text-ink md:text-3xl">{meta.title}</h1>
-        <p className="mt-3 text-sm leading-relaxed text-muted">{meta.helper}</p>
-
-        {meta.encouragement && stepIndex > 0 && (
-          <p className="mt-2 text-sm text-green-deep">{meta.encouragement}</p>
-        )}
-
-        <div className="mt-8">
-          <ApplyStepContent stepId={currentStepId} data={data} onChange={updateData} />
+  if (phase === "bridge") {
+    return (
+      <>
+        <div className="min-h-[100svh] bg-paper">
+          <ApplyProgressHeader
+            stepNumber={INTRO_SCREEN_COUNT}
+            totalSteps={totalSteps}
+            onBack={goBack}
+            canGoBack
+          />
+          <ApplyBridgeScreen onContinue={handleContinueFromBridge} />
         </div>
+        {saveModal}
+      </>
+    );
+  }
 
-        {stepIndex > 0 && stepIndex % 3 === 0 && (
-          <p className="mt-8 rounded-2xl border border-line bg-mist-2 px-4 py-3 text-center text-xs text-muted">
-            Soft search only · FCA regulated · Your data is secure
-          </p>
+  if (phase === "qualifying" || phase === "form") {
+    return (
+      <div className="min-h-[100svh] bg-paper">
+        <ApplyProgressHeader
+          stepNumber={progressStepNumber}
+          totalSteps={totalSteps}
+          onBack={goBack}
+          canGoBack
+        />
+
+        <main className={`mx-auto max-w-lg px-5 pt-6 ${phase === "form" ? "pb-44" : "pb-40"}`}>
+          <p className="eyebrow">Finance application</p>
+          <h1 className="mt-3 text-2xl font-medium text-ink md:text-3xl">{meta.title}</h1>
+          <p className="mt-3 text-sm leading-relaxed text-muted">{meta.helper}</p>
+
+          {meta.encouragement && phase === "form" && formIndex > 0 && (
+            <p className="mt-2 text-sm text-green-deep">{meta.encouragement}</p>
+          )}
+
+          <div className="mt-8">
+            <ApplyStepContent
+              stepId={currentStepId}
+              data={data}
+              onChange={updateData}
+              onAutoAdvance={phase === "qualifying" ? handleAutoAdvance : undefined}
+              fieldErrors={fieldErrors}
+            />
+          </div>
+        </main>
+
+        {showStickyFooter && (
+          <ApplyStickyFooter
+            onContinue={goNext}
+            onSave={handleSaveClick}
+            continueLabel={isReview ? "Check My Eligibility" : "Continue"}
+            continueDisabled={!canContinue}
+            reassurance={stepReassurance}
+          />
         )}
-      </main>
 
-      <ApplyStickyFooter
-        onContinue={goNext}
-        onSave={handleSaveClick}
-        continueLabel={isReview ? "Check My Eligibility" : "Continue"}
-      />
+        {saveModal}
 
-      <SaveProgressModal
-        open={saveModalOpen}
-        mobile={saveMobile}
-        onMobileChange={setSaveMobile}
-        onSendResume={handleSendFromSaveModal}
-        onContinue={() => setSaveModalOpen(false)}
-        sending={sendingResume}
-      />
+        <ExitIntentModal
+          open={exitOpen}
+          onSendResume={handleSendFromExit}
+          onContinue={() => setExitOpen(false)}
+          onLeave={() => router.push("/")}
+          sending={sendingResume}
+        />
+      </div>
+    );
+  }
 
-      <ExitIntentModal
-        open={exitOpen}
-        onSendResume={handleSendFromExit}
-        onContinue={() => setExitOpen(false)}
-        onLeave={() => router.push("/")}
-        sending={sendingResume}
-      />
-    </div>
-  );
+  return null;
 }

@@ -1,11 +1,19 @@
+"use client";
+
 import { HeroEligibilityCard } from "@/components/HeroEligibilityCard";
+import { useLandingVariant } from "@/components/landing/LandingVariantProvider";
 
 export function HeroV2FormPanel() {
+  const { variant, applyHref } = useLandingVariant();
+
   return (
-    <div id="hero-eligibility" className="scroll-mt-28 w-full min-w-0">
-      <div className="hero-v2-glass-card">
-        <HeroEligibilityCard variant="v2" />
-      </div>
-    </div>
+    <HeroEligibilityCard
+      variant="v2"
+      introHeadline={variant.cardIntroHeadline}
+      introBody={variant.cardIntroBody}
+      ctaLabel={variant.cta}
+      trustMessage={variant.trustMessage}
+      applyHref={applyHref}
+    />
   );
 }

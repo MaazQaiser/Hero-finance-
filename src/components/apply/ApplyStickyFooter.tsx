@@ -1,21 +1,27 @@
 "use client";
 
+import { type ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
+import { ApplyStepReassurance } from "@/components/apply/ApplyStepReassurance";
 
 interface ApplyStickyFooterProps {
   onContinue: () => void;
   onSave: () => void;
   continueLabel?: string;
+  continueDisabled?: boolean;
   saving?: boolean;
   networkError?: string;
+  reassurance?: { icon: ReactNode; text: string } | null;
 }
 
 export function ApplyStickyFooter({
   onContinue,
   onSave,
   continueLabel = "Continue",
+  continueDisabled = false,
   saving = false,
   networkError,
+  reassurance,
 }: ApplyStickyFooterProps) {
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper/95 backdrop-blur-2xl">
@@ -25,7 +31,10 @@ export function ApplyStickyFooter({
             {networkError}
           </p>
         )}
-        <Button fullWidth size="lg" onClick={onContinue}>
+        {reassurance && (
+          <ApplyStepReassurance icon={reassurance.icon} text={reassurance.text} />
+        )}
+        <Button fullWidth size="lg" onClick={onContinue} disabled={continueDisabled || saving}>
           {continueLabel}
         </Button>
         <button
