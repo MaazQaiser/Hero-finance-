@@ -42,7 +42,7 @@ export function HeroEligibilityCard({
   const isFloating = variant === "floating";
 
   const shellClass = isV2
-    ? "relative"
+    ? "relative overflow-hidden rounded-[24px] border border-line bg-paper p-5 shadow-[0_20px_56px_rgba(30,22,53,0.18)] sm:p-6"
     : isCyclix
       ? "glass-form-card relative"
       : isFloating
@@ -96,7 +96,7 @@ export function HeroEligibilityCard({
         </div>
       )}
 
-      <div className={isFloating && !isCyclix && !isV2 ? "px-5 pb-5 md:px-6 md:pb-6" : isV2 ? "pt-2" : ""}>
+      <div className={isFloating && !isCyclix && !isV2 ? "px-5 pb-5 md:px-6 md:pb-6" : ""}>
         {isV2 && (
           <>
             <div className="mb-4 flex items-center justify-between gap-3 text-xs font-semibold text-muted">
