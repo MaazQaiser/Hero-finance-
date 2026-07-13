@@ -3,15 +3,13 @@
 import { ApplyEntryHeader } from "@/components/apply/entry/ApplyEntryHeader";
 import { ApplyPrimaryButton } from "@/components/apply/entry/ApplyPrimaryButton";
 import { ApplyTrustBadge } from "@/components/apply/entry/ApplyTrustBadge";
+import { AmbientTrust } from "@/components/apply/AmbientTrust";
 import { TrustpilotWidget } from "@/components/TrustpilotWidget";
+import { getActiveJourneyVariant } from "@/lib/journey/journeyVariants";
 
 interface ApplyWelcomeScreenProps {
   onContinue: () => void;
   onSaveLater: () => void;
-  headline?: string;
-  body?: string;
-  ctaLabel?: string;
-  trustMessage?: string;
 }
 
 function BadgeIcon({ className }: { className?: string }) {
@@ -32,14 +30,9 @@ function SearchIcon({ className }: { className?: string }) {
   );
 }
 
-export function ApplyWelcomeScreen({
-  onContinue,
-  onSaveLater,
-  headline = "Every credit story deserves a fair hearing.",
-  body = "At Hero, we consider every credit story — not just a score. A few quick questions help us understand your situation before we run a soft search.",
-  ctaLabel = "Start my application",
-  trustMessage = "Soft search only",
-}: ApplyWelcomeScreenProps) {
+export function ApplyWelcomeScreen({ onContinue, onSaveLater }: ApplyWelcomeScreenProps) {
+  const journey = getActiveJourneyVariant();
+
   return (
     <div className="min-h-[100svh] bg-paper">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-64 saas-glow" aria-hidden />
@@ -49,21 +42,17 @@ export function ApplyWelcomeScreen({
       <main className="relative mx-auto max-w-lg px-5 pb-12 pt-8 md:px-8 md:pb-16 md:pt-12">
         <section className="hero-fade-up text-center">
           <p className="eyebrow">Finance application</p>
-          <h1 className="headline-lg mt-4">{headline}</h1>
-          <p className="body-lg mx-auto mt-4 max-w-md">{body}</p>
+          <h1 className="headline-lg mt-4">{journey.introTitle}</h1>
+          <p className="body-lg mx-auto mt-4 max-w-md">{journey.introDescription}</p>
 
           <div className="mt-8">
             <ApplyPrimaryButton onClick={onContinue} reassurance="">
-              {ctaLabel}
+              {journey.ctaText}
             </ApplyPrimaryButton>
           </div>
 
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm font-medium text-muted">
-            <span>Takes around 60 seconds</span>
-            <span aria-hidden className="text-line">
-              •
-            </span>
-            <span>{trustMessage}</span>
+          <div className="mt-5">
+            <AmbientTrust messageKey="intro" />
           </div>
         </section>
 

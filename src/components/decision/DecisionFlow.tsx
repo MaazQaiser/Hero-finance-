@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ApprovedDecision } from "@/components/decision/ApprovedDecision";
 import { DeclinedDecision } from "@/components/decision/DeclinedDecision";
 import { PendingDecision } from "@/components/decision/PendingDecision";
 import { DecisionStickyFooter } from "@/components/decision/DecisionStickyFooter";
+import { WarrantySelection } from "@/components/decision/warranty/WarrantySelection";
+import { AnimatedPage } from "@/components/motion/AnimatedPage";
 import {
   type DecisionState,
   type FinanceDecision,
@@ -17,8 +20,12 @@ interface DecisionFlowProps {
   stateOverride?: string;
 }
 
+type ApprovedStage = "summary" | "warranty";
+
 export function DecisionFlow({ stateOverride }: DecisionFlowProps) {
+  const router = useRouter();
   const [decision, setDecision] = useState<FinanceDecision | null>(null);
+  const [approvedStage, setApprovedStage] = useState<ApprovedStage>("summary");
 
   useEffect(() => {
     const saved = loadDecision();
@@ -53,6 +60,12 @@ export function DecisionFlow({ stateOverride }: DecisionFlowProps) {
   }
 
   const state: DecisionState = decision.state;
+  const showWarranty = state === "approved" && approvedStage === "warranty";
+
+  const handleWarrantyContinue = () => {
+    // Frontend prototype only — selection is not persisted or charged
+    router.push("/cars");
+  };
 
   return (
     <>
@@ -62,18 +75,37 @@ export function DecisionFlow({ stateOverride }: DecisionFlowProps) {
             Hero Car Finance
           </Link>
           <p className="text-xs tracking-wide text-muted">
-            {state === "approved" ? "Approved" : state === "pending" ? "Processing" : "Under review"}
+            {showWarranty
+              ? "Protection"
+              : state === "approved"
+                ? "Approved"
+                : state === "pending"
+                  ? "Processing"
+                  : "Under review"}
           </p>
         </div>
       </header>
 
       <main className="mx-auto max-w-lg px-5 py-8">
-        {state === "approved" && <ApprovedDecision decision={decision} />}
-        {state === "declined" && <DeclinedDecision decision={decision} />}
-        {state === "pending" && <PendingDecision decision={decision} />}
+        <AnimatedPage pageKey={`${state}-${approvedStage}`}>
+          {state === "approved" && approvedStage === "summary" && (
+            <ApprovedDecision decision={decision} />
+          )}
+          {showWarranty && <WarrantySelection onContinue={handleWarrantyContinue} />}
+          {state === "declined" && <DeclinedDecision decision={decision} />}
+          {state === "pending" && <PendingDecision decision={decision} />}
+        </AnimatedPage>
       </main>
 
-      <DecisionStickyFooter state={state} />
+      <DecisionStickyFooter
+        state={state}
+        hide={showWarranty}
+        onApprovedContinue={
+          state === "approved" && approvedStage === "summary"
+            ? () => setApprovedStage("warranty")
+            : undefined
+        }
+      />
     </>
   );
 }

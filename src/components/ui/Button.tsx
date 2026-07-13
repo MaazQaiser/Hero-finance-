@@ -10,13 +10,14 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   fullWidth?: boolean;
   href?: string;
+  loading?: boolean;
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-green text-white hover:bg-green-deep border border-transparent shadow-[0_4px_14px_rgba(91,43,212,0.25)] active:scale-[0.98]",
+    "bg-green text-white hover:bg-green-deep border border-transparent shadow-[0_4px_14px_rgba(91,43,212,0.25)] hover:shadow-[0_8px_20px_rgba(91,43,212,0.28)]",
   secondary:
-    "bg-mist-2 text-ink border-2 border-line hover:border-green/30 hover:bg-mist active:scale-[0.98]",
+    "bg-mist-2 text-ink border-2 border-line hover:border-green/30 hover:bg-mist",
   ghost:
     "bg-transparent text-ink hover:text-green-deep border border-transparent",
 };
@@ -33,21 +34,35 @@ export function Button({
   className = "",
   children,
   href,
+  loading = false,
+  disabled,
   ...props
 }: ButtonProps) {
-  const classes = `inline-flex items-center justify-center rounded-full font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green disabled:opacity-50 ${variantClasses[variant]} ${sizeClasses[size]} ${fullWidth ? "w-full" : ""} ${className}`;
+  const classes = `motion-button inline-flex items-center justify-center gap-2 rounded-full font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green disabled:pointer-events-none disabled:opacity-50 ${variantClasses[variant]} ${sizeClasses[size]} ${fullWidth ? "w-full" : ""} ${className}`;
+
+  const content = (
+    <>
+      {loading ? (
+        <span
+          className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent"
+          aria-hidden
+        />
+      ) : null}
+      <span>{children}</span>
+    </>
+  );
 
   if (href) {
     return (
-      <Link href={href} className={classes}>
-        {children}
+      <Link href={href} className={classes} aria-disabled={disabled || loading || undefined}>
+        {content}
       </Link>
     );
   }
 
   return (
-    <button className={classes} {...props}>
-      {children}
+    <button className={classes} disabled={disabled || loading} {...props}>
+      {content}
     </button>
   );
 }

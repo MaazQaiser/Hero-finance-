@@ -85,7 +85,7 @@ export function CalculatorExperience() {
       ? { label: "Browse Cars Within This Budget", href: browseHref }
       : mode === "deposit"
         ? { label: "Continue Application", href: "/apply" }
-        : { label: "Check My Eligibility", href: "/apply?campaign=price-budget" };
+        : { label: "Check My Eligibility", href: "/apply?campaign=affordability" };
 
   const secondaryCta =
     mode === "deposit"

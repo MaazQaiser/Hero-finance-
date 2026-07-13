@@ -35,6 +35,12 @@
     overflow-x: clip;
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
   body {
     @apply bg-paper text-ink antialiased;
     font-family: var(--font-sans);
@@ -279,6 +285,135 @@
     opacity: 0;
   }
 
+  /* ── Premium motion system (apply journey) ── */
+  .motion-page {
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity 250ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 250ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .motion-page-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .motion-card {
+    transition:
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 220ms ease;
+  }
+
+  .motion-card-interactive:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(30, 22, 53, 0.08);
+  }
+
+  .motion-button {
+    transition:
+      transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 180ms ease,
+      border-color 180ms ease,
+      box-shadow 180ms ease,
+      opacity 180ms ease;
+  }
+
+  .motion-button:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+
+  .motion-button:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  .motion-progress-bar {
+    transition: width 400ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .motion-field {
+    transition:
+      border-color 200ms ease,
+      box-shadow 200ms ease,
+      background-color 200ms ease;
+  }
+
+  .motion-field:focus {
+    transition-duration: 180ms;
+  }
+
+  .motion-error-in {
+    animation: motion-error-in 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .motion-shake {
+    animation: motion-shake 320ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  }
+
+  .motion-option {
+    transition:
+      border-color 200ms ease,
+      background-color 200ms ease,
+      transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 200ms ease;
+  }
+
+  .motion-option:active {
+    transform: scale(0.99);
+  }
+
+  .motion-modal-backdrop {
+    opacity: 0;
+    transition: opacity 240ms ease;
+  }
+
+  .motion-modal-backdrop-visible {
+    opacity: 1;
+  }
+
+  .motion-modal-panel {
+    border-radius: var(--radius-card);
+    border: 1px solid var(--color-line, #e8e0f5);
+    background: var(--color-paper, #fff);
+    padding: 1.5rem;
+    box-shadow: 0 24px 64px rgba(30, 22, 53, 0.18);
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+    transition:
+      opacity 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .motion-modal-panel-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  @keyframes motion-error-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes motion-shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-3px);
+    }
+    75% {
+      transform: translateX(3px);
+    }
+  }
+
   .calculator-result-enter {
     animation: hero-fade-up 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
@@ -366,10 +501,37 @@
     .animate-float-delay-1,
     .animate-float-delay-2,
     .animate-float-delay-3,
-    .animate-float-delay-4 {
+    .animate-float-delay-4,
+    .motion-error-in,
+    .motion-shake {
       animation: none;
       opacity: 1;
       transform: none;
+    }
+
+    .motion-page,
+    .motion-page-visible,
+    .motion-card,
+    .motion-card-interactive,
+    .motion-button,
+    .motion-progress-bar,
+    .motion-field,
+    .motion-option,
+    .motion-modal-backdrop,
+    .motion-modal-panel {
+      transition: none !important;
+      transform: none !important;
+      opacity: 1 !important;
+    }
+
+    .motion-card-interactive:hover,
+    .motion-button:hover:not(:disabled),
+    .motion-button:active:not(:disabled) {
+      transform: none !important;
+    }
+
+    .motion-option:active {
+      transform: none !important;
     }
   }
 }

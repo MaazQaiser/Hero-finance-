@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
+import { AnimatedModal } from "@/components/motion/AnimatedModal";
 
 interface ExitIntentModalProps {
   open: boolean;
@@ -17,39 +18,30 @@ export function ExitIntentModal({
   onLeave,
   sending = false,
 }: ExitIntentModalProps) {
-  if (!open) return null;
-
   return (
-    <div className="fixed inset-0 z-[80] flex items-end justify-center bg-ink/50 p-5 backdrop-blur-sm md:items-center">
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="exit-intent-title"
-        className="w-full max-w-md rounded-[var(--radius-card)] border border-line bg-paper p-6 shadow-2xl"
-      >
-        <h2 id="exit-intent-title" className="text-xl font-medium text-ink">
-          Before you go...
-        </h2>
-        <p className="mt-2 text-sm leading-relaxed text-muted">
-          Your progress can be saved so you can continue later.
-        </p>
+    <AnimatedModal open={open} onClose={onContinue} labelledBy="exit-intent-title">
+      <h2 id="exit-intent-title" className="text-xl font-medium text-ink">
+        Before you go...
+      </h2>
+      <p className="mt-2 text-sm leading-relaxed text-muted">
+        Your progress can be saved so you can continue later.
+      </p>
 
-        <div className="mt-6 space-y-3">
-          <Button fullWidth size="lg" onClick={onSendResume} disabled={sending}>
-            {sending ? "Sending..." : "Send Me a Resume Link"}
-          </Button>
-          <Button fullWidth variant="secondary" size="lg" onClick={onContinue}>
-            Keep Going
-          </Button>
-          <button
-            type="button"
-            onClick={onLeave}
-            className="min-h-11 w-full text-sm text-muted transition-colors hover:text-ink"
-          >
-            Leave Anyway
-          </button>
-        </div>
+      <div className="mt-6 space-y-3">
+        <Button fullWidth size="lg" onClick={onSendResume} loading={sending}>
+          {sending ? "Sending..." : "Send Me a Resume Link"}
+        </Button>
+        <Button fullWidth variant="secondary" size="lg" onClick={onContinue}>
+          Keep Going
+        </Button>
+        <button
+          type="button"
+          onClick={onLeave}
+          className="motion-button min-h-11 w-full text-sm text-muted hover:text-ink"
+        >
+          Leave Anyway
+        </button>
       </div>
-    </div>
+    </AnimatedModal>
   );
 }

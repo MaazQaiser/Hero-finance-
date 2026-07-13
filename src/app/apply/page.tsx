@@ -13,11 +13,12 @@ interface ApplyPageProps {
     session?: string;
     simulate?: string;
     campaign?: string;
+    variant?: string;
   }>;
 }
 
 export default async function ApplyPage({ searchParams }: ApplyPageProps) {
-  const { vehicle, resume, session, simulate, campaign } = await searchParams;
+  const { vehicle, resume, session, simulate } = await searchParams;
 
   return (
     <ApplyFlow
@@ -25,7 +26,6 @@ export default async function ApplyPage({ searchParams }: ApplyPageProps) {
       resume={resume === "true"}
       sessionExpired={session === "expired"}
       simulateNetworkError={simulate === "network-error"}
-      campaign={campaign}
     />
   );
 }

@@ -1,82 +1,79 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { ApplyInput } from "@/components/apply/ApplyField";
+import { SavedStatusBadge } from "@/components/apply/save/SavedStatusBadge";
+import { AnimatedModal } from "@/components/motion/AnimatedModal";
 
 interface SaveProgressModalProps {
   open: boolean;
-  mobile: string;
-  onMobileChange: (value: string) => void;
-  onSendResume: () => void;
-  onContinue: () => void;
-  sending?: boolean;
-  mobileError?: string;
+  onContinueLater: () => void;
+  onReturnToApplication: () => void;
 }
+
+const helperItems = [
+  "Resume on any device",
+  "Securely saved",
+  "No need to start again",
+];
 
 export function SaveProgressModal({
   open,
-  mobile,
-  onMobileChange,
-  onSendResume,
-  onContinue,
-  sending = false,
-  mobileError,
+  onContinueLater,
+  onReturnToApplication,
 }: SaveProgressModalProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!open || !mounted) return null;
-
   return (
-    <div className="fixed inset-0 z-[80] flex items-end justify-center bg-ink/50 p-5 backdrop-blur-sm md:items-center">
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="save-progress-title"
-        className="w-full max-w-md rounded-[var(--radius-card)] border border-line bg-paper p-6 shadow-2xl"
-      >
-        <h2 id="save-progress-title" className="text-xl font-medium text-ink">
-          Save your progress and continue anytime.
+    <AnimatedModal open={open} onClose={onReturnToApplication} labelledBy="save-progress-title">
+      <div className="flex justify-center">
+        <div
+          className="hero-success-in flex h-16 w-16 items-center justify-center rounded-full bg-success/15 text-success"
+          aria-hidden
+        >
+          <svg
+            className="h-8 w-8"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+          >
+            <path d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+      </div>
+
+      <div className="mt-5 text-center">
+        <SavedStatusBadge />
+        <h2 id="save-progress-title" className="mt-4 text-xl font-medium text-ink">
+          Your progress has been saved.
         </h2>
-        <p className="mt-2 text-sm text-muted">
-          We&apos;ll send a secure link so you can pick up right where you left off.
-        </p>
-
-        <div className="mt-6">
-          <ApplyInput
-            id="save-mobile"
-            label="Mobile number"
-            required
-            type="tel"
-            inputMode="tel"
-            value={mobile}
-            onChange={(e) => onMobileChange(e.target.value)}
-            error={mobileError}
-            placeholder="07XXX XXXXXX"
-            autoComplete="tel"
-          />
-        </div>
-
-        <div className="mt-6 space-y-3">
-          <Button fullWidth size="lg" onClick={onSendResume} disabled={sending}>
-            {sending ? "Sending..." : "Send Resume Link"}
-          </Button>
-          <Button fullWidth variant="secondary" size="lg" onClick={onContinue}>
-            Continue Application
-          </Button>
-        </div>
-
-        <p className="mt-5 flex items-center justify-center gap-2 text-center text-xs text-muted">
-          <span aria-hidden className="text-success">
-            ✓
-          </span>
-          Your information is securely saved.
+        <p className="mt-2 text-sm leading-relaxed text-muted">
+          You can safely leave now and continue your application whenever you&apos;re ready. Your
+          information will be waiting for you.
         </p>
       </div>
-    </div>
+
+      <ul className="mt-6 space-y-2.5 rounded-2xl border border-line bg-mist-2 p-4">
+        {helperItems.map((item) => (
+          <li key={item} className="flex items-center gap-2 text-sm text-muted">
+            <span className="text-green-deep" aria-hidden>
+              ✓
+            </span>
+            {item}
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-6 space-y-3">
+        <Button fullWidth size="lg" onClick={onContinueLater}>
+          Continue Later
+        </Button>
+        <Button fullWidth variant="secondary" size="lg" onClick={onReturnToApplication}>
+          Return to Application
+        </Button>
+      </div>
+
+      <p className="mt-5 text-center text-xs leading-relaxed text-muted">
+        No pressure. Continue whenever you&apos;re ready.
+      </p>
+    </AnimatedModal>
   );
 }

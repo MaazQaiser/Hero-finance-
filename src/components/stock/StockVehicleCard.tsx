@@ -24,7 +24,7 @@ export function StockVehicleCard({ vehicle, searchMode }: StockVehicleCardProps)
   const monthlyFirst = searchMode === "monthly";
 
   return (
-    <article className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-paper">
+    <article className="motion-card motion-card-interactive overflow-hidden rounded-[var(--radius-card)] border border-line bg-paper">
       <div className="relative aspect-[16/10] overflow-hidden">
         <div className="carousel-snap absolute inset-0 h-full">
           {vehicle.images.map((image, index) => (

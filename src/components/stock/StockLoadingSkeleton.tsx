@@ -1,6 +1,6 @@
 export function StockVehicleSkeleton() {
   return (
-    <article className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-paper animate-pulse">
+    <article className="motion-card overflow-hidden rounded-[var(--radius-card)] border border-line bg-paper animate-pulse">
       <div className="aspect-[16/10] bg-mist" />
       <div className="space-y-3 p-4 md:p-5">
         <div className="h-5 w-2/3 rounded-lg bg-line" />
@@ -21,7 +21,7 @@ export function StockVehicleSkeleton() {
 
 export function StockLoadingGrid() {
   return (
-    <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+    <div className="motion-page motion-page-visible grid gap-5 md:grid-cols-2 xl:grid-cols-3">
       {Array.from({ length: 6 }).map((_, index) => (
         <StockVehicleSkeleton key={index} />
       ))}

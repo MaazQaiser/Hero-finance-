@@ -1,5 +1,7 @@
 "use client";
 
+import { AnimatedProgress } from "@/components/motion/AnimatedProgress";
+
 interface ApplyProgressHeaderProps {
   stepNumber: number;
   totalSteps: number;
@@ -23,7 +25,7 @@ export function ApplyProgressHeader({
             type="button"
             onClick={onBack}
             disabled={!canGoBack}
-            className="flex min-h-11 items-center gap-2 text-sm font-medium text-ink transition-colors hover:text-green-deep disabled:opacity-30"
+            className="motion-button flex min-h-11 items-center gap-2 text-sm font-medium text-ink hover:text-green-deep disabled:opacity-30"
           >
             <span aria-hidden>←</span> Back
           </button>
@@ -32,12 +34,7 @@ export function ApplyProgressHeader({
           </p>
         </div>
 
-        <div className="h-1.5 overflow-hidden rounded-full bg-cream/10">
-          <div
-            className="h-full rounded-full bg-green transition-all duration-500 ease-out"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
+        <AnimatedProgress value={progress} label="Application progress" />
       </div>
     </header>
   );

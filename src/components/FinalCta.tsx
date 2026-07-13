@@ -42,11 +42,11 @@ export function FinalCta() {
 
                 <div className="mt-5 space-y-1 text-sm font-medium text-ink">
                   <p>Takes about 60 seconds</p>
-                  <p>{variant.trustMessage}</p>
+                  <p>{variant.firstReassurance}</p>
                 </div>
 
                 <p className="mt-5 text-base leading-relaxed text-muted">
-                  {variant.reassuranceBody}
+                  {variant.supportingCopy}
                 </p>
 
                 <div className="mt-8 space-y-3">

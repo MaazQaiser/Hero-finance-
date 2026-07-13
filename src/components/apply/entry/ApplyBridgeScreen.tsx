@@ -1,6 +1,8 @@
 "use client";
 
 import { ApplyPrimaryButton } from "@/components/apply/entry/ApplyPrimaryButton";
+import { AmbientTrust } from "@/components/apply/AmbientTrust";
+import { getActiveJourneyVariant } from "@/lib/journey/journeyVariants";
 
 interface ApplyBridgeScreenProps {
   onContinue: () => void;
@@ -23,24 +25,24 @@ function BridgeIllustration() {
 }
 
 export function ApplyBridgeScreen({ onContinue }: ApplyBridgeScreenProps) {
+  const journey = getActiveJourneyVariant();
+
   return (
     <div className="bg-paper">
       <main className="mx-auto flex max-w-lg flex-col justify-center px-5 pb-12 pt-8 text-center md:px-8">
         <BridgeIllustration />
 
-        <h1 className="headline-md">You&apos;re in the right place.</h1>
-        <p className="body-lg mx-auto mt-4 max-w-md">
-          Most people we help have been turned down elsewhere. Let&apos;s complete the remaining
-          details.
-        </p>
+        <h1 className="headline-md">{journey.bridgeTitle}</h1>
+        <p className="body-lg mx-auto mt-4 max-w-md">{journey.bridgeDescription}</p>
 
         <div className="mt-8">
-          <ApplyPrimaryButton
-            onClick={onContinue}
-            reassurance="Soft search only • No impact on your credit score"
-          >
+          <ApplyPrimaryButton onClick={onContinue} reassurance="">
             Continue Application
           </ApplyPrimaryButton>
+        </div>
+
+        <div className="mt-5">
+          <AmbientTrust messageKey="bridge" />
         </div>
       </main>
     </div>

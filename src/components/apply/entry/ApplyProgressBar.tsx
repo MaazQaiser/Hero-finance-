@@ -35,7 +35,7 @@ export function ApplyProgressBar({
         aria-label={`Application progress: ${progress}%`}
       >
         <div
-          className="h-full rounded-full bg-gradient-to-r from-green to-green-deep transition-all duration-700 ease-out"
+          className="motion-progress-bar h-full rounded-full bg-gradient-to-r from-green to-green-deep"
           style={{ width: `${progress}%` }}
         />
       </div>

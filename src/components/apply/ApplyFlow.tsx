@@ -5,16 +5,22 @@ import { useRouter } from "next/navigation";
 import { ApplyBridgeScreen } from "@/components/apply/entry/ApplyBridgeScreen";
 import { ApplyWelcomeScreen } from "@/components/apply/entry/ApplyWelcomeScreen";
 import { ApplyLoadingScreen } from "@/components/apply/ApplyLoadingScreen";
+import { ELIGIBILITY_LOADING_DURATION_MS } from "@/components/apply/loading/EligibilityLoading";
 import { ApplyNetworkError } from "@/components/apply/ApplyNetworkError";
 import { ApplyProgressHeader } from "@/components/apply/ApplyProgressHeader";
 import { ApplySessionTimeout } from "@/components/apply/ApplySessionTimeout";
 import { ApplyStepContent } from "@/components/apply/ApplyStepContent";
 import { ApplyStickyFooter } from "@/components/apply/ApplyStickyFooter";
+import { AmbientTrust } from "@/components/apply/AmbientTrust";
+import { AnimatedPage } from "@/components/motion/AnimatedPage";
 import { ExitIntentModal } from "@/components/apply/ExitIntentModal";
-import { ResumeLinkSent } from "@/components/apply/ResumeLinkSent";
 import { SaveProgressModal } from "@/components/apply/SaveProgressModal";
+import { ResumeApplicationScreen } from "@/components/apply/save/ResumeApplicationScreen";
+import { mockSavedApplication } from "@/lib/apply/mockSaveProgress";
 import { stepMeta } from "@/lib/apply/stepMeta";
-import { getStepReassurance } from "@/lib/apply/stepReassurance";
+import {
+  getAmbientTrustKeyForStep,
+} from "@/lib/apply/ambientTrustMessages";
 import {
   clearProgress,
   getProgressAgeMs,
@@ -35,15 +41,12 @@ import {
 } from "@/lib/apply/types";
 import { generateDecision, saveDecision } from "@/lib/apply/decision";
 import { isStepComplete, validateStep } from "@/lib/apply/validation";
-import { resolveLandingVariant } from "@/lib/landing/resolveVariant";
-import { loadLandingCampaign, saveLandingCampaign } from "@/lib/landing/storage";
 
 interface ApplyFlowProps {
   vehicleId?: string;
   resume?: boolean;
   sessionExpired?: boolean;
   simulateNetworkError?: boolean;
-  campaign?: string;
 }
 
 type FlowPhase =
@@ -54,7 +57,8 @@ type FlowPhase =
   | "loading"
   | "session-expired"
   | "network-error"
-  | "resume-sent";
+  | "resume-sent"
+  | "resume-hub";
 
 function getPhaseForStep(stepId: StepId): FlowPhase {
   if (getPreBridgeSteps().includes(stepId)) return "qualifying";
@@ -85,23 +89,9 @@ export function ApplyFlow({
   resume = false,
   sessionExpired = false,
   simulateNetworkError = false,
-  campaign,
 }: ApplyFlowProps) {
   const router = useRouter();
   const networkRetried = useRef(false);
-
-  const [landingVariant, setLandingVariant] = useState(() => resolveLandingVariant(campaign));
-
-  useEffect(() => {
-    if (campaign) {
-      setLandingVariant(resolveLandingVariant(campaign));
-      saveLandingCampaign(campaign);
-      return;
-    }
-
-    const stored = loadLandingCampaign();
-    setLandingVariant(resolveLandingVariant(stored));
-  }, [campaign]);
 
   const [data, setData] = useState<ApplicationData>(() =>
     mergeInitialData(vehicleId, resume),
@@ -134,7 +124,10 @@ export function ApplyFlow({
     [currentStepId, data, isMobileStep, phase],
   );
   const canContinue = phase === "form" || isMobileStep ? isStepComplete(currentStepId, data) : true;
-  const stepReassurance = phase === "form" ? getStepReassurance(currentStepId) : null;
+  const ambientTrustKey =
+    phase === "qualifying" || phase === "form"
+      ? getAmbientTrustKeyForStep(currentStepId)
+      : null;
 
   const progressStepNumber =
     phase === "qualifying"
@@ -156,6 +149,11 @@ export function ApplyFlow({
         setEntryResolved(true);
         return;
       }
+
+      // Design prototype: land on the resume hub before jumping back into steps
+      setPhase("resume-hub");
+      setEntryResolved(true);
+      return;
     }
 
     if (shouldSkipWelcome(resume, sessionExpired)) {
@@ -195,14 +193,11 @@ export function ApplyFlow({
     const preIndex = preBridgeSteps.indexOf(stepId);
     if (preIndex >= 0) {
       setQualifyingIndex(preIndex);
-      setPhase("qualifying");
-      return;
     }
 
     const postIndex = getPostBridgeSteps(saved.data).indexOf(stepId);
     if (postIndex >= 0) {
       setFormIndex(postIndex);
-      setPhase("form");
     }
   }, [preBridgeSteps, resume]);
 
@@ -221,6 +216,13 @@ export function ApplyFlow({
     if (!["welcome", "qualifying", "bridge", "form"].includes(phase)) return;
     saveProgress(data, currentStepId);
   }, [currentStepId, data, phase]);
+
+  useEffect(() => {
+    if (!["welcome", "qualifying", "bridge", "form"].includes(phase)) return;
+    if (window.scrollY > 0) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [currentStepId, phase]);
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -270,7 +272,7 @@ export function ApplyFlow({
       saveDecision(decision);
       clearProgress();
       router.push(`/apply/decision?state=${decision.state}`);
-    }, 4000);
+    }, ELIGIBILITY_LOADING_DURATION_MS);
   }, [data, router]);
 
   const goNextQualifying = useCallback(() => {
@@ -317,9 +319,9 @@ export function ApplyFlow({
   }, [currentQualifyingStepId, goNextQualifying, phase]);
 
   const handleSaveClick = useCallback(() => {
-    setSaveMobile(data.mobile || saveMobile);
+    saveProgress(data, currentStepId);
     setSaveModalOpen(true);
-  }, [data.mobile, saveMobile]);
+  }, [currentStepId, data]);
 
   const sendResumeLink = useCallback(
     (mobile: string) => {
@@ -330,15 +332,21 @@ export function ApplyFlow({
         setSendingResume(false);
         setSaveModalOpen(false);
         setExitOpen(false);
-        setPhase("resume-sent");
+        setPhase("resume-hub");
       }, 800);
     },
     [currentStepId, data],
   );
 
-  const handleSendFromSaveModal = useCallback(() => {
-    sendResumeLink(saveMobile);
-  }, [saveMobile, sendResumeLink]);
+  const handleContinueLater = useCallback(() => {
+    saveProgress(data, currentStepId);
+    setSaveModalOpen(false);
+    setPhase("resume-hub");
+  }, [currentStepId, data]);
+
+  const handleReturnToApplication = useCallback(() => {
+    setSaveModalOpen(false);
+  }, []);
 
   const handleSendFromExit = useCallback(() => {
     sendResumeLink(data.mobile || saveMobile);
@@ -362,7 +370,9 @@ export function ApplyFlow({
         return;
       }
     }
-    setPhase("welcome");
+    // Prototype fallback when no real progress exists
+    setPhase("form");
+    setFormIndex(0);
   }, [preBridgeSteps]);
 
   const handleStartAgain = useCallback(() => {
@@ -391,11 +401,8 @@ export function ApplyFlow({
   const saveModal = (
     <SaveProgressModal
       open={saveModalOpen}
-      mobile={saveMobile}
-      onMobileChange={setSaveMobile}
-      onSendResume={handleSendFromSaveModal}
-      onContinue={() => setSaveModalOpen(false)}
-      sending={sendingResume}
+      onContinueLater={handleContinueLater}
+      onReturnToApplication={handleReturnToApplication}
     />
   );
 
@@ -413,8 +420,15 @@ export function ApplyFlow({
     return <ApplyNetworkError onRetry={handleNetworkRetry} />;
   }
 
-  if (phase === "resume-sent") {
-    return <ResumeLinkSent onContinue={() => setPhase("form")} />;
+  if (phase === "resume-sent" || phase === "resume-hub") {
+    return (
+      <ResumeApplicationScreen
+        saved={mockSavedApplication}
+        onResume={handleResumeFromTimeout}
+        onStartAgain={handleStartAgain}
+        onStartNew={handleStartAgain}
+      />
+    );
   }
 
   if (!entryResolved && resume) {
@@ -424,14 +438,12 @@ export function ApplyFlow({
   if (phase === "welcome") {
     return (
       <>
-        <ApplyWelcomeScreen
-          onContinue={handleContinueFromWelcome}
-          onSaveLater={handleSaveClick}
-          headline={landingVariant.applicationHeadline}
-          body={landingVariant.applicationBody}
-          ctaLabel={landingVariant.applicationCta}
-          trustMessage={landingVariant.trustMessage}
-        />
+        <AnimatedPage pageKey="welcome">
+          <ApplyWelcomeScreen
+            onContinue={handleContinueFromWelcome}
+            onSaveLater={handleSaveClick}
+          />
+        </AnimatedPage>
         {saveModal}
       </>
     );
@@ -447,7 +459,9 @@ export function ApplyFlow({
             onBack={goBack}
             canGoBack
           />
-          <ApplyBridgeScreen onContinue={handleContinueFromBridge} />
+          <AnimatedPage pageKey="bridge">
+            <ApplyBridgeScreen onContinue={handleContinueFromBridge} />
+          </AnimatedPage>
         </div>
         {saveModal}
       </>
@@ -465,23 +479,31 @@ export function ApplyFlow({
         />
 
         <main className={`mx-auto max-w-lg px-5 pt-6 ${phase === "form" ? "pb-44" : "pb-40"}`}>
-          <p className="eyebrow">Finance application</p>
-          <h1 className="mt-3 text-2xl font-medium text-ink md:text-3xl">{meta.title}</h1>
-          <p className="mt-3 text-sm leading-relaxed text-muted">{meta.helper}</p>
+          <AnimatedPage pageKey={`${phase}-${currentStepId}`}>
+            <p className="eyebrow">Finance application</p>
+            <h1 className="mt-3 text-2xl font-medium text-ink md:text-3xl">{meta.title}</h1>
+            <p className="mt-3 text-sm leading-relaxed text-muted">{meta.helper}</p>
 
-          {meta.encouragement && phase === "form" && formIndex > 0 && (
-            <p className="mt-2 text-sm text-green-deep">{meta.encouragement}</p>
-          )}
+            {meta.encouragement && phase === "form" && formIndex > 0 && (
+              <p className="mt-2 text-sm text-green-deep">{meta.encouragement}</p>
+            )}
 
-          <div className="mt-8">
-            <ApplyStepContent
-              stepId={currentStepId}
-              data={data}
-              onChange={updateData}
-              onAutoAdvance={phase === "qualifying" ? handleAutoAdvance : undefined}
-              fieldErrors={fieldErrors}
-            />
-          </div>
+            <div className="mt-8">
+              <ApplyStepContent
+                stepId={currentStepId}
+                data={data}
+                onChange={updateData}
+                onAutoAdvance={phase === "qualifying" ? handleAutoAdvance : undefined}
+                fieldErrors={fieldErrors}
+              />
+            </div>
+
+            {ambientTrustKey && !showStickyFooter && (
+              <div className="mt-10">
+                <AmbientTrust messageKey={ambientTrustKey} />
+              </div>
+            )}
+          </AnimatedPage>
         </main>
 
         {showStickyFooter && (
@@ -490,7 +512,7 @@ export function ApplyFlow({
             onSave={handleSaveClick}
             continueLabel={isReview ? "Check My Eligibility" : "Continue"}
             continueDisabled={!canContinue}
-            reassurance={stepReassurance}
+            trustKey={ambientTrustKey}
           />
         )}
 

@@ -124,9 +124,9 @@ export function HowItWorksV2() {
                 Soft search
               </p>
               <h3 className="mt-4 font-display text-2xl font-extrabold tracking-tight text-white md:text-3xl">
-                {variant.reassuranceHeadline}
+                {variant.firstReassurance}
               </h3>
-              <p className="mt-3 text-sm leading-relaxed text-white/85">{variant.reassuranceBody}</p>
+              <p className="mt-3 text-sm leading-relaxed text-white/85">{variant.supportingCopy}</p>
             </div>
           </ScrollReveal>
         </div>

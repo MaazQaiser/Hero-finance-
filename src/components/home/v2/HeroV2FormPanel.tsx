@@ -9,10 +9,10 @@ export function HeroV2FormPanel() {
   return (
     <HeroEligibilityCard
       variant="v2"
-      introHeadline={variant.cardIntroHeadline}
-      introBody={variant.cardIntroBody}
+      introHeadline={variant.introHeading}
+      introBody={variant.supportingCopy}
       ctaLabel={variant.cta}
-      trustMessage={variant.trustMessage}
+      trustMessage={variant.firstReassurance}
       applyHref={applyHref}
     />
   );

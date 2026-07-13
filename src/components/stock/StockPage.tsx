@@ -183,7 +183,7 @@ export function StockPage() {
           {loading ? (
             <StockLoadingGrid />
           ) : (
-            <>
+            <div className="motion-page motion-page-visible">
               <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                 {visibleVehicles.map((vehicle) => (
                   <StockVehicleCard
@@ -209,7 +209,7 @@ export function StockPage() {
                   </Button>
                 </div>
               )}
-            </>
+            </div>
           )}
         </div>
       </section>

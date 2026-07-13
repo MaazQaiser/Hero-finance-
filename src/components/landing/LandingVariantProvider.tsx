@@ -19,7 +19,10 @@ interface LandingVariantProviderProps {
 
 export function LandingVariantProvider({ children }: LandingVariantProviderProps) {
   const searchParams = useSearchParams();
-  const campaign = searchParams.get("campaign") ?? searchParams.get("variant");
+  const campaign =
+    searchParams.get("campaign") ??
+    searchParams.get("variant") ??
+    searchParams.get("utm_content");
 
   const value = useMemo(() => {
     const variant = resolveLandingVariant(campaign);

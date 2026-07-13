@@ -1,8 +1,13 @@
+"use client";
+
 import { Button } from "@/components/ui/Button";
 import { type DecisionState } from "@/lib/apply/decision";
 
 interface DecisionStickyFooterProps {
   state: DecisionState;
+  /** When set, primary approved CTA advances the prototype stage instead of linking */
+  onApprovedContinue?: () => void;
+  hide?: boolean;
 }
 
 const PHONE_HREF = "tel:08001234567";
@@ -15,7 +20,7 @@ const ctaConfig: Record<
     label: "See Matching Cars",
     href: "/cars",
     secondary: {
-      label: "Speak to our team",
+      label: "Speak to a Finance Specialist",
       href: PHONE_HREF,
     },
   },
@@ -29,9 +34,15 @@ const ctaConfig: Record<
   },
 };
 
-export function DecisionStickyFooter({ state }: DecisionStickyFooterProps) {
+export function DecisionStickyFooter({
+  state,
+  onApprovedContinue,
+  hide = false,
+}: DecisionStickyFooterProps) {
   const config = ctaConfig[state];
   const animateIn = state === "approved";
+
+  if (hide) return null;
 
   return (
     <div
@@ -49,9 +60,15 @@ export function DecisionStickyFooter({ state }: DecisionStickyFooterProps) {
             {config.secondary.label}
           </Button>
         )}
-        <Button fullWidth size="lg" href={config.href}>
-          {config.label}
-        </Button>
+        {state === "approved" && onApprovedContinue ? (
+          <Button fullWidth size="lg" onClick={onApprovedContinue}>
+            {config.label}
+          </Button>
+        ) : (
+          <Button fullWidth size="lg" href={config.href}>
+            {config.label}
+          </Button>
+        )}
       </div>
     </div>
   );
