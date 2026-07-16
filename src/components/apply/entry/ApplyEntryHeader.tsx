@@ -45,10 +45,10 @@ export function ApplyEntryHeader({ onSaveLater }: ApplyEntryHeaderProps) {
         <button
           type="button"
           onClick={onSaveLater}
-          className="min-h-11 shrink-0 text-sm font-semibold text-green-deep transition-colors hover:text-green"
+          className="motion-button min-h-11 shrink-0 rounded-full border border-green/30 bg-green/10 px-4 text-sm font-semibold text-green-deep hover:border-green/50 hover:bg-green/15"
         >
           <span className="hidden sm:inline">Save &amp; Continue Later</span>
-          <span className="sm:hidden">Save</span>
+          <span className="sm:hidden">Save &amp; Continue</span>
         </button>
       </div>
     </header>

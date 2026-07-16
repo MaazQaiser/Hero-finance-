@@ -241,6 +241,20 @@ const rawVehicles: Omit<Vehicle, "specs" | "registration" | "apr">[] = [
     images: ["/images/stock/used-car-3.jpg", "/images/stock/used-car-listed-2.jpg"],
     addedAt: "2026-06-08",
   },
+  {
+    id: "11",
+    make: "Tesla",
+    model: "Model 3",
+    year: 2022,
+    mileage: 21400,
+    fuel: "Electric",
+    transmission: "Automatic",
+    price: 26995,
+    monthlyHp: 399,
+    badge: "Just In",
+    images: ["/images/stock/used-car-listed-2.jpg", "/images/stock/used-car-3.jpg"],
+    addedAt: "2026-06-23",
+  },
 ];
 
 export const vehicles: Vehicle[] = rawVehicles.map(enrichVehicle);
@@ -296,7 +310,7 @@ export function calculateHpMonthly(
 }
 
 export const filterOptions = {
-  makes: ["BMW", "Audi", "Ford", "Mercedes-Benz", "Volkswagen", "Toyota", "Nissan", "Kia", "Hyundai", "Vauxhall"],
+  makes: ["BMW", "Audi", "Ford", "Mercedes-Benz", "Volkswagen", "Toyota", "Nissan", "Kia", "Hyundai", "Vauxhall", "Tesla"],
   fuelTypes: ["Petrol", "Diesel", "Hybrid", "Electric"],
   transmissions: ["Manual", "Automatic"],
   years: [2023, 2022, 2021, 2020, 2019],

@@ -1,5 +1,7 @@
 "use client";
 
+import { approvalContent } from "@/config/approvalContent";
+
 interface ApprovalHeaderProps {
   eyebrow?: string;
   title?: string;
@@ -8,23 +10,20 @@ interface ApprovalHeaderProps {
 }
 
 export function ApprovalHeader({
-  eyebrow = "Congratulations!",
-  title = "You're approved for vehicle finance.",
-  description = "We've successfully reviewed your application and found finance options that match your circumstances.",
+  eyebrow = approvalContent.eyebrow,
+  title = approvalContent.title,
+  description = approvalContent.description,
   applicantName,
 }: ApprovalHeaderProps) {
   const personalizedDescription =
-    applicantName && description.startsWith("We've successfully")
-      ? description.replace(
-          "We've successfully reviewed your application",
-          `We've successfully reviewed your application, ${applicantName},`,
-        )
+    applicantName && !description.includes(applicantName)
+      ? `${description.replace(/\.$/, "")}, ${applicantName}.`
       : description;
 
   return (
-    <section className="text-center">
+    <section className="approval-header text-center">
       <div
-        className="hero-success-in mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-success/15 text-success"
+        className="approval-success-icon hero-success-in mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-success/15 text-success"
         aria-hidden
       >
         <svg

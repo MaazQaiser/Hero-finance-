@@ -8,6 +8,7 @@ interface RecommendedCarsSectionProps {
   /** Optional approval amount — used to curate a shortlist from mock stock */
   approvedAmount?: number;
   limit?: number;
+  onOpenWarranty?: () => void;
 }
 
 function getRecommendedVehicles(approvedAmount?: number, limit = 4): Vehicle[] {
@@ -21,6 +22,7 @@ function getRecommendedVehicles(approvedAmount?: number, limit = 4): Vehicle[] {
 export function RecommendedCarsSection({
   approvedAmount,
   limit = 4,
+  onOpenWarranty,
 }: RecommendedCarsSectionProps) {
   const recommended = getRecommendedVehicles(approvedAmount, Math.min(Math.max(limit, 3), 5));
 
@@ -36,7 +38,7 @@ export function RecommendedCarsSection({
       <div className="carousel-snap -mx-5 px-5 pb-1">
         {recommended.map((vehicle, index) => (
           <div key={vehicle.id} className="w-[78vw] shrink-0 snap-center sm:w-[280px]">
-            <VehicleCard vehicle={vehicle} index={index} />
+            <VehicleCard vehicle={vehicle} index={index} onOpenWarranty={onOpenWarranty} />
           </div>
         ))}
       </div>

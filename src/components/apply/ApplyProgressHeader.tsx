@@ -1,12 +1,15 @@
 "use client";
 
 import { AnimatedProgress } from "@/components/motion/AnimatedProgress";
+import { BackNavigationNotice } from "@/components/apply/save/BackNavigationNotice";
+import { ProgressHint } from "@/components/apply/form/ProgressHint";
 
 interface ApplyProgressHeaderProps {
   stepNumber: number;
   totalSteps: number;
   onBack: () => void;
   canGoBack: boolean;
+  backNotice?: string | null;
 }
 
 export function ApplyProgressHeader({
@@ -14,6 +17,7 @@ export function ApplyProgressHeader({
   totalSteps,
   onBack,
   canGoBack,
+  backNotice,
 }: ApplyProgressHeaderProps) {
   const progress = (stepNumber / totalSteps) * 100;
 
@@ -25,7 +29,7 @@ export function ApplyProgressHeader({
             type="button"
             onClick={onBack}
             disabled={!canGoBack}
-            className="motion-button flex min-h-11 items-center gap-2 text-sm font-medium text-ink hover:text-green-deep disabled:opacity-30"
+            className="motion-button flex min-h-11 items-center gap-2 text-sm font-medium text-ink hover:text-green-deep focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green disabled:opacity-30"
           >
             <span aria-hidden>←</span> Back
           </button>
@@ -34,7 +38,11 @@ export function ApplyProgressHeader({
           </p>
         </div>
 
+        <ProgressHint stepNumber={stepNumber} totalSteps={totalSteps} className="mb-2" />
+
         <AnimatedProgress value={progress} label="Application progress" />
+
+        {backNotice ? <BackNavigationNotice message={backNotice} className="mt-3" /> : null}
       </div>
     </header>
   );

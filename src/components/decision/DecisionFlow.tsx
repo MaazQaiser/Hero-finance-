@@ -89,7 +89,10 @@ export function DecisionFlow({ stateOverride }: DecisionFlowProps) {
       <main className="mx-auto max-w-lg px-5 py-8">
         <AnimatedPage pageKey={`${state}-${approvedStage}`}>
           {state === "approved" && approvedStage === "summary" && (
-            <ApprovedDecision decision={decision} />
+            <ApprovedDecision
+              decision={decision}
+              onOpenWarranty={() => setApprovedStage("warranty")}
+            />
           )}
           {showWarranty && <WarrantySelection onContinue={handleWarrantyContinue} />}
           {state === "declined" && <DeclinedDecision decision={decision} />}

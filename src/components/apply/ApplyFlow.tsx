@@ -16,11 +16,22 @@ import { AnimatedPage } from "@/components/motion/AnimatedPage";
 import { ExitIntentModal } from "@/components/apply/ExitIntentModal";
 import { SaveProgressModal } from "@/components/apply/SaveProgressModal";
 import { ResumeApplicationScreen } from "@/components/apply/save/ResumeApplicationScreen";
-import { mockSavedApplication } from "@/lib/apply/mockSaveProgress";
-import { stepMeta } from "@/lib/apply/stepMeta";
+import { JourneyVariantProvider, useJourneyVariant } from "@/components/apply/JourneyVariantProvider";
+import { VehicleJourneySummary } from "@/components/apply/VehicleJourneySummary";
 import {
-  getAmbientTrustKeyForStep,
-} from "@/lib/apply/ambientTrustMessages";
+  applyJourneyDefaults,
+  getJourneyBehaviour,
+  getStepMetaForJourney,
+} from "@/lib/journey/journeyBehaviour";
+import { getVehicleById } from "@/data/vehicles";
+import { mockSavedApplication } from "@/lib/apply/mockSaveProgress";
+import { saveContinueContent } from "@/config/saveContinueContent";
+import { stepMeta } from "@/lib/apply/stepMeta";
+import { personalizeStepMeta } from "@/lib/apply/stepPersonalization";
+import {
+  getTrustMessageKeyForStep,
+  getTrustMessage,
+} from "@/config/trustMessages";
 import {
   clearProgress,
   getProgressAgeMs,
@@ -47,6 +58,9 @@ interface ApplyFlowProps {
   resume?: boolean;
   sessionExpired?: boolean;
   simulateNetworkError?: boolean;
+  campaign?: string;
+  variant?: string;
+  source?: string;
 }
 
 type FlowPhase =
@@ -89,9 +103,38 @@ export function ApplyFlow({
   resume = false,
   sessionExpired = false,
   simulateNetworkError = false,
+  campaign,
+  variant,
+  source,
 }: ApplyFlowProps) {
+  return (
+    <JourneyVariantProvider
+      campaign={campaign}
+      variant={variant}
+      vehicleId={vehicleId}
+      source={source}
+    >
+      <ApplyFlowContent
+        vehicleId={vehicleId}
+        resume={resume}
+        sessionExpired={sessionExpired}
+        simulateNetworkError={simulateNetworkError}
+      />
+    </JourneyVariantProvider>
+  );
+}
+
+function ApplyFlowContent({
+  vehicleId,
+  resume = false,
+  sessionExpired = false,
+  simulateNetworkError = false,
+}: Omit<ApplyFlowProps, "campaign" | "variant" | "source">) {
   const router = useRouter();
   const networkRetried = useRef(false);
+  const journey = useJourneyVariant();
+  const behaviour = useMemo(() => getJourneyBehaviour(journey.id), [journey.id]);
+  const journeyDefaultsApplied = useRef(false);
 
   const [data, setData] = useState<ApplicationData>(() =>
     mergeInitialData(vehicleId, resume),
@@ -106,6 +149,8 @@ export function ApplyFlow({
   const [exitOpen, setExitOpen] = useState(false);
   const [saveMobile, setSaveMobile] = useState("");
   const [sendingResume, setSendingResume] = useState(false);
+  const [backNotice, setBackNotice] = useState<string | null>(null);
+  const backNoticeIndex = useRef(0);
 
   const preBridgeSteps = useMemo(() => getPreBridgeSteps(), []);
   const postBridgeSteps = useMemo(() => getPostBridgeSteps(data), [data]);
@@ -115,18 +160,29 @@ export function ApplyFlow({
   const currentFormStepId = postBridgeSteps[formIndex] ?? "email";
   const currentStepId =
     phase === "qualifying" ? currentQualifyingStepId : phase === "form" ? currentFormStepId : "mobile";
-  const meta = stepMeta[currentStepId];
+  const meta = personalizeStepMeta(
+    currentStepId,
+    getStepMetaForJourney(currentStepId, behaviour, stepMeta[currentStepId]),
+    data,
+  );
+  const summaryVehicle =
+    behaviour.showVehicleSummary && data.vehicleId
+      ? getVehicleById(data.vehicleId)
+      : null;
   const isReview = currentFormStepId === "review";
   const isMobileStep = phase === "qualifying" && currentQualifyingStepId === "mobile";
   const showStickyFooter = phase === "form" || isMobileStep;
   const fieldErrors = useMemo(
-    () => (phase === "form" || isMobileStep ? validateStep(currentStepId, data) : {}),
-    [currentStepId, data, isMobileStep, phase],
+    () =>
+      phase === "qualifying" || phase === "form"
+        ? validateStep(currentStepId, data)
+        : {},
+    [currentStepId, data, phase],
   );
   const canContinue = phase === "form" || isMobileStep ? isStepComplete(currentStepId, data) : true;
   const ambientTrustKey =
     phase === "qualifying" || phase === "form"
-      ? getAmbientTrustKeyForStep(currentStepId)
+      ? getTrustMessageKeyForStep(currentStepId)
       : null;
 
   const progressStepNumber =
@@ -209,6 +265,12 @@ export function ApplyFlow({
   }, [formIndex, phase, postBridgeSteps.length]);
 
   useEffect(() => {
+    if (journeyDefaultsApplied.current) return;
+    journeyDefaultsApplied.current = true;
+    setData((current) => applyJourneyDefaults(current, behaviour));
+  }, [behaviour]);
+
+  useEffect(() => {
     if (data.mobile && !saveMobile) setSaveMobile(data.mobile);
   }, [data.mobile, saveMobile]);
 
@@ -240,6 +302,10 @@ export function ApplyFlow({
   }, []);
 
   const goBack = useCallback(() => {
+    const messages = saveContinueContent.backNavigation;
+    setBackNotice(messages[backNoticeIndex.current % messages.length]);
+    backNoticeIndex.current += 1;
+
     if (phase === "form") {
       if (formIndex === 0) {
         setPhase("bridge");
@@ -302,6 +368,8 @@ export function ApplyFlow({
   }, [currentFormStepId, data, isReview, postBridgeSteps.length, simulateNetworkError, submitApplication]);
 
   const goNext = useCallback(() => {
+    setBackNotice(null);
+
     if (phase === "qualifying") {
       if (isMobileStep && !isStepComplete("mobile", data)) return;
       goNextQualifying();
@@ -317,6 +385,12 @@ export function ApplyFlow({
     if (phase !== "qualifying" || !isAutoAdvanceStep(currentQualifyingStepId)) return;
     window.setTimeout(() => goNextQualifying(), 280);
   }, [currentQualifyingStepId, goNextQualifying, phase]);
+
+  useEffect(() => {
+    if (!backNotice) return;
+    const timer = window.setTimeout(() => setBackNotice(null), 4000);
+    return () => window.clearTimeout(timer);
+  }, [backNotice]);
 
   const handleSaveClick = useCallback(() => {
     saveProgress(data, currentStepId);
@@ -442,6 +516,7 @@ export function ApplyFlow({
           <ApplyWelcomeScreen
             onContinue={handleContinueFromWelcome}
             onSaveLater={handleSaveClick}
+            vehicleId={vehicleId}
           />
         </AnimatedPage>
         {saveModal}
@@ -458,9 +533,10 @@ export function ApplyFlow({
             totalSteps={totalSteps}
             onBack={goBack}
             canGoBack
+            backNotice={backNotice}
           />
           <AnimatedPage pageKey="bridge">
-            <ApplyBridgeScreen onContinue={handleContinueFromBridge} />
+            <ApplyBridgeScreen onContinue={handleContinueFromBridge} vehicleId={vehicleId} />
           </AnimatedPage>
         </div>
         {saveModal}
@@ -476,6 +552,7 @@ export function ApplyFlow({
           totalSteps={totalSteps}
           onBack={goBack}
           canGoBack
+          backNotice={backNotice}
         />
 
         <main className={`mx-auto max-w-lg px-5 pt-6 ${phase === "form" ? "pb-44" : "pb-40"}`}>
@@ -488,6 +565,8 @@ export function ApplyFlow({
               <p className="mt-2 text-sm text-green-deep">{meta.encouragement}</p>
             )}
 
+            {summaryVehicle ? <VehicleJourneySummary vehicle={summaryVehicle} /> : null}
+
             <div className="mt-8">
               <ApplyStepContent
                 stepId={currentStepId}
@@ -495,12 +574,13 @@ export function ApplyFlow({
                 onChange={updateData}
                 onAutoAdvance={phase === "qualifying" ? handleAutoAdvance : undefined}
                 fieldErrors={fieldErrors}
+                behaviour={behaviour}
               />
             </div>
 
             {ambientTrustKey && !showStickyFooter && (
               <div className="mt-10">
-                <AmbientTrust messageKey={ambientTrustKey} />
+                <AmbientTrust message={getTrustMessage(ambientTrustKey)} />
               </div>
             )}
           </AnimatedPage>

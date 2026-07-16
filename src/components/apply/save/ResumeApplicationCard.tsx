@@ -1,9 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
-import { ApplicationProgressCard } from "@/components/apply/save/ApplicationProgressCard";
+import { ApplicationProgress } from "@/components/apply/save/ApplicationProgress";
 import { SavedStatusBadge } from "@/components/apply/save/SavedStatusBadge";
 import { type MockSavedApplication } from "@/lib/apply/mockSaveProgress";
+import { saveContinueContent } from "@/config/saveContinueContent";
 
 interface ResumeApplicationCardProps {
   saved: MockSavedApplication;
@@ -16,20 +17,17 @@ export function ResumeApplicationCard({
   onResume,
   onStartAgain,
 }: ResumeApplicationCardProps) {
+  const { resume } = saveContinueContent;
+
   return (
-    <div className="hero-fade-up space-y-5">
+    <div className="save-resume-card hero-fade-up space-y-5">
       <div className="text-center">
         <SavedStatusBadge label="We'll remember where you left off" />
-        <h1 className="mt-4 text-2xl font-medium text-ink md:text-3xl">
-          Continue your application
-        </h1>
-        <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted">
-          You&apos;ve already completed {saved.completedSteps} of {saved.totalSteps} steps.
-          Continue whenever you&apos;re ready — no pressure.
-        </p>
+        <h1 className="mt-4 text-2xl font-medium text-ink md:text-3xl">{resume.title}</h1>
+        <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted">{resume.subtitle}</p>
       </div>
 
-      <ApplicationProgressCard
+      <ApplicationProgress
         completedSteps={saved.completedSteps}
         totalSteps={saved.totalSteps}
         progressPercent={saved.progressPercent}
@@ -39,16 +37,14 @@ export function ResumeApplicationCard({
 
       <div className="space-y-3">
         <Button fullWidth size="lg" onClick={onResume}>
-          Resume application
+          {resume.primaryCta}
         </Button>
         <Button fullWidth variant="secondary" size="lg" onClick={onStartAgain}>
-          Start again
+          {resume.secondaryCta}
         </Button>
       </div>
 
-      <p className="text-center text-xs leading-relaxed text-muted">
-        Your progress is securely saved. We&apos;ll pick up exactly where you stopped.
-      </p>
+      <p className="text-center text-xs leading-relaxed text-muted">{resume.footerNote}</p>
     </div>
   );
 }

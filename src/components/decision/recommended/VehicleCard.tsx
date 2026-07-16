@@ -4,24 +4,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { type Vehicle, formatPrice } from "@/data/vehicles";
-import { VehicleBadge } from "@/components/decision/recommended/VehicleBadge";
 import { VehicleSpecs } from "@/components/decision/recommended/VehicleSpecs";
+import { VehicleTrustSection } from "@/components/trust/VehicleTrustSection";
 
 interface VehicleCardProps {
   vehicle: Vehicle;
   index?: number;
+  onOpenWarranty?: () => void;
 }
 
-function getTrustBadges(fuel: string): string[] {
-  const badges = ["AA Inspected", "Ready to Drive", "Free Delivery"];
-  if (/electric|ev|hybrid/i.test(fuel)) {
-    badges.push("Battery Health Verified");
-  }
-  return badges;
-}
-
-export function VehicleCard({ vehicle, index = 0 }: VehicleCardProps) {
-  const badges = getTrustBadges(vehicle.fuel);
+export function VehicleCard({ vehicle, index = 0, onOpenWarranty }: VehicleCardProps) {
   const delayClass =
     index === 0
       ? "hero-fade-up-delay"
@@ -45,11 +37,6 @@ export function VehicleCard({ vehicle, index = 0 }: VehicleCardProps) {
           className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           sizes="(max-width: 768px) 85vw, 280px"
         />
-        <div className="absolute inset-x-3 bottom-3 flex flex-wrap gap-1.5">
-          {badges.slice(0, 3).map((label) => (
-            <VehicleBadge key={label} label={label} />
-          ))}
-        </div>
       </div>
 
       <div className="p-4">
@@ -75,13 +62,12 @@ export function VehicleCard({ vehicle, index = 0 }: VehicleCardProps) {
           </p>
         </div>
 
-        {badges.length > 3 ? (
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {badges.slice(3).map((label) => (
-              <VehicleBadge key={label} label={label} />
-            ))}
-          </div>
-        ) : null}
+        <VehicleTrustSection
+          vehicle={vehicle}
+          compact
+          onOpenWarranty={onOpenWarranty}
+          className="mt-3"
+        />
 
         <Link href={`/cars/${vehicle.id}`} className="mt-4 block">
           <Button fullWidth size="md">

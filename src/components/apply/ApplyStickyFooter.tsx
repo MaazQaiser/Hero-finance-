@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/Button";
 import { AmbientTrust } from "@/components/apply/AmbientTrust";
-import { type AmbientTrustKey } from "@/lib/apply/ambientTrustMessages";
+import { getTrustMessage, type TrustMessageKey } from "@/config/trustMessages";
 
 interface ApplyStickyFooterProps {
   onContinue: () => void;
@@ -11,7 +11,7 @@ interface ApplyStickyFooterProps {
   continueDisabled?: boolean;
   saving?: boolean;
   networkError?: string;
-  trustKey?: AmbientTrustKey | null;
+  trustKey?: TrustMessageKey | null;
 }
 
 export function ApplyStickyFooter({
@@ -31,7 +31,9 @@ export function ApplyStickyFooter({
             {networkError}
           </p>
         )}
-        {trustKey && <AmbientTrust messageKey={trustKey} className="mb-3" />}
+        {trustKey ? (
+          <AmbientTrust message={getTrustMessage(trustKey)} className="mb-3" />
+        ) : null}
         <Button
           fullWidth
           size="lg"
@@ -45,9 +47,9 @@ export function ApplyStickyFooter({
           type="button"
           onClick={onSave}
           disabled={saving}
-          className="motion-button mt-3 min-h-11 w-full text-sm font-medium text-muted hover:text-ink disabled:opacity-50"
+          className="motion-button min-h-11 w-full rounded-full border border-green/25 bg-green/10 text-sm font-semibold text-green-deep hover:border-green/40 hover:bg-green/15 disabled:opacity-50"
         >
-          {saving ? "Saving..." : "Save for later"}
+          {saving ? "Saving..." : "Save & Continue Later"}
         </button>
       </div>
     </div>

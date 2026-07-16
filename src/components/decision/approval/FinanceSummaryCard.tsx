@@ -1,6 +1,7 @@
 "use client";
 
 import { formatPrice } from "@/data/vehicles";
+import { approvalContent } from "@/config/approvalContent";
 
 interface FinanceSummaryCardProps {
   approvedAmount: number;
@@ -18,8 +19,10 @@ export function FinanceSummaryCard({
   lenderName,
 }: FinanceSummaryCardProps) {
   return (
-    <section className="motion-card hero-fade-up-delay-3 rounded-[var(--radius-card)] border border-green/30 bg-gradient-to-br from-green to-green-deep p-6 text-white">
-      <p className="text-xs font-medium tracking-wide text-white/70">Your finance summary</p>
+    <section className="approval-finance-summary motion-card hero-fade-up-delay-3 rounded-[var(--radius-card)] border border-green/30 bg-gradient-to-br from-green to-green-deep p-6 text-white">
+      <p className="text-xs font-medium tracking-wide text-white/70">
+        {approvalContent.financeSummaryLabel}
+      </p>
 
       <div className="mt-5 grid gap-5 sm:grid-cols-2">
         <div>

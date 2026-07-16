@@ -3,39 +3,26 @@
 import { useEffect, useState } from "react";
 import { HeroLogo } from "@/components/HeroLogo";
 import { LoadingIndicator } from "@/components/apply/loading/LoadingIndicator";
-import { LoadingMessage } from "@/components/apply/loading/LoadingMessage";
-import { LoadingStep } from "@/components/apply/loading/LoadingStep";
+import { LoadingStatus } from "@/components/apply/loading/LoadingStatus";
+import { RotatingTrustMessage } from "@/components/apply/loading/RotatingTrustMessage";
+import {
+  ELIGIBILITY_LOADING_DURATION_MS,
+  ELIGIBILITY_STATE_FADE_MS,
+  ELIGIBILITY_STATE_HOLD_MS,
+  eligibilityLoadingStates,
+  eligibilityRotatingTrustMessages,
+  type LoadingStateMessage,
+} from "@/config/loadingMessages";
 
-export interface EligibilityLoadingState {
-  title: string;
-  description: string;
-}
-
-const DEFAULT_STATES: EligibilityLoadingState[] = [
-  {
-    title: "Reviewing your application",
-    description: "We're securely checking the information you've provided.",
-  },
-  {
-    title: "Finding suitable finance options",
-    description: "Matching your application with finance providers.",
-  },
-  {
-    title: "Preparing your result",
-    description: "Almost finished. We're putting everything together.",
-  },
-];
-
-/** Total prototype duration — keep in sync with ApplyFlow redirect timing */
-export const ELIGIBILITY_LOADING_DURATION_MS = 4500;
-const STATE_HOLD_MS = 1400;
-const FADE_MS = 300;
+export { ELIGIBILITY_LOADING_DURATION_MS };
 
 interface EligibilityLoadingProps {
-  states?: EligibilityLoadingState[];
+  states?: LoadingStateMessage[];
 }
 
-export function EligibilityLoading({ states = DEFAULT_STATES }: EligibilityLoadingProps) {
+export function EligibilityLoading({
+  states = eligibilityLoadingStates,
+}: EligibilityLoadingProps) {
   const [stepIndex, setStepIndex] = useState(0);
   const [stepVisible, setStepVisible] = useState(true);
 
@@ -52,8 +39,8 @@ export function EligibilityLoading({ states = DEFAULT_STATES }: EligibilityLoadi
           window.setTimeout(() => {
             setStepIndex(index);
             setStepVisible(true);
-          }, FADE_MS);
-        }, index * STATE_HOLD_MS),
+          }, ELIGIBILITY_STATE_FADE_MS);
+        }, index * ELIGIBILITY_STATE_HOLD_MS),
       );
     });
 
@@ -73,7 +60,7 @@ export function EligibilityLoading({ states = DEFAULT_STATES }: EligibilityLoadi
         <LoadingIndicator progress={progress} />
 
         <div className="mt-10 w-full">
-          <LoadingStep
+          <LoadingStatus
             title={current.title}
             description={current.description}
             visible={stepVisible}
@@ -85,14 +72,18 @@ export function EligibilityLoading({ states = DEFAULT_STATES }: EligibilityLoadi
             <span
               key={state.title}
               className={`h-1.5 rounded-full transition-all duration-300 ${
-                index === stepIndex ? "w-6 bg-green" : index < stepIndex ? "w-1.5 bg-green/50" : "w-1.5 bg-line"
+                index === stepIndex
+                  ? "w-6 bg-green"
+                  : index < stepIndex
+                    ? "w-1.5 bg-green/50"
+                    : "w-1.5 bg-line"
               }`}
             />
           ))}
         </div>
 
-        <div className="mt-14 flex w-full justify-center">
-          <LoadingMessage />
+        <div className="mt-14 flex w-full justify-center border-t border-line/80 pt-4">
+          <RotatingTrustMessage messages={eligibilityRotatingTrustMessages} />
         </div>
       </main>
     </div>

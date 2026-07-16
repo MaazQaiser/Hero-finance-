@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/Button";
 import { SavedStatusBadge } from "@/components/apply/save/SavedStatusBadge";
 import { AnimatedModal } from "@/components/motion/AnimatedModal";
+import { saveContinueContent } from "@/config/saveContinueContent";
 
 interface SaveProgressModalProps {
   open: boolean;
@@ -10,17 +11,13 @@ interface SaveProgressModalProps {
   onReturnToApplication: () => void;
 }
 
-const helperItems = [
-  "Resume on any device",
-  "Securely saved",
-  "No need to start again",
-];
-
 export function SaveProgressModal({
   open,
   onContinueLater,
   onReturnToApplication,
 }: SaveProgressModalProps) {
+  const { modal } = saveContinueContent;
+
   return (
     <AnimatedModal open={open} onClose={onReturnToApplication} labelledBy="save-progress-title">
       <div className="flex justify-center">
@@ -43,16 +40,13 @@ export function SaveProgressModal({
       <div className="mt-5 text-center">
         <SavedStatusBadge />
         <h2 id="save-progress-title" className="mt-4 text-xl font-medium text-ink">
-          Your progress has been saved.
+          {modal.title}
         </h2>
-        <p className="mt-2 text-sm leading-relaxed text-muted">
-          You can safely leave now and continue your application whenever you&apos;re ready. Your
-          information will be waiting for you.
-        </p>
+        <p className="mt-2 text-sm leading-relaxed text-muted">{modal.description}</p>
       </div>
 
       <ul className="mt-6 space-y-2.5 rounded-2xl border border-line bg-mist-2 p-4">
-        {helperItems.map((item) => (
+        {modal.checklist.map((item) => (
           <li key={item} className="flex items-center gap-2 text-sm text-muted">
             <span className="text-green-deep" aria-hidden>
               ✓
@@ -64,16 +58,14 @@ export function SaveProgressModal({
 
       <div className="mt-6 space-y-3">
         <Button fullWidth size="lg" onClick={onContinueLater}>
-          Continue Later
+          {modal.primaryCta}
         </Button>
         <Button fullWidth variant="secondary" size="lg" onClick={onReturnToApplication}>
-          Return to Application
+          {modal.secondaryCta}
         </Button>
       </div>
 
-      <p className="mt-5 text-center text-xs leading-relaxed text-muted">
-        No pressure. Continue whenever you&apos;re ready.
-      </p>
+      <p className="mt-5 text-center text-xs leading-relaxed text-muted">{modal.footerNote}</p>
     </AnimatedModal>
   );
 }

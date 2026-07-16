@@ -4,12 +4,16 @@ import { ApplyEntryHeader } from "@/components/apply/entry/ApplyEntryHeader";
 import { ApplyPrimaryButton } from "@/components/apply/entry/ApplyPrimaryButton";
 import { ApplyTrustBadge } from "@/components/apply/entry/ApplyTrustBadge";
 import { AmbientTrust } from "@/components/apply/AmbientTrust";
+import { useJourneyVariant, useJourneyBehaviour } from "@/components/apply/JourneyVariantProvider";
+import { trustMessages } from "@/config/trustMessages";
+import { VehicleJourneySummary } from "@/components/apply/VehicleJourneySummary";
+import { getVehicleById } from "@/data/vehicles";
 import { TrustpilotWidget } from "@/components/TrustpilotWidget";
-import { getActiveJourneyVariant } from "@/lib/journey/journeyVariants";
 
 interface ApplyWelcomeScreenProps {
   onContinue: () => void;
   onSaveLater: () => void;
+  vehicleId?: string;
 }
 
 function BadgeIcon({ className }: { className?: string }) {
@@ -30,8 +34,11 @@ function SearchIcon({ className }: { className?: string }) {
   );
 }
 
-export function ApplyWelcomeScreen({ onContinue, onSaveLater }: ApplyWelcomeScreenProps) {
-  const journey = getActiveJourneyVariant();
+export function ApplyWelcomeScreen({ onContinue, onSaveLater, vehicleId }: ApplyWelcomeScreenProps) {
+  const journey = useJourneyVariant();
+  const behaviour = useJourneyBehaviour();
+  const summaryVehicle =
+    behaviour.showVehicleSummary && vehicleId ? getVehicleById(vehicleId) : null;
 
   return (
     <div className="min-h-[100svh] bg-paper">
@@ -44,15 +51,26 @@ export function ApplyWelcomeScreen({ onContinue, onSaveLater }: ApplyWelcomeScre
           <p className="eyebrow">Finance application</p>
           <h1 className="headline-lg mt-4">{journey.introTitle}</h1>
           <p className="body-lg mx-auto mt-4 max-w-md">{journey.introDescription}</p>
+          {behaviour.introExtraReassurance ? (
+            <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-green-deep">
+              {behaviour.introExtraReassurance}
+            </p>
+          ) : null}
+
+          {summaryVehicle ? (
+            <div className="mx-auto mt-6 max-w-md text-left">
+              <VehicleJourneySummary vehicle={summaryVehicle} />
+            </div>
+          ) : null}
 
           <div className="mt-8">
-            <ApplyPrimaryButton onClick={onContinue} reassurance="">
+            <AmbientTrust message={trustMessages.intro} className="mb-4 border-t-0 pt-0" />
+            <ApplyPrimaryButton
+              onClick={onContinue}
+              reassurance={journey.introReassurance}
+            >
               {journey.ctaText}
             </ApplyPrimaryButton>
-          </div>
-
-          <div className="mt-5">
-            <AmbientTrust messageKey="intro" />
           </div>
         </section>
 

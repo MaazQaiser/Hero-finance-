@@ -1,10 +1,8 @@
+import { type LandingVariant } from "@/lib/landing/types";
+
 /**
- * Frontend design prototype — journey message matching.
- *
- * Switch the active journey by changing `activeVariant` below.
- * Layout and flow stay the same; only copy updates.
- *
- * Example: const activeVariant = "badCredit";
+ * Journey message matching — intro, bridge, and approval copy per entry point.
+ * Layout and flow stay identical; only strings change.
  */
 
 export type JourneyVariantId =
@@ -14,190 +12,226 @@ export type JourneyVariantId =
   | "selfEmployed"
   | "firstTimeBuyer"
   | "noDeposit"
+  | "negativeEquity"
+  | "fastDecision"
   | "calculator"
   | "vehicle"
   | "softSearch";
 
 export interface JourneyVariant {
+  id: JourneyVariantId;
   introTitle: string;
   introDescription: string;
+  introReassurance: string;
   ctaText: string;
   bridgeTitle: string;
   bridgeDescription: string;
+  bridgeReassurance: string;
+  approvalEyebrow: string;
   approvalTitle: string;
   approvalDescription: string;
-  trustMessages: string[];
 }
-
-/** ─── Change this to preview a different journey ─── */
-export const activeVariant: JourneyVariantId = "badCredit";
 
 export const journeyVariants: Record<JourneyVariantId, JourneyVariant> = {
   default: {
+    id: "default",
     introTitle: "Every credit story deserves a fair hearing.",
-    introDescription: "Answer a few quick questions so we can understand your situation.",
+    introDescription:
+      "Answer a few quick questions so we can understand your situation before we run a soft search.",
+    introReassurance: "Soft search only · no impact on your credit file",
     ctaText: "Start my application",
     bridgeTitle: "You're in the right place.",
     bridgeDescription:
       "Most people we help have been turned down elsewhere. Let's complete the remaining details.",
-    approvalTitle: "You're approved.",
+    bridgeReassurance: "Soft search only · checking eligibility won't affect your score",
+    approvalEyebrow: "Congratulations!",
+    approvalTitle: "Great news. You're approved.",
     approvalDescription:
-      "Great news. We've found finance options and we've got real cars ready for you.",
-    trustMessages: [
-      "Soft search only.",
-      "FCA regulated dealer.",
-      "Real cars ready to drive away.",
-      "Finance and car from one trusted team.",
-    ],
+      "We've found finance options and we've got real cars ready for you.",
   },
 
   badCredit: {
-    introTitle: "Been turned down before?",
-    introDescription: "We look beyond your credit score and consider your full situation.",
+    id: "badCredit",
+    introTitle: "We consider every credit story.",
+    introDescription:
+      "Your score isn't the whole picture. A few quick questions help us understand your situation before we run a soft search.",
+    introReassurance: "Soft search only · your score stays protected",
     ctaText: "Check my options",
     bridgeTitle: "You're not alone.",
-    bridgeDescription: "Many customers we help have been declined elsewhere.",
-    approvalTitle: "Great news.",
-    approvalDescription: "We've found finance options based on your circumstances.",
-    trustMessages: [
-      "We consider more than your credit score.",
-      "Soft search only.",
-      "Real cars ready to drive away.",
-      "FCA regulated dealer.",
-    ],
+    bridgeDescription: "Many of the customers we help have been declined elsewhere.",
+    bridgeReassurance: "We look at your full circumstances, not just a credit score",
+    approvalEyebrow: "Great news",
+    approvalTitle: "We've found finance options based on your circumstances.",
+    approvalDescription:
+      "Your application has been matched with lenders who consider more than your credit score.",
   },
 
   declined: {
-    introTitle: "Been refused finance elsewhere?",
+    id: "declined",
+    introTitle: "We consider every credit story.",
     introDescription:
-      "A previous decline doesn't define your options. We work with lenders who look at the full picture.",
+      "Being refused before doesn't define your options. A few quick questions help us understand your situation before we run a soft search.",
+    introReassurance: "Refused elsewhere doesn't mean refused here",
     ctaText: "See if I qualify",
     bridgeTitle: "This is a fresh start.",
     bridgeDescription:
-      "We'll gather a few more details so we can match you with lenders who consider your full story.",
-    approvalTitle: "You're approved.",
+      "Many of the customers we help have been declined elsewhere. A few more details help us match you with the right lenders.",
+    bridgeReassurance: "Soft search only · nothing here hard-searches your credit",
+    approvalEyebrow: "Congratulations!",
+    approvalTitle: "Great news. You're approved.",
     approvalDescription:
       "We've found finance options even after a previous refusal — with real cars ready for you.",
-    trustMessages: [
-      "Refused elsewhere doesn't mean refused here.",
-      "Soft search only.",
-      "AA inspected stock.",
-      "FCA regulated dealer.",
-    ],
   },
 
   selfEmployed: {
-    introTitle: "Finance for self-employed drivers.",
-    introDescription: "We regularly help sole traders and business owners.",
-    ctaText: "Continue",
+    id: "selfEmployed",
+    introTitle: "We understand how you earn.",
+    introDescription:
+      "Self-employed income comes in many forms. A few quick questions help us match you with the right lenders before we run a soft search.",
+    introReassurance: "Lenders who understand self-employed income",
+    ctaText: "Start my application",
     bridgeTitle: "We'll review your application based on your circumstances.",
-    bridgeDescription:
-      "A few more details help us match you with lenders who understand how you earn.",
+    bridgeDescription: "We regularly help self-employed applicants.",
+    bridgeReassurance: "Your income is only used to assess affordability",
+    approvalEyebrow: "Congratulations!",
     approvalTitle: "We've found suitable finance options for you.",
     approvalDescription:
       "Your application has been matched with options that work for self-employed drivers.",
-    trustMessages: [
-      "Lenders who understand self-employed income.",
-      "Soft search only.",
-      "Real cars in stock.",
-      "FCA regulated dealer.",
-    ],
   },
 
   firstTimeBuyer: {
-    introTitle: "First car on finance? We'll guide you.",
-    introDescription: "No jargon, no pressure — just clear steps from check to keys.",
+    id: "firstTimeBuyer",
+    introTitle: "Your first step, made straightforward.",
+    introDescription:
+      "First-time finance doesn't have to be confusing. A few quick questions help us understand what you need before we run a soft search.",
+    introReassurance: "Soft search only · perfect for first-time buyers",
     ctaText: "Start my application",
     bridgeTitle: "You're doing great.",
-    bridgeDescription:
-      "Almost there. A few more details and we'll run a soft search that won't affect your score.",
-    approvalTitle: "You're approved.",
+    bridgeDescription: "We'll guide you through every step.",
+    bridgeReassurance: "Clear monthly payments · no jargon, no pressure",
+    approvalEyebrow: "Congratulations!",
+    approvalTitle: "Great news. You're approved.",
     approvalDescription:
       "Welcome to car finance — we've found options and AA-inspected cars ready for you.",
-    trustMessages: [
-      "Clear monthly payments.",
-      "Soft search only.",
-      "AA inspected vehicles.",
-      "One team from start to finish.",
-    ],
   },
 
   noDeposit: {
-    introTitle: "No deposit? You could still drive away.",
-    introDescription: "Deposit-free options may be available depending on your circumstances.",
+    id: "noDeposit",
+    introTitle: "Deposit-free options may be available.",
+    introDescription:
+      "A deposit isn't always required. A few quick questions help us see what's possible before we run a soft search.",
+    introReassurance: "Deposit isn't always a barrier",
     ctaText: "Check no-deposit options",
     bridgeTitle: "Let's see what's possible.",
     bridgeDescription:
       "We'll use the next few details to check deposit-free and low-deposit finance options.",
-    approvalTitle: "You're approved.",
+    bridgeReassurance: "Soft search only · no obligation to proceed",
+    approvalEyebrow: "Congratulations!",
+    approvalTitle: "Great news. You're approved.",
     approvalDescription:
-      "Great news — finance options are available, including paths that may work with little or no deposit.",
-    trustMessages: [
-      "Deposit isn't always a barrier.",
-      "Soft search only.",
-      "Real cars ready to reserve.",
-      "FCA regulated dealer.",
-    ],
+      "Finance options are available, including paths that may work with little or no deposit.",
+  },
+
+  negativeEquity: {
+    id: "negativeEquity",
+    introTitle: "We'll help you understand your position.",
+    introDescription:
+      "Negative equity doesn't have to stop you moving forward. A few quick questions help us see what's possible before we run a soft search.",
+    introReassurance: "Soft search only · confidential and secure",
+    ctaText: "Start my application",
+    bridgeTitle: "Let's look at your options.",
+    bridgeDescription:
+      "We'll gather a few more details so we can understand your current finance position.",
+    bridgeReassurance: "Your information is only used for your application",
+    approvalEyebrow: "Congratulations!",
+    approvalTitle: "Great news. You're approved.",
+    approvalDescription:
+      "We've found finance options that take your circumstances into account.",
+  },
+
+  fastDecision: {
+    id: "fastDecision",
+    introTitle: "A fast decision starts here.",
+    introDescription:
+      "Most applications take around 60 seconds. A few quick questions help us run your soft search straight away.",
+    introReassurance: "Decision in under 60 seconds · soft search only",
+    ctaText: "Get my decision",
+    bridgeTitle: "Almost there.",
+    bridgeDescription:
+      "Finish these details and we'll prioritise the quickest available finance options.",
+    bridgeReassurance: "Soft search only · no impact on your credit score",
+    approvalEyebrow: "Congratulations!",
+    approvalTitle: "Great news. You're approved.",
+    approvalDescription:
+      "Your decision is ready — browse AA-inspected cars when you're ready.",
   },
 
   calculator: {
-    introTitle: "You've seen your numbers — let's make them real.",
+    id: "calculator",
+    introTitle: "Know your numbers before you choose.",
     introDescription:
-      "Based on your calculator estimate, answer a few quick questions to check your eligibility.",
+      "Understanding your budget makes car shopping easier. A few quick questions help us show what's affordable before we run a soft search.",
+    introReassurance: "No admin fees · the price you see is the price you pay",
     ctaText: "Check my eligibility",
     bridgeTitle: "Your estimate is a starting point.",
-    bridgeDescription:
-      "Complete the remaining details so we can confirm options close to the budget you explored.",
-    approvalTitle: "You're approved.",
+    bridgeDescription: "Let's turn your estimate into a real approval.",
+    bridgeReassurance: "We'll confirm options close to the budget you explored",
+    approvalEyebrow: "Congratulations!",
+    approvalTitle: "Your estimated payment is now a real approval.",
     approvalDescription:
       "We've found finance options that align with the budget you calculated — and cars ready to browse.",
-    trustMessages: [
-      "No admin fees.",
-      "Soft search only.",
-      "Clear monthly payments.",
-      "FCA regulated dealer.",
-    ],
   },
 
   vehicle: {
+    id: "vehicle",
     introTitle: "You've found a car — let's check finance.",
     introDescription:
       "A few quick questions help us confirm finance options for the vehicle you have in mind.",
+    introReassurance: "Finance and the car from one team",
     ctaText: "Continue with this car",
     bridgeTitle: "Almost ready to reserve.",
     bridgeDescription:
       "Finish these details and we'll run a soft search so you can move toward reserving your car.",
-    approvalTitle: "You're approved.",
+    bridgeReassurance: "Soft search only · AA inspected stock",
+    approvalEyebrow: "Congratulations!",
+    approvalTitle: "This vehicle fits within your approved budget.",
     approvalDescription:
       "Finance options are ready — you can continue toward the car you selected.",
-    trustMessages: [
-      "Finance and the car from one team.",
-      "Soft search only.",
-      "AA inspected stock.",
-      "FCA regulated dealer.",
-    ],
   },
 
   softSearch: {
-    introTitle: "Check without touching your credit score.",
+    id: "softSearch",
+    introTitle: "A soft search you can trust.",
     introDescription:
-      "A soft search shows your options first — with no mark left on your credit file.",
+      "We'll only run a soft search — it won't affect your credit score. A few quick questions first help us understand your situation.",
+    introReassurance: "Soft search only · zero impact on your credit file",
     ctaText: "Start my soft search",
     bridgeTitle: "Still a soft search.",
     bridgeDescription:
       "The next details help us complete your soft search — nothing here hard-searches your credit.",
-    approvalTitle: "You're approved.",
+    bridgeReassurance: "No impact on your credit score",
+    approvalEyebrow: "Congratulations!",
+    approvalTitle: "Great news. You're approved.",
     approvalDescription:
       "Your soft search is complete. We've found finance options with no impact on your credit score.",
-    trustMessages: [
-      "Soft search only.",
-      "No impact on your credit score.",
-      "Real cars ready to drive away.",
-      "FCA regulated dealer.",
-    ],
   },
 };
 
+/** Continue landing conversation into the application intro when a campaign is present. */
+export function mergeJourneyWithLanding(
+  journey: JourneyVariant,
+  landing: LandingVariant,
+): JourneyVariant {
+  return {
+    ...journey,
+    introTitle: landing.applicationIntroHeading,
+    introDescription: landing.applicationSupportingCopy,
+    ctaText: landing.applicationCta,
+    introReassurance: landing.firstReassurance,
+  };
+}
+
+/** @deprecated Use resolveJourneyVariant() or useJourneyVariant() instead */
 export function getActiveJourneyVariant(): JourneyVariant {
-  return journeyVariants[activeVariant] ?? journeyVariants.default;
+  return journeyVariants.default;
 }

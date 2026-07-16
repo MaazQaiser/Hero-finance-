@@ -21,5 +21,5 @@ export const mockSavedApplication: MockSavedApplication = {
   totalSteps: 19,
   progressPercent: 42,
   estimatedMinutesRemaining: 3,
-  lastSavedLabel: "Today at 3:15 PM",
+  lastSavedLabel: "Today at 2:15 PM",
 };

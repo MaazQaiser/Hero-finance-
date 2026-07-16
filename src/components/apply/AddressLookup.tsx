@@ -13,6 +13,7 @@ interface AddressLookupProps {
   onPostcodeChange: (postcode: string) => void;
   onAddressChange: (address: string) => void;
   errors?: { postcode?: string; address?: string };
+  autoFocus?: boolean;
 }
 
 export function AddressLookup({
@@ -23,10 +24,12 @@ export function AddressLookup({
   onPostcodeChange,
   onAddressChange,
   errors,
+  autoFocus = false,
 }: AddressLookupProps) {
   const [lookupDone, setLookupDone] = useState(() => lookupAddresses(postcode).length > 0);
   const addressOptions = lookupDone ? lookupAddresses(postcode) : [];
   const postcodeValid = postcode.trim().length > 0 && !errors?.postcode;
+  const addressValid = Boolean(address.trim()) && !errors?.address;
 
   const handleFindAddress = () => {
     setLookupDone(true);
@@ -41,15 +44,19 @@ export function AddressLookup({
         id={postcodeId}
         label="Postcode"
         required
+        autoFocus={autoFocus}
+        autoComplete="postal-code"
+        autoCapitalize="characters"
+        spellCheck={false}
         value={postcode}
         onChange={(e) => {
           onPostcodeChange(e.target.value.toUpperCase());
           setLookupDone(false);
         }}
         error={errors?.postcode}
-        autoComplete="postal-code"
+        valid={postcodeValid}
         placeholder="M1 1AA"
-        className={postcodeValid ? "border-green/40 bg-white" : ""}
+        hint="UK postcode — we'll find your address."
       />
 
       <Button type="button" variant="secondary" fullWidth size="lg" onClick={handleFindAddress}>
@@ -64,7 +71,7 @@ export function AddressLookup({
           value={address}
           onChange={(e) => onAddressChange(e.target.value)}
           error={errors?.address}
-          className={address ? "border-green/40 bg-white" : ""}
+          valid={addressValid}
         >
           <option value="">Choose an address</option>
           {addressOptions.map((item) => (

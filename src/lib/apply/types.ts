@@ -47,6 +47,10 @@ export interface ApplicationData {
   drivingLicence: DrivingLicence | "";
   vehicleId: string;
   vehicleSearch: string;
+  financeDeposit: string;
+  purchaseTimeframe: string;
+  hasFinanceToSettle: "" | "yes" | "no";
+  settlementAmount: string;
   jointApplicant: boolean;
   jointFirstName: string;
   jointLastName: string;
@@ -106,6 +110,10 @@ export const initialApplicationData: ApplicationData = {
   drivingLicence: "",
   vehicleId: "",
   vehicleSearch: "",
+  financeDeposit: "",
+  purchaseTimeframe: "",
+  hasFinanceToSettle: "",
+  settlementAmount: "",
   jointApplicant: false,
   jointFirstName: "",
   jointLastName: "",

@@ -1,4 +1,5 @@
 import { DecisionFlow } from "@/components/decision/DecisionFlow";
+import { JourneyVariantProvider } from "@/components/apply/JourneyVariantProvider";
 
 export const metadata = {
   title: "Finance Decision | Hero Car Finance",
@@ -12,5 +13,9 @@ interface DecisionPageProps {
 export default async function DecisionPage({ searchParams }: DecisionPageProps) {
   const { state } = await searchParams;
 
-  return <DecisionFlow stateOverride={state} />;
+  return (
+    <JourneyVariantProvider>
+      <DecisionFlow stateOverride={state} />
+    </JourneyVariantProvider>
+  );
 }

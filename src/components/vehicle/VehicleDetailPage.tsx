@@ -15,7 +15,8 @@ import { VehicleSpecsAccordion } from "@/components/vehicle/VehicleSpecsAccordio
 import { VehicleStickyCta } from "@/components/vehicle/VehicleStickyCta";
 import { VehicleSummary } from "@/components/vehicle/VehicleSummary";
 import { VehicleTopNav } from "@/components/vehicle/VehicleTopNav";
-import { VehicleTrustBlock } from "@/components/vehicle/VehicleTrustBlock";
+import { VehicleTrustSection } from "@/components/trust/VehicleTrustSection";
+import { DealerAdvantageCard } from "@/components/trust/DealerAdvantageCard";
 
 interface VehicleDetailPageProps {
   vehicle: Vehicle;
@@ -62,7 +63,12 @@ export function VehicleDetailPage({
           onDepositChange={setDeposit}
           onTermChange={setTermMonths}
         />
-        <VehicleTrustBlock />
+        <section className="px-5 md:px-8 lg:px-12">
+          <div className="mx-auto max-w-7xl space-y-5">
+            <VehicleTrustSection vehicle={vehicle} />
+            <DealerAdvantageCard />
+          </div>
+        </section>
         <VehicleSpecsAccordion specs={vehicle.specs} />
         <VehicleRelatedCars vehicles={relatedVehicles} />
         <VehicleBuyToOrder />

@@ -1,6 +1,8 @@
 "use client";
 
 import { type ApplicationData, type StepId } from "@/lib/apply/types";
+import { type FieldErrors } from "@/lib/apply/validation";
+import { type JourneyBehaviour } from "@/lib/journey/journeyBehaviour";
 import { getVehicleById } from "@/data/vehicles";
 import { AddressLookup } from "@/components/apply/AddressLookup";
 import { ApplyInput, ApplySelect } from "@/components/apply/ApplyField";
@@ -8,7 +10,8 @@ import { ApplyReviewSummary } from "@/components/apply/ApplyReviewSummary";
 import { OptionCard } from "@/components/apply/OptionCard";
 import { VehicleSearchInput } from "@/components/apply/VehicleSearchInput";
 import { Checkbox } from "@/components/ui/checkbox";
-import { type FieldErrors } from "@/lib/apply/validation";
+import { isFieldValid } from "@/lib/apply/inlineValidation";
+import { stepHasAutofocus } from "@/lib/apply/stepMeta";
 
 interface ApplyStepContentProps {
   stepId: StepId;
@@ -16,6 +19,7 @@ interface ApplyStepContentProps {
   onChange: (updates: Partial<ApplicationData>) => void;
   onAutoAdvance?: () => void;
   fieldErrors?: FieldErrors;
+  behaviour?: JourneyBehaviour;
 }
 
 export function ApplyStepContent({
@@ -24,7 +28,10 @@ export function ApplyStepContent({
   onChange,
   onAutoAdvance,
   fieldErrors = {},
+  behaviour,
 }: ApplyStepContentProps) {
+  const autofocus = stepHasAutofocus(stepId);
+
   const handleOptionSelect = (updates: Partial<ApplicationData>) => {
     onChange(updates);
     onAutoAdvance?.();
@@ -38,11 +45,14 @@ export function ApplyStepContent({
           label="Mobile number"
           required
           type="tel"
-          inputMode="tel"
+          inputMode="numeric"
+          autoComplete="tel"
+          autoFocus={autofocus}
           value={data.mobile}
           onChange={(e) => onChange({ mobile: e.target.value })}
           hint="We'll text your result and save your progress."
-          autoComplete="tel"
+          error={fieldErrors.mobile}
+          valid={isFieldValid("mobile", data, "mobile")}
           placeholder="07XXX XXXXXX"
         />
       );
@@ -87,7 +97,7 @@ export function ApplyStepContent({
             />
           ))}
           {fieldErrors.employmentDuration && (
-            <p className="text-sm text-coral">{fieldErrors.employmentDuration}</p>
+            <p className="motion-error-in text-sm text-coral">{fieldErrors.employmentDuration}</p>
           )}
         </div>
       );
@@ -98,11 +108,12 @@ export function ApplyStepContent({
           id="previousEmployerName"
           label="Employer name"
           required
+          autoFocus={autofocus}
           value={data.previousEmployerName}
           onChange={(e) => onChange({ previousEmployerName: e.target.value })}
           error={fieldErrors.previousEmployerName}
+          valid={isFieldValid("previousEmployerName", data, "previous-employer")}
           placeholder="Company name"
-          className={data.previousEmployerName.trim() ? "border-green/40 bg-white" : ""}
         />
       );
 
@@ -128,7 +139,7 @@ export function ApplyStepContent({
             />
           ))}
           {fieldErrors.previousEmploymentDuration && (
-            <p className="text-sm text-coral">{fieldErrors.previousEmploymentDuration}</p>
+            <p className="motion-error-in text-sm text-coral">{fieldErrors.previousEmploymentDuration}</p>
           )}
         </div>
       );
@@ -146,6 +157,7 @@ export function ApplyStepContent({
             postcode: fieldErrors.postcode,
             address: fieldErrors.address,
           }}
+          autoFocus={autofocus}
         />
       );
 
@@ -167,7 +179,7 @@ export function ApplyStepContent({
             />
           ))}
           {fieldErrors.yearsAtAddress && (
-            <p className="text-sm text-coral">{fieldErrors.yearsAtAddress}</p>
+            <p className="motion-error-in text-sm text-coral">{fieldErrors.yearsAtAddress}</p>
           )}
         </div>
       );
@@ -187,6 +199,7 @@ export function ApplyStepContent({
             postcode: fieldErrors.previousPostcode,
             address: fieldErrors.previousAddress,
           }}
+          autoFocus={autofocus}
         />
       );
 
@@ -197,10 +210,13 @@ export function ApplyStepContent({
           label="Email address"
           type="email"
           inputMode="email"
+          autoComplete="email"
+          autoFocus={autofocus}
           value={data.email}
           onChange={(e) => onChange({ email: e.target.value })}
-          hint="Optional — but helpful if you'd like a resume link"
-          autoComplete="email"
+          hint="Optional — helpful if you'd like a resume link"
+          error={fieldErrors.email}
+          valid={Boolean(data.email.trim()) && !fieldErrors.email}
           placeholder="you@email.com"
         />
       );
@@ -212,10 +228,11 @@ export function ApplyStepContent({
           label="Date of birth"
           type="date"
           required
+          autoFocus={autofocus}
           value={data.dateOfBirth}
           onChange={(e) => onChange({ dateOfBirth: e.target.value })}
           error={fieldErrors.dateOfBirth}
-          className={data.dateOfBirth ? "border-green/40 bg-white" : ""}
+          valid={isFieldValid("dateOfBirth", data, "dob")}
           max={new Date(new Date().setFullYear(new Date().getFullYear() - 18))
             .toISOString()
             .split("T")[0]}
@@ -260,6 +277,7 @@ export function ApplyStepContent({
               label={option.label}
               description={option.description}
               selected={data.employmentStatus === option.value}
+              highlighted={behaviour?.highlightEmploymentOption === option.value}
               onClick={() =>
                 handleOptionSelect({
                   employmentStatus: option.value as ApplicationData["employmentStatus"],
@@ -267,20 +285,60 @@ export function ApplyStepContent({
               }
             />
           ))}
+          {behaviour?.employmentReassurance ? (
+            <p className="pt-1 text-center text-sm leading-relaxed text-green-deep">
+              {behaviour.employmentReassurance}
+            </p>
+          ) : null}
         </div>
       );
 
     case "income":
       return (
         <div className="space-y-4">
+          {behaviour?.showNegativeEquityQuestions ? (
+            <div className="space-y-3 rounded-[var(--radius-card)] border border-line bg-mist-2 p-4">
+              <p className="text-sm font-medium text-ink">Do you currently have finance to settle?</p>
+              <div className="grid grid-cols-2 gap-3">
+                <OptionCard
+                  label="Yes"
+                  selected={data.hasFinanceToSettle === "yes"}
+                  onClick={() => onChange({ hasFinanceToSettle: "yes" })}
+                />
+                <OptionCard
+                  label="No"
+                  selected={data.hasFinanceToSettle === "no"}
+                  onClick={() => onChange({ hasFinanceToSettle: "no", settlementAmount: "" })}
+                />
+              </div>
+              {data.hasFinanceToSettle === "yes" ? (
+                <ApplyInput
+                  id="settlementAmount"
+                  label="Estimated settlement amount"
+                  type="number"
+                  inputMode="decimal"
+                  value={data.settlementAmount}
+                  onChange={(e) => onChange({ settlementAmount: e.target.value })}
+                  error={fieldErrors.settlementAmount}
+                  valid={isFieldValid("settlementAmount", data, "income")}
+                  placeholder="e.g. 3500"
+                  hint="An approximate figure is fine for now."
+                />
+              ) : null}
+            </div>
+          ) : null}
+
           {data.employmentStatus === "employed" && (
             <>
               <ApplyInput
                 id="employerName"
                 label="Employer name"
                 required
+                autoFocus={autofocus}
                 value={data.employerName}
                 onChange={(e) => onChange({ employerName: e.target.value })}
+                error={fieldErrors.employerName}
+                valid={isFieldValid("employerName", data, "income")}
               />
               <ApplyInput
                 id="jobTitle"
@@ -288,6 +346,8 @@ export function ApplyStepContent({
                 required
                 value={data.jobTitle}
                 onChange={(e) => onChange({ jobTitle: e.target.value })}
+                error={fieldErrors.jobTitle}
+                valid={isFieldValid("jobTitle", data, "income")}
               />
             </>
           )}
@@ -298,8 +358,11 @@ export function ApplyStepContent({
                 id="businessType"
                 label="Business type"
                 required
+                autoFocus={autofocus}
                 value={data.businessType}
                 onChange={(e) => onChange({ businessType: e.target.value })}
+                error={fieldErrors.businessType}
+                valid={isFieldValid("businessType", data, "income")}
                 placeholder="e.g. Plumbing, Consulting"
               />
               <ApplySelect
@@ -308,6 +371,8 @@ export function ApplyStepContent({
                 required
                 value={data.yearsTrading}
                 onChange={(e) => onChange({ yearsTrading: e.target.value })}
+                error={fieldErrors.yearsTrading}
+                valid={isFieldValid("yearsTrading", data, "income")}
               >
                 <option value="">Select</option>
                 <option value="1">Less than 1 year</option>
@@ -323,8 +388,11 @@ export function ApplyStepContent({
               id="incomeSource"
               label="Income source"
               required
+              autoFocus={autofocus}
               value={data.incomeSource}
               onChange={(e) => onChange({ incomeSource: e.target.value })}
+              error={fieldErrors.incomeSource}
+              valid={isFieldValid("incomeSource", data, "income")}
               placeholder="e.g. State pension, private pension"
             />
           )}
@@ -335,9 +403,13 @@ export function ApplyStepContent({
             required
             type="number"
             inputMode="decimal"
+            autoFocus={autofocus && data.employmentStatus === "other"}
             value={data.monthlyIncome}
             onChange={(e) => onChange({ monthlyIncome: e.target.value })}
+            error={fieldErrors.monthlyIncome}
+            valid={isFieldValid("monthlyIncome", data, "income")}
             placeholder="2500"
+            hint="Before tax, in pounds."
           />
         </div>
       );
@@ -403,6 +475,45 @@ export function ApplyStepContent({
               }
             />
           )}
+
+          {behaviour?.showDepositField ? (
+            <ApplyInput
+              id="financeDeposit"
+              label="Deposit"
+              type="number"
+              inputMode="decimal"
+              value={data.financeDeposit}
+              onChange={(e) => onChange({ financeDeposit: e.target.value })}
+              valid={Boolean(data.financeDeposit.trim())}
+              hint={behaviour.depositHelperText}
+              placeholder="0"
+            />
+          ) : null}
+
+          {behaviour?.showPurchaseTimeframe ? (
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-ink">When are you looking to purchase?</p>
+              {[
+                { value: "asap", label: "ASAP", description: "As soon as possible" },
+                { value: "1-3-months", label: "1–3 months", description: "Within the next few months" },
+                { value: "3-plus-months", label: "3+ months", description: "Just exploring for now" },
+              ].map((option) => (
+                <OptionCard
+                  key={option.value}
+                  label={option.label}
+                  description={option.description}
+                  selected={data.purchaseTimeframe === option.value}
+                  highlighted={option.value === "asap"}
+                  onClick={() => onChange({ purchaseTimeframe: option.value })}
+                />
+              ))}
+              {behaviour.purchaseTimeframeHelper ? (
+                <p className="text-center text-sm leading-relaxed text-green-deep">
+                  {behaviour.purchaseTimeframeHelper}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
         </div>
       );
     }
@@ -414,8 +525,11 @@ export function ApplyStepContent({
             id="jointFirstName"
             label="Joint applicant first name"
             required
+            autoFocus={autofocus}
             value={data.jointFirstName}
             onChange={(e) => onChange({ jointFirstName: e.target.value })}
+            error={fieldErrors.jointFirstName}
+            valid={isFieldValid("jointFirstName", data, "joint")}
             autoComplete="given-name"
           />
           <ApplyInput
@@ -424,6 +538,8 @@ export function ApplyStepContent({
             required
             value={data.jointLastName}
             onChange={(e) => onChange({ jointLastName: e.target.value })}
+            error={fieldErrors.jointLastName}
+            valid={isFieldValid("jointLastName", data, "joint")}
             autoComplete="family-name"
           />
           <ApplyInput
@@ -431,9 +547,11 @@ export function ApplyStepContent({
             label="Mobile number"
             required
             type="tel"
-            inputMode="tel"
+            inputMode="numeric"
             value={data.jointMobile}
             onChange={(e) => onChange({ jointMobile: e.target.value })}
+            error={fieldErrors.jointMobile}
+            valid={isFieldValid("jointMobile", data, "joint")}
             placeholder="07XXX XXXXXX"
             autoComplete="tel"
           />
@@ -444,6 +562,8 @@ export function ApplyStepContent({
             required
             value={data.jointDateOfBirth}
             onChange={(e) => onChange({ jointDateOfBirth: e.target.value })}
+            error={fieldErrors.jointDateOfBirth}
+            valid={isFieldValid("jointDateOfBirth", data, "joint")}
             max={new Date(new Date().setFullYear(new Date().getFullYear() - 18))
               .toISOString()
               .split("T")[0]}
@@ -458,6 +578,8 @@ export function ApplyStepContent({
                 jointEmploymentStatus: e.target.value as ApplicationData["jointEmploymentStatus"],
               })
             }
+            error={fieldErrors.jointEmploymentStatus}
+            valid={isFieldValid("jointEmploymentStatus", data, "joint")}
           >
             <option value="">Select status</option>
             <option value="employed">Employed</option>
@@ -473,6 +595,8 @@ export function ApplyStepContent({
             inputMode="decimal"
             value={data.jointMonthlyIncome}
             onChange={(e) => onChange({ jointMonthlyIncome: e.target.value })}
+            error={fieldErrors.jointMonthlyIncome}
+            valid={isFieldValid("jointMonthlyIncome", data, "joint")}
             placeholder="e.g. 2500"
             hint="Before tax, in pounds"
           />
@@ -482,6 +606,14 @@ export function ApplyStepContent({
     case "consent":
       return (
         <div className="space-y-3">
+          {behaviour?.consentEmphasiseSoftSearch ? (
+            <div className="rounded-[var(--radius-card)] border border-green/30 bg-green/10 p-4 text-center">
+              <p className="text-sm font-semibold text-green-deep">Soft search only</p>
+              <p className="mt-1 text-sm leading-relaxed text-ink">
+                No impact on your credit score.
+              </p>
+            </div>
+          ) : null}
           {[
             {
               id: "termsAccepted",

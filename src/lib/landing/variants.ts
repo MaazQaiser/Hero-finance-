@@ -20,9 +20,9 @@ const badCredit: LandingVariant = {
     "Your score isn't the whole story. We match you with lenders who look at your full circumstances — with real cars ready to reserve.",
   cta: "Check my options",
   firstReassurance: "Soft search only · your score stays protected",
-  applicationIntroHeading: "Your score isn't the whole story.",
+  applicationIntroHeading: "We consider every credit story.",
   applicationSupportingCopy:
-    "We look at your full circumstances, not just a credit score. A few quick questions help us find finance that fits before we run a soft search.",
+    "Your score isn't the whole picture. A few quick questions help us understand your situation before we run a soft search.",
   applicationCta: "Start my application",
 };
 
