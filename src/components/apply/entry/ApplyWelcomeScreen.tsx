@@ -59,7 +59,7 @@ export function ApplyWelcomeScreen({ onContinue, onSaveLater, vehicleId }: Apply
 
           {summaryVehicle ? (
             <div className="mx-auto mt-6 max-w-md text-left">
-              <VehicleJourneySummary vehicle={summaryVehicle} />
+              <VehicleJourneySummary vehicle={summaryVehicle} compact />
             </div>
           ) : null}
 

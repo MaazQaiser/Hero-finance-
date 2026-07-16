@@ -57,7 +57,7 @@ export function personalizeStepMeta(
       }
       break;
 
-    case "address-duration":
+    case "address":
       if (city) {
         return {
           ...meta,

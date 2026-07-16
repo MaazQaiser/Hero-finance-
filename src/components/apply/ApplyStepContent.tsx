@@ -147,6 +147,7 @@ export function ApplyStepContent({
     case "address":
       return (
         <AddressLookup
+          key="current-address-lookup"
           postcodeId="postcode"
           addressId="address"
           postcode={data.postcode}
@@ -187,6 +188,7 @@ export function ApplyStepContent({
     case "previous-address":
       return (
         <AddressLookup
+          key="previous-address-lookup"
           postcodeId="previousPostcode"
           addressId="previousAddress"
           postcode={data.previousPostcode}
@@ -614,7 +616,9 @@ export function ApplyStepContent({
               </p>
             </div>
           ) : null}
-          {[
+          <div className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted">Required to continue</p>
+            {[
             {
               id: "termsAccepted",
               checked: data.termsAccepted,
@@ -629,7 +633,36 @@ export function ApplyStepContent({
               label: "I have read and accept the Privacy Policy.",
               optional: false,
             },
-            {
+          ].map((item) => (
+            <label
+              key={item.id}
+              htmlFor={item.id}
+              className={`flex min-h-12 cursor-pointer items-start gap-3 rounded-2xl border p-4 transition-colors hover:border-green/25 ${
+                fieldErrors[item.id as keyof ApplicationData]
+                  ? "border-coral bg-coral/5"
+                  : "border-line bg-mist-2"
+              }`}
+            >
+              <Checkbox
+                id={item.id}
+                checked={item.checked}
+                onCheckedChange={(value) => item.onCheckedChange(value === true)}
+                className="mt-0.5"
+              />
+              <span className="text-sm leading-relaxed text-ink">{item.label}</span>
+            </label>
+          ))}
+            {(fieldErrors.termsAccepted || fieldErrors.privacyAccepted) && (
+              <p className="motion-error-in text-sm text-coral">
+                Please accept the required policies to continue.
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted">Optional updates</p>
+            {[
+              {
               id: "marketingConsent",
               checked: data.marketingConsent,
               onCheckedChange: (checked: boolean) => onChange({ marketingConsent: checked }),
@@ -653,6 +686,7 @@ export function ApplyStepContent({
               </span>
             </label>
           ))}
+          </div>
         </div>
       );
 

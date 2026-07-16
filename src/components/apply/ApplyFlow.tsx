@@ -51,6 +51,13 @@ import {
   normalizeStepId,
 } from "@/lib/apply/types";
 import { generateDecision, saveDecision } from "@/lib/apply/decision";
+import {
+  clearPreviousAddressIfNotNeeded,
+  getFormStepNumber,
+  getNextFormStepId,
+  getPrevFormStepId,
+  resolveActiveFormStepId,
+} from "@/lib/apply/navigation";
 import { isStepComplete, validateStep } from "@/lib/apply/validation";
 
 interface ApplyFlowProps {
@@ -143,7 +150,7 @@ function ApplyFlowContent({
     sessionExpired ? "session-expired" : "welcome",
   );
   const [qualifyingIndex, setQualifyingIndex] = useState(0);
-  const [formIndex, setFormIndex] = useState(0);
+  const [formStepId, setFormStepId] = useState<StepId>("email");
   const [entryResolved, setEntryResolved] = useState(sessionExpired);
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [exitOpen, setExitOpen] = useState(false);
@@ -153,11 +160,10 @@ function ApplyFlowContent({
   const backNoticeIndex = useRef(0);
 
   const preBridgeSteps = useMemo(() => getPreBridgeSteps(), []);
-  const postBridgeSteps = useMemo(() => getPostBridgeSteps(data), [data]);
   const totalSteps = useMemo(() => getTotalStepCount(data), [data]);
 
   const currentQualifyingStepId = preBridgeSteps[qualifyingIndex] ?? "residential";
-  const currentFormStepId = postBridgeSteps[formIndex] ?? "email";
+  const currentFormStepId = resolveActiveFormStepId(formStepId, data);
   const currentStepId =
     phase === "qualifying" ? currentQualifyingStepId : phase === "form" ? currentFormStepId : "mobile";
   const meta = personalizeStepMeta(
@@ -169,7 +175,6 @@ function ApplyFlowContent({
     behaviour.showVehicleSummary && data.vehicleId
       ? getVehicleById(data.vehicleId)
       : null;
-  const isReview = currentFormStepId === "review";
   const isMobileStep = phase === "qualifying" && currentQualifyingStepId === "mobile";
   const showStickyFooter = phase === "form" || isMobileStep;
   const fieldErrors = useMemo(
@@ -190,7 +195,7 @@ function ApplyFlowContent({
       ? qualifyingIndex + 2
       : phase === "bridge"
         ? INTRO_SCREEN_COUNT
-        : INTRO_SCREEN_COUNT + formIndex + 1;
+        : getFormStepNumber(currentFormStepId, data, INTRO_SCREEN_COUNT);
 
   useEffect(() => {
     if (sessionExpired) {
@@ -224,7 +229,7 @@ function ApplyFlowContent({
           setQualifyingIndex(preIndex);
           setPhase("qualifying");
         } else if (postIndex >= 0) {
-          setFormIndex(postIndex);
+          setFormStepId(stepId);
           setPhase("form");
         } else {
           setPhase(nextPhase);
@@ -253,16 +258,17 @@ function ApplyFlowContent({
 
     const postIndex = getPostBridgeSteps(saved.data).indexOf(stepId);
     if (postIndex >= 0) {
-      setFormIndex(postIndex);
+      setFormStepId(stepId);
     }
   }, [preBridgeSteps, resume]);
 
   useEffect(() => {
     if (phase !== "form") return;
-    if (formIndex >= postBridgeSteps.length) {
-      setFormIndex(Math.max(postBridgeSteps.length - 1, 0));
+    const resolved = resolveActiveFormStepId(formStepId, data);
+    if (resolved !== formStepId) {
+      setFormStepId(resolved);
     }
-  }, [formIndex, phase, postBridgeSteps.length]);
+  }, [data, formStepId, phase]);
 
   useEffect(() => {
     if (journeyDefaultsApplied.current) return;
@@ -298,7 +304,15 @@ function ApplyFlowContent({
   }, [phase]);
 
   const updateData = useCallback((updates: Partial<ApplicationData>) => {
-    setData((current) => ({ ...current, ...updates }));
+    setData((current) => {
+      const next = { ...current, ...updates };
+
+      if ("yearsAtAddress" in updates) {
+        return { ...next, ...clearPreviousAddressIfNotNeeded(next) };
+      }
+
+      return next;
+    });
   }, []);
 
   const goBack = useCallback(() => {
@@ -307,11 +321,12 @@ function ApplyFlowContent({
     backNoticeIndex.current += 1;
 
     if (phase === "form") {
-      if (formIndex === 0) {
+      const prevStepId = getPrevFormStepId(currentFormStepId, data);
+      if (!prevStepId) {
         setPhase("bridge");
         return;
       }
-      setFormIndex((index) => Math.max(index - 1, 0));
+      setFormStepId(prevStepId);
       return;
     }
 
@@ -328,7 +343,7 @@ function ApplyFlowContent({
       }
       setQualifyingIndex((index) => Math.max(index - 1, 0));
     }
-  }, [formIndex, phase, preBridgeSteps.length, qualifyingIndex]);
+  }, [currentFormStepId, data, phase, preBridgeSteps.length, qualifyingIndex]);
 
   const submitApplication = useCallback(() => {
     setPhase("loading");
@@ -353,7 +368,7 @@ function ApplyFlowContent({
   const goNextForm = useCallback(() => {
     if (!isStepComplete(currentFormStepId, data)) return;
 
-    if (isReview) {
+    if (currentFormStepId === "consent") {
       if (simulateNetworkError && !networkRetried.current) {
         networkRetried.current = true;
         setPhase("network-error");
@@ -364,8 +379,11 @@ function ApplyFlowContent({
       return;
     }
 
-    setFormIndex((index) => Math.min(index + 1, postBridgeSteps.length - 1));
-  }, [currentFormStepId, data, isReview, postBridgeSteps.length, simulateNetworkError, submitApplication]);
+    const nextStepId = getNextFormStepId(currentFormStepId, data);
+    if (nextStepId) {
+      setFormStepId(nextStepId);
+    }
+  }, [currentFormStepId, data, simulateNetworkError, submitApplication]);
 
   const goNext = useCallback(() => {
     setBackNotice(null);
@@ -439,21 +457,21 @@ function ApplyFlowContent({
         return;
       }
       if (postIndex >= 0) {
-        setFormIndex(postIndex);
+        setFormStepId(stepId);
         setPhase("form");
         return;
       }
     }
     // Prototype fallback when no real progress exists
     setPhase("form");
-    setFormIndex(0);
+    setFormStepId("email");
   }, [preBridgeSteps]);
 
   const handleStartAgain = useCallback(() => {
     clearProgress();
     setData(mergeInitialData(vehicleId, false));
     setQualifyingIndex(0);
-    setFormIndex(0);
+    setFormStepId("email");
     setPhase("welcome");
   }, [vehicleId]);
 
@@ -464,7 +482,7 @@ function ApplyFlowContent({
 
   const handleContinueFromBridge = useCallback(() => {
     setPhase("form");
-    setFormIndex(0);
+    setFormStepId("email");
   }, []);
 
   const handleNetworkRetry = useCallback(() => {
@@ -481,7 +499,7 @@ function ApplyFlowContent({
   );
 
   if (phase === "loading") {
-    return <ApplyLoadingScreen />;
+    return <ApplyLoadingScreen vehicle={summaryVehicle} />;
   }
 
   if (phase === "session-expired") {
@@ -561,14 +579,15 @@ function ApplyFlowContent({
             <h1 className="mt-3 text-2xl font-medium text-ink md:text-3xl">{meta.title}</h1>
             <p className="mt-3 text-sm leading-relaxed text-muted">{meta.helper}</p>
 
-            {meta.encouragement && phase === "form" && formIndex > 0 && (
+            {meta.encouragement && phase === "form" && currentFormStepId !== "email" && (
               <p className="mt-2 text-sm text-green-deep">{meta.encouragement}</p>
             )}
 
-            {summaryVehicle ? <VehicleJourneySummary vehicle={summaryVehicle} /> : null}
+            {summaryVehicle ? <VehicleJourneySummary vehicle={summaryVehicle} compact /> : null}
 
             <div className="mt-8">
               <ApplyStepContent
+                key={currentStepId}
                 stepId={currentStepId}
                 data={data}
                 onChange={updateData}
@@ -590,7 +609,7 @@ function ApplyFlowContent({
           <ApplyStickyFooter
             onContinue={goNext}
             onSave={handleSaveClick}
-            continueLabel={isReview ? "Check My Eligibility" : "Continue"}
+            continueLabel={currentStepId === "consent" ? "Run my soft search" : "Continue"}
             continueDisabled={!canContinue}
             trustKey={ambientTrustKey}
           />

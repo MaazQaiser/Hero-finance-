@@ -117,7 +117,12 @@ export function validateStep(stepId: StepId, data: ApplicationData): FieldErrors
       break;
 
     case "consent":
-      // Mock-friendly: don't block Continue on consent checkboxes
+      if (!data.termsAccepted) {
+        errors.termsAccepted = "Please accept the Terms & Conditions to continue";
+      }
+      if (!data.privacyAccepted) {
+        errors.privacyAccepted = "Please accept the Privacy Policy to continue";
+      }
       break;
 
     case "review":

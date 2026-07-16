@@ -36,7 +36,7 @@ export const trustMessages: Record<
   },
 
   address: {
-    description: "Delivered to your door within our delivery area.",
+    description: "Free delivery available.",
   },
 
   livingSituation: {
@@ -44,25 +44,23 @@ export const trustMessages: Record<
   },
 
   employment: {
-    description: "Hundreds of inspected vehicles are ready to drive away.",
+    description: "Hundreds of cars ready to drive away.",
   },
 
   income: {
-    title: "No hidden admin fees",
-    description: "The price you see is the price you pay.",
+    description: "No admin fees — the price you see is the price you pay.",
   },
 
   licence: {
-    description: "Battery health certificates available on eligible EVs.",
+    description: "Battery health verified on our EVs.",
   },
 
   finance: {
-    description: "14-day money back on eligible online purchases.",
+    description: "Hundreds of cars ready to drive away.",
   },
 
   consent: {
-    title: "Soft search only",
-    description: "Checking eligibility won't affect your credit score.",
+    description: "Soft search only — no impact on your credit score.",
   },
 
   review: {
@@ -70,8 +68,7 @@ export const trustMessages: Record<
   },
 
   bridge: {
-    title: "Soft search only",
-    description: "Checking eligibility won't affect your credit score.",
+    description: "Hundreds of cars ready to drive away.",
   },
 
   approval: [

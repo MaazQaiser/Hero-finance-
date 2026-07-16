@@ -171,9 +171,10 @@ export function getPostBridgeSteps(data: ApplicationData): StepId[] {
     steps.push("joint");
   }
 
-  steps.push("consent", "review");
+  steps.push("consent");
 
-  return steps;
+  // Guard against accidental duplicates if step list is extended later
+  return steps.filter((step, index) => steps.indexOf(step) === index);
 }
 
 export function getActiveSteps(data: ApplicationData): StepId[] {

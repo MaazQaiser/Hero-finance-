@@ -70,7 +70,7 @@ export const stepMeta: Record<
   },
   consent: {
     title: "Almost there — just a few confirmations",
-    helper: "Your eligibility check uses a soft search.",
+    helper: "No impact on your credit score.",
   },
   review: {
     title: "Review your application",

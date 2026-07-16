@@ -5,49 +5,41 @@ import { HeroLogo } from "@/components/HeroLogo";
 import { LoadingIndicator } from "@/components/apply/loading/LoadingIndicator";
 import { LoadingStatus } from "@/components/apply/loading/LoadingStatus";
 import { RotatingTrustMessage } from "@/components/apply/loading/RotatingTrustMessage";
+import { VehicleJourneySummary } from "@/components/apply/VehicleJourneySummary";
 import {
   ELIGIBILITY_LOADING_DURATION_MS,
-  ELIGIBILITY_STATE_FADE_MS,
-  ELIGIBILITY_STATE_HOLD_MS,
   eligibilityLoadingStates,
   eligibilityRotatingTrustMessages,
   type LoadingStateMessage,
 } from "@/config/loadingMessages";
+import { type Vehicle } from "@/data/vehicles";
 
 export { ELIGIBILITY_LOADING_DURATION_MS };
 
 interface EligibilityLoadingProps {
   states?: LoadingStateMessage[];
+  vehicle?: Vehicle | null;
 }
 
 export function EligibilityLoading({
   states = eligibilityLoadingStates,
+  vehicle = null,
 }: EligibilityLoadingProps) {
-  const [stepIndex, setStepIndex] = useState(0);
-  const [stepVisible, setStepVisible] = useState(true);
+  const stepIndex = 0;
+  const stepVisible = true;
+  const [progress, setProgress] = useState(0.18);
 
   useEffect(() => {
-    if (states.length <= 1) return;
+    const start = window.setTimeout(() => setProgress(0.56), 700);
+    const mid = window.setTimeout(() => setProgress(0.82), 1800);
+    const end = window.setTimeout(() => setProgress(0.96), 3200);
+    return () => {
+      window.clearTimeout(start);
+      window.clearTimeout(mid);
+      window.clearTimeout(end);
+    };
+  }, []);
 
-    const timers: number[] = [];
-
-    states.forEach((_, index) => {
-      if (index === 0) return;
-      timers.push(
-        window.setTimeout(() => {
-          setStepVisible(false);
-          window.setTimeout(() => {
-            setStepIndex(index);
-            setStepVisible(true);
-          }, ELIGIBILITY_STATE_FADE_MS);
-        }, index * ELIGIBILITY_STATE_HOLD_MS),
-      );
-    });
-
-    return () => timers.forEach((timer) => window.clearTimeout(timer));
-  }, [states]);
-
-  const progress = (stepIndex + 1) / states.length;
   const current = states[stepIndex] ?? states[0];
 
   return (
@@ -67,20 +59,11 @@ export function EligibilityLoading({
           />
         </div>
 
-        <div className="mt-4 flex items-center justify-center gap-2" aria-hidden>
-          {states.map((state, index) => (
-            <span
-              key={state.title}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                index === stepIndex
-                  ? "w-6 bg-green"
-                  : index < stepIndex
-                    ? "w-1.5 bg-green/50"
-                    : "w-1.5 bg-line"
-              }`}
-            />
-          ))}
-        </div>
+        {vehicle ? (
+          <div className="mt-8 w-full max-w-md text-left">
+            <VehicleJourneySummary vehicle={vehicle} compact />
+          </div>
+        ) : null}
 
         <div className="mt-14 flex w-full justify-center border-t border-line/80 pt-4">
           <RotatingTrustMessage messages={eligibilityRotatingTrustMessages} />
