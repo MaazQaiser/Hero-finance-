@@ -43,7 +43,7 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
             display: "inline-flex",
             alignItems: "center",
             gap: 8,
-            background: "#0E7A4F",
+            background: "var(--agreen)",
             color: "#fff",
             fontSize: 12.5,
             fontWeight: 700,
@@ -74,13 +74,13 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
           letterSpacing: "-0.025em",
           lineHeight: 1.1,
           marginBottom: 10,
-          color: "#12211B",
+          color: "var(--aink)",
         }}
       >
         Good news{firstName ? `, ${firstName}` : ""}.
       </h1>
 
-      <p style={{ fontSize: 14.5, lineHeight: 1.55, color: "#5C6B64", marginBottom: 22 }}>
+      <p style={{ fontSize: 14.5, lineHeight: 1.55, color: "var(--aink-soft)", marginBottom: 22 }}>
         A lender on our panel is happy to proceed based on your soft search. Nothing here
         has touched your credit score.
       </p>
@@ -91,12 +91,12 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
           borderRadius: 20,
           overflow: "hidden",
           margin: "0 0 18px",
-          border: "1.5px solid #E2E8E4",
+          border: "1.5px solid var(--aline)",
         }}
       >
         {/* Dark top */}
-        <div style={{ background: "#12211B", color: "#fff", padding: 22 }}>
-          <p style={{ fontSize: 12.5, color: "#9FB3A9", marginBottom: 6 }}>Your budget</p>
+        <div style={{ background: "var(--aink)", color: "#fff", padding: 22 }}>
+          <p style={{ fontSize: 12.5, color: "rgba(255,255,255,0.55)", marginBottom: 6 }}>Your budget</p>
           <p
             style={{
               fontWeight: 600,
@@ -105,8 +105,8 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
               lineHeight: 1.1,
             }}
           >
-            <span style={{ color: "#C4F04B" }}>{budget}</span>
-            <span style={{ fontSize: 18, fontWeight: 400, color: "#9FB3A9" }}> per month</span>
+            <span style={{ color: "var(--alime)" }}>{budget}</span>
+            <span style={{ fontSize: 18, fontWeight: 400, color: "rgba(255,255,255,0.55)" }}> per month</span>
           </p>
         </div>
 
@@ -132,12 +132,12 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
                 justifyContent: "space-between",
                 gap: 14,
                 padding: "11px 0",
-                borderBottom: "1px solid #E2E8E4",
+                borderBottom: "1px solid var(--aline)",
                 fontSize: 14.5,
               }}
             >
-              <span style={{ color: "#5C6B64" }}>{label}</span>
-              <span style={{ fontWeight: 600, textAlign: "right", color: "#12211B" }}>
+              <span style={{ color: "var(--aink-soft)" }}>{label}</span>
+              <span style={{ fontWeight: 600, textAlign: "right", color: "var(--aink)" }}>
                 {value}
               </span>
             </li>
@@ -154,7 +154,7 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
               fontSize: 17,
               letterSpacing: "-0.015em",
               margin: "4px 0 12px",
-              color: "#12211B",
+              color: "var(--aink)",
             }}
           >
             {stock.length} in stock that fit
@@ -169,7 +169,7 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
                   display: "flex",
                   gap: 14,
                   alignItems: "center",
-                  border: "1.5px solid #E2E8E4",
+                  border: "1.5px solid var(--aline)",
                   borderRadius: 16,
                   padding: "13px 15px",
                   background: "#fff",
@@ -185,7 +185,7 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
                     borderRadius: 10,
                     overflow: "hidden",
                     flexShrink: 0,
-                    background: "#EAF1EC",
+                    background: "var(--agreen-wash)",
                     position: "relative",
                   }}
                 >
@@ -209,13 +209,13 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
                       <svg width="34" height="16" viewBox="0 0 26 12" fill="none">
                         <path
                           d="M2 9h22M4.5 9c0-3 2.2-5.5 5-5.5h4c1.6 0 3.1.7 4.1 1.9L19.4 7h2.1c1.4 0 2.5 1 2.5 2"
-                          stroke="#0E7A4F"
+                          stroke="var(--agreen)"
                           strokeWidth="1.6"
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         />
-                        <circle cx="8" cy="9.6" r="1.9" fill="#0E7A4F" />
-                        <circle cx="18.5" cy="9.6" r="1.9" fill="#0E7A4F" />
+                        <circle cx="8" cy="9.6" r="1.9" fill="var(--agreen)" />
+                        <circle cx="18.5" cy="9.6" r="1.9" fill="var(--agreen)" />
                       </svg>
                     </div>
                   )}
@@ -229,12 +229,12 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
                       fontSize: 15,
                       fontWeight: 600,
                       letterSpacing: "-0.01em",
-                      color: "#12211B",
+                      color: "var(--aink)",
                     }}
                   >
                     {vehicle.make} {vehicle.model}
                   </strong>
-                  <span style={{ fontSize: 12.5, color: "#5C6B64" }}>
+                  <span style={{ fontSize: 12.5, color: "var(--aink-soft)" }}>
                     {vehicle.year} · {formatMileage(vehicle.mileage)}
                   </span>
                 </div>
@@ -247,12 +247,12 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
                       fontWeight: 600,
                       fontSize: 19,
                       letterSpacing: "-0.02em",
-                      color: "#0A5D3C",
+                      color: "var(--agreen)",
                     }}
                   >
                     {formatPrice(vehicle.monthlyHp)}
                   </strong>
-                  <span style={{ fontSize: 11.5, color: "#5C6B64" }}>per month</span>
+                  <span style={{ fontSize: 11.5, color: "var(--aink-soft)" }}>per month</span>
                 </div>
               </Link>
             ))}
@@ -263,7 +263,7 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
       {/* What happens next */}
       <div
         style={{
-          background: "#F2F7F4",
+          background: "var(--agreen-wash)",
           borderRadius: 18,
           padding: "18px 20px",
           marginBottom: 16,
@@ -275,7 +275,7 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
             fontSize: 16,
             letterSpacing: "-0.015em",
             marginBottom: 10,
-            color: "#12211B",
+            color: "var(--aink)",
           }}
         >
           What happens next
@@ -285,7 +285,7 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
             paddingLeft: 19,
             fontSize: 14.5,
             lineHeight: 1.6,
-            color: "#5C6B64",
+            color: "var(--aink-soft)",
             margin: 0,
           }}
         >
@@ -300,12 +300,12 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
       {/* Representative example */}
       <div
         style={{
-          border: "1.5px solid #E2E8E4",
-          borderRadius: 14,
+          border: "1.5px solid var(--aline)",
+          borderRadius: 9999,
           padding: "15px 16px",
           fontSize: 12.5,
           lineHeight: 1.6,
-          color: "#5C6B64",
+          color: "var(--aink-soft)",
           marginBottom: 20,
           background: "#fff",
         }}
@@ -313,7 +313,7 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
         <strong
           style={{
             display: "block",
-            color: "#12211B",
+            color: "var(--aink)",
             marginBottom: 6,
             letterSpacing: "0.04em",
             textTransform: "uppercase",
@@ -339,10 +339,11 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
           fontSize: 17,
           fontWeight: 600,
           color: "#fff",
-          background: "#0E7A4F",
+          background: "var(--agreen)",
           border: "none",
-          borderRadius: 14,
+          borderRadius: 9999,
           padding: 17,
+          boxShadow: "0 4px 14px rgba(91, 43, 212, 0.25)",
           textDecoration: "none",
           marginBottom: 9,
         }}
@@ -358,10 +359,10 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
           textAlign: "center",
           fontSize: 16,
           fontWeight: 600,
-          color: "#12211B",
+          color: "var(--aink)",
           background: "#fff",
-          border: "1.5px solid #C7D2CC",
-          borderRadius: 14,
+          border: "1.5px solid var(--aline-strong)",
+          borderRadius: 9999,
           padding: 16,
           textDecoration: "none",
         }}

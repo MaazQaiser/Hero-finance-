@@ -33,8 +33,8 @@ export function ChoiceOption({ label, selected, onClick }: ChoiceOptionProps) {
         fontSize: 16.5,
         fontWeight: 500,
         color: "var(--aink)",
-        background: "#fff",
-        border: `1.5px solid ${selected ? "var(--agreen)" : "var(--aline)"}`,
+        background: selected ? "var(--agreen-wash)" : "#f8f5ff",
+        border: "none",
         borderRadius: "var(--aradius)",
         padding: "17px 18px",
         cursor: "pointer",
@@ -42,14 +42,12 @@ export function ChoiceOption({ label, selected, onClick }: ChoiceOptionProps) {
         alignItems: "center",
         justifyContent: "space-between",
         gap: 12,
-        transition: "border-color 0.15s, transform 0.12s, box-shadow 0.15s",
+        transition: "background 0.15s, transform 0.12s",
         transform: pressing ? "scale(0.985)" : "none",
-        boxShadow: selected
-          ? "none"
-          : "0 2px 6px rgba(18,33,27,0.04)",
+        boxShadow: "none",
       }}
     >
-      {/* Green wash fill sweep */}
+      {/* Wash fill sweep */}
       <span
         aria-hidden
         style={{

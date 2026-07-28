@@ -224,10 +224,7 @@ export function ApplyFlow({
   if (phase === "loading") {
     return (
       <div className="apply-shell-outer">
-        <div
-          className="apply-shell"
-          style={{ "--a-tint": "#FAFCFA" } as React.CSSProperties}
-        >
+        <div className="apply-shell">
           <ApplyBrandBar savedFlash={false} />
           <SectionRail sectionIndex={5} segmentPct={100} loadingMode />
           <div
@@ -246,13 +243,13 @@ export function ApplyFlow({
                 width: 44,
                 height: 44,
                 borderRadius: "50%",
-                border: "3px solid #E2E8E4",
-                borderTopColor: "#0E7A4F",
+                border: "3px solid var(--aline)",
+                borderTopColor: "var(--agreen)",
                 marginBottom: 20,
               }}
               className="a-spinner"
             />
-            <p style={{ fontSize: 15, color: "#5C6B64" }}>
+            <p style={{ fontSize: 15, color: "var(--aink-soft)" }}>
               Running your soft search across our lender panel…
             </p>
           </div>
@@ -293,42 +290,16 @@ export function ApplyFlow({
 
   if (!currentStep) return null;
 
-  const sectionTint = currentSection?.tint ?? "#EFF7F1";
   const tone = currentSection?.tone ?? "warm";
 
   return (
     <div className="apply-shell-outer">
-      <div
-        className="apply-shell"
-        style={{ "--a-tint": sectionTint } as React.CSSProperties}
-      >
+      <div className="apply-shell">
         {/* Brand bar */}
         <ApplyBrandBar savedFlash={savedFlash} />
 
         {/* 6-segment rail */}
         <SectionRail sectionIndex={sectionIndex} segmentPct={segmentPct} />
-
-        {/* Back link */}
-        {safeIndex > 0 && (
-          <div style={{ padding: "12px 20px 0" }}>
-            <button
-              type="button"
-              onClick={goBack}
-              style={{
-                background: "none",
-                border: "none",
-                fontFamily: "inherit",
-                fontSize: 14.5,
-                fontWeight: 600,
-                color: "var(--aink-soft)",
-                cursor: "pointer",
-                padding: 0,
-              }}
-            >
-              ← Back
-            </button>
-          </div>
-        )}
 
         {/* Scrollable stage */}
         <main
@@ -409,7 +380,7 @@ export function ApplyFlow({
               <svg width="14" height="16" viewBox="0 0 14 16" fill="none" aria-hidden>
                 <path
                   d="M7 1L1 3.5v4.2C1 11.3 3.6 14.4 7 15c3.4-.6 6-3.7 6-7.3V3.5L7 1z"
-                  stroke="#0E7A4F"
+                  stroke="var(--agreen)"
                   strokeWidth="1.5"
                   strokeLinejoin="round"
                 />
@@ -430,25 +401,37 @@ export function ApplyFlow({
             </button>
           )}
 
-          {/* Save later — shown from section 2 onward on all steps */}
-          {showSaveLater && (
-            <button
-              type="button"
-              onClick={handleSaveClick}
+          {/* Save later + Back — side by side white CTAs */}
+          {(showSaveLater || safeIndex > 0) && (
+            <div
               style={{
-                width: "100%",
-                background: "none",
-                border: "none",
-                fontFamily: "inherit",
-                fontSize: 14,
-                fontWeight: 600,
-                color: "var(--aink-soft)",
-                padding: "13px 0 2px",
-                cursor: "pointer",
+                display: "flex",
+                alignItems: "stretch",
+                gap: 10,
+                paddingTop: 10,
               }}
             >
-              Save and continue later
-            </button>
+              {showSaveLater && (
+                <button
+                  type="button"
+                  className="a-cta-secondary"
+                  onClick={handleSaveClick}
+                >
+                  Save and continue later
+                </button>
+              )}
+
+              {safeIndex > 0 && (
+                <button
+                  type="button"
+                  className="a-cta-secondary"
+                  onClick={goBack}
+                  style={{ flex: showSaveLater ? "0 0 auto" : 1, minWidth: showSaveLater ? 96 : undefined }}
+                >
+                  Back
+                </button>
+              )}
+            </div>
           )}
         </footer>
 

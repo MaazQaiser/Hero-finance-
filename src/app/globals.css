@@ -654,92 +654,115 @@
 }
 
 /* ==========================================================================
-   Apply shell — v2 green journey
+   Apply shell — website brand (purple) journey
    Scoped under .apply-shell so the marketing site is unaffected.
    ========================================================================== */
 
 .apply-shell-outer {
   min-height: 100dvh;
-  background: #dce4e0;
+  background: #f0ebff;
   display: flex;
   justify-content: center;
   align-items: flex-start;
 }
 
 .apply-shell {
-  --aink: #12211b;
-  --aink-soft: #5c6b64;
-  --aline: #e2e8e4;
-  --aline-strong: #c7d2cc;
-  --agreen: #0e7a4f;
-  --agreen-dark: #0a5d3c;
-  --agreen-wash: #e4f2ea;
-  --alime: #c4f04b;
-  --aerror: #b3261e;
-  --aerror-wash: #fdf2f1;
-  --aradius: 14px;
+  --aink: #1e1635;
+  --aink-soft: #6e6a7c;
+  --aline: #e8e0f5;
+  --aline-strong: #d4c8eb;
+  --agreen: #5b2bd4;
+  --agreen-dark: #4a1fa8;
+  --agreen-wash: #f0ebff;
+  --alime: #dfff4d;
+  --aerror: #ff4438;
+  --aerror-wash: #fff1f0;
+  --aradius: 1rem;
 
   width: 100%;
   max-width: 480px;
-  background: var(--a-tint, #eff7f1);
+  background: #ffffff;
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
   color: var(--aink);
   position: relative;
   overflow-x: hidden;
-  transition: background 0.45s ease;
   box-shadow:
-    0 0 0 1px rgba(18, 33, 27, 0.06),
-    0 24px 60px rgba(18, 33, 27, 0.14);
+    0 0 0 1px rgba(30, 22, 53, 0.06),
+    0 24px 60px rgba(30, 22, 53, 0.12);
 }
 
-/* Apply-shell field overrides */
+/* Apply-shell field overrides — match site ApplyField */
 .apply-shell input,
 .apply-shell select,
 .apply-shell textarea {
   border-color: var(--aline) !important;
-  border-radius: var(--aradius) !important;
+  border-radius: 1rem !important;
   color: var(--aink) !important;
-  background: #fff !important;
-  font-size: 17px !important;
+  background: #f8f5ff !important;
+  font-size: 16px !important;
 }
 
 .apply-shell input:focus,
 .apply-shell select:focus,
 .apply-shell textarea:focus {
-  border-color: var(--agreen) !important;
-  box-shadow: 0 0 0 3px var(--agreen-wash) !important;
+  border-color: rgba(91, 43, 212, 0.4) !important;
+  box-shadow: 0 0 0 3px rgba(91, 43, 212, 0.15) !important;
   outline: none !important;
+  background: #fff !important;
 }
 
 .apply-shell input.a-invalid,
 .apply-shell select.a-invalid {
-  border-color: var(--aerror) !important;
+  border-color: rgba(255, 68, 56, 0.6) !important;
   background: var(--aerror-wash) !important;
 }
 
-/* Apply-shell CTA button */
+/* Apply-shell CTA button — match site primary Button */
 .a-cta {
   width: 100%;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 600;
   color: #fff;
   background: var(--agreen);
   border: none;
-  border-radius: var(--aradius);
-  padding: 17px;
+  border-radius: 9999px;
+  padding: 16px 24px;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background 0.15s, box-shadow 0.15s;
+  box-shadow: 0 4px 14px rgba(91, 43, 212, 0.25);
 }
-.a-cta:hover { background: var(--agreen-dark); }
+.a-cta:hover {
+  background: var(--agreen-dark);
+  box-shadow: 0 8px 20px rgba(91, 43, 212, 0.28);
+}
 .a-cta:active { transform: scale(0.99); }
-.a-cta:disabled { opacity: 0.5; cursor: not-allowed; }
+.a-cta:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
 
-/* Choice card hover / focus */
+/* Secondary / white CTA — same size as .a-cta */
+.a-cta-secondary {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--aink);
+  background: #fff;
+  border: 1.5px solid var(--aline);
+  border-radius: 9999px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  font-family: inherit;
+}
+.a-cta-secondary:hover {
+  background: var(--agreen-wash);
+  border-color: var(--aline-strong);
+}
+.a-cta-secondary:active { transform: scale(0.99); }
+
+/* Choice card hover / focus — no stroke or shadow */
 .a-choice-btn:hover {
-  border-color: var(--aline-strong) !important;
-  box-shadow: 0 2px 8px rgba(18, 33, 27, 0.07);
+  background: var(--agreen-wash) !important;
 }
 .a-choice-btn:focus-visible {
   outline: 2.5px solid var(--agreen);

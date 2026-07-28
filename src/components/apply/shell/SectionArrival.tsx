@@ -73,7 +73,7 @@ export function SectionArrival({ section, sectionIndex, onDone }: SectionArrival
         style={{
           fontSize: 15,
           lineHeight: 1.5,
-          color: "#A6BAB0",
+          color: "rgba(255,255,255,0.65)",
         }}
       >
         {section.desc}

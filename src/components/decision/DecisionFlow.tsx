@@ -53,7 +53,7 @@ export function DecisionFlow({ stateOverride }: DecisionFlowProps) {
         className="apply-shell-outer"
         style={{ alignItems: "center", justifyContent: "center" }}
       >
-        <p style={{ color: "#5C6B64", fontSize: 15 }}>Loading your decision…</p>
+        <p style={{ color: "var(--aink-soft)", fontSize: 15 }}>Loading your decision…</p>
       </div>
     );
   }
@@ -62,18 +62,12 @@ export function DecisionFlow({ stateOverride }: DecisionFlowProps) {
 
   return (
     <div className="apply-shell-outer">
-      <div
-        className="apply-shell"
-        style={{
-          "--a-tint":
-            state === "approved" ? "#FAFCFA" : state === "pending" ? "#FAFCFA" : "#FDF2F1",
-        } as React.CSSProperties}
-      >
+      <div className="apply-shell">
         {/* Header */}
         <header
           style={{
             padding: "16px 20px 12px",
-            borderBottom: "1px solid #E2E8E4",
+            borderBottom: "1px solid var(--aline)",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
@@ -86,12 +80,12 @@ export function DecisionFlow({ stateOverride }: DecisionFlowProps) {
               fontSize: 20,
               letterSpacing: "-0.02em",
               textDecoration: "none",
-              color: "#12211B",
+              color: "var(--aink)",
             }}
           >
-            Her<span style={{ color: "#0E7A4F" }}>o</span>
+            Her<span style={{ color: "var(--agreen)" }}>o</span>
           </Link>
-          <span style={{ fontSize: 12, color: "#5C6B64", letterSpacing: "0.04em" }}>
+          <span style={{ fontSize: 12, color: "var(--aink-soft)", letterSpacing: "0.04em" }}>
             {state === "approved"
               ? "Approved in principle"
               : state === "pending"

@@ -5,10 +5,6 @@ export type FieldErrors = Partial<Record<keyof ApplicationData, string>>;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const postcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2}$/i;
 
-function cleanMobile(value: string): string {
-  return value.replace(/\s+/g, "");
-}
-
 export function validateStep(stepId: StepId | string, data: ApplicationData): FieldErrors {
   const errors: FieldErrors = {};
 
@@ -28,11 +24,6 @@ export function validateStep(stepId: StepId | string, data: ApplicationData): Fi
       break;
 
     case "mobile":
-      if (!cleanMobile(data.mobile)) {
-        errors.mobile = "Enter your mobile number";
-      } else if (!/^0\d{9,10}$/.test(cleanMobile(data.mobile))) {
-        errors.mobile = "Enter a valid UK mobile number";
-      }
       break;
 
     case "joint-choice":
@@ -45,14 +36,6 @@ export function validateStep(stepId: StepId | string, data: ApplicationData): Fi
       break;
 
     case "dob":
-      if (!data.dateOfBirth) {
-        errors.dateOfBirth = "Enter your date of birth";
-      } else {
-        const dob = new Date(data.dateOfBirth);
-        const age = (Date.now() - dob.getTime()) / (365.25 * 24 * 60 * 60 * 1000);
-        if (age < 18) errors.dateOfBirth = "You must be 18 or over to apply";
-        else if (age > 100) errors.dateOfBirth = "Enter a valid date of birth";
-      }
       break;
 
     // v2 Section 2 — Licence

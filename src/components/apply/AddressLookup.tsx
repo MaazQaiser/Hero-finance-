@@ -64,8 +64,8 @@ export function AddressLookup({
         style={{
           width: "100%",
           padding: "14px 18px",
-          background: "#F4F6F5",
-          border: "1.5px solid var(--aline-strong)",
+          background: "var(--agreen-wash)",
+          border: "1.5px solid var(--aline)",
           borderRadius: "var(--aradius)",
           fontFamily: "inherit",
           fontSize: 16,
@@ -76,12 +76,12 @@ export function AddressLookup({
           transition: "background 0.15s, border-color 0.15s",
         }}
         onMouseEnter={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background = "#E8EDEA";
-          (e.currentTarget as HTMLButtonElement).style.borderColor = "#9DB5A8";
+          (e.currentTarget as HTMLButtonElement).style.background = "#e8e0f5";
+          (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--aline-strong)";
         }}
         onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.background = "#F4F6F5";
-          (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--aline-strong)";
+          (e.currentTarget as HTMLButtonElement).style.background = "var(--agreen-wash)";
+          (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--aline)";
         }}
       >
         Find my address
