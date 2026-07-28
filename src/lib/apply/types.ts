@@ -1,6 +1,6 @@
 export type EmploymentStatus = "employed" | "self-employed" | "retired" | "other";
 export type ResidentialStatus = "homeowner" | "renting" | "family" | "other";
-export type DrivingLicence = "full-uk" | "provisional" | "none";
+export type DrivingLicence = "full-uk" | "provisional" | "eu-international" | "none";
 export type EmploymentDuration =
   | "less-than-3-months"
   | "3-6-months"
@@ -23,17 +23,36 @@ export type AddressDuration =
   | "";
 
 export interface ApplicationData {
+  // Core personal
   firstName: string;
   lastName: string;
   mobile: string;
   email: string;
   dateOfBirth: string;
+
+  // v2 Section 0 — Quick questions
+  budgetBand: string;     // "Under £200" | "£200 to £300" | "£300 to £400" | "£400 to £500" | "Over £500"
+  depositBand: string;    // "None" | "Under £500" | "£500 to £1,000" | "£1,000 to £2,500" | "Over £2,500"
+  carType: string;        // "Small car" | "Family car or estate" | "SUV" | "Van or pickup" | "Not sure yet"
+  creditRating: string;   // "Excellent" | "Good" | "Fair" | "Poor" | "Not sure"
+  // purchaseTimeframe shared with v1
+
+  // Address (v2 uses addressTenure; legacy uses yearsAtAddress)
   postcode: string;
   address: string;
-  yearsAtAddress: AddressDuration | string;
-  residentialStatus: ResidentialStatus | "";
-  employmentStatus: EmploymentStatus | "";
-  employmentDuration: EmploymentDuration;
+  yearsAtAddress: AddressDuration | string; // legacy
+  addressTenure: string;  // v2: "Under 6 months" | "6 to 12 months" | "1 to 2 years" | "2 to 3 years" | "Over 3 years"
+  livingStatus: string;   // v2 6-way: "Homeowner with a mortgage" | "Homeowner, no mortgage" | "Renting privately" | "Renting from council or housing association" | "Living with parents or family" | "Other"
+  residentialStatus: ResidentialStatus | ""; // legacy
+  previousPostcode: string;
+  previousAddress: string;
+  previousAddressTenure: string; // v2: "Under 1 year" | "1 to 2 years" | "2 to 3 years" | "Over 3 years"
+
+  // Employment
+  employmentStatus: EmploymentStatus | ""; // legacy 4-way
+  employmentStatusFull: string; // v2 8-way: "employed-full-time" | "employed-part-time" | "self-employed" | "retired" | "student" | "unemployed" | "receiving-benefits" | "homemaker"
+  employmentDuration: EmploymentDuration; // legacy
+  jobDuration: string;    // v2: "Under 3 months" | "3 to 6 months" | "6 to 12 months" | "1 to 3 years" | "Over 3 years"
   previousEmployerName: string;
   previousEmploymentDuration: PreviousEmploymentDuration;
   employerName: string;
@@ -42,15 +61,20 @@ export interface ApplicationData {
   yearsTrading: string;
   incomeSource: string;
   monthlyIncome: string;
-  previousPostcode: string;
-  previousAddress: string;
+  otherIncome: string;    // v2: optional additional income
+
+  // Licence (extended in v2 to include EU/international)
   drivingLicence: DrivingLicence | "";
+
+  // Vehicle (legacy — v2 removes vehicle search from apply)
   vehicleId: string;
   vehicleSearch: string;
   financeDeposit: string;
   purchaseTimeframe: string;
   hasFinanceToSettle: "" | "yes" | "no";
   settlementAmount: string;
+
+  // Joint
   jointApplicant: boolean;
   jointFirstName: string;
   jointLastName: string;
@@ -58,29 +82,48 @@ export interface ApplicationData {
   jointDateOfBirth: string;
   jointEmploymentStatus: EmploymentStatus | "";
   jointMonthlyIncome: string;
+
+  // Consent
   termsAccepted: boolean;
   privacyAccepted: boolean;
   marketingConsent: boolean;
 }
 
 export type StepId =
-  | "residential"
-  | "employment"
-  | "licence"
-  | "joint-choice"
+  // v2 Section 0 — Quick questions
+  | "budget"
+  | "deposit"
+  | "car-type"
+  | "credit-rating"
+  | "when"
+  // v2 Section 1 — Details
+  | "name"
   | "mobile"
   | "email"
   | "dob"
+  | "joint-choice"
+  // v2 Section 2 — Licence
+  | "licence"
+  // v2 Section 3 — Address
+  | "address"
+  | "address-duration"
+  | "living"
+  | "previous-address"
+  | "previous-address-duration"
+  // v2 Section 4 — Work & income
+  | "employment"
+  | "employer"
+  | "job-duration"
+  | "income"
+  // v2 Section 5 — Confirm
+  | "consent"
+  // Legacy (kept for storage/resume backward compat)
+  | "residential"
   | "employment-duration"
   | "previous-employer"
   | "previous-employment-duration"
-  | "address"
-  | "address-duration"
-  | "previous-address"
-  | "income"
   | "vehicle"
   | "joint"
-  | "consent"
   | "review";
 
 export const INTRO_SCREEN_COUNT = 7;
@@ -91,12 +134,26 @@ export const initialApplicationData: ApplicationData = {
   mobile: "",
   email: "",
   dateOfBirth: "",
+  // v2 quick questions
+  budgetBand: "",
+  depositBand: "",
+  carType: "",
+  creditRating: "",
+  // address
   postcode: "",
   address: "",
   yearsAtAddress: "",
+  addressTenure: "",
+  livingStatus: "",
   residentialStatus: "",
+  previousPostcode: "",
+  previousAddress: "",
+  previousAddressTenure: "",
+  // employment
   employmentStatus: "",
+  employmentStatusFull: "",
   employmentDuration: "",
+  jobDuration: "",
   previousEmployerName: "",
   previousEmploymentDuration: "",
   employerName: "",
@@ -105,15 +162,17 @@ export const initialApplicationData: ApplicationData = {
   yearsTrading: "",
   incomeSource: "",
   monthlyIncome: "",
-  previousPostcode: "",
-  previousAddress: "",
+  otherIncome: "",
+  // licence
   drivingLicence: "",
+  // vehicle (legacy)
   vehicleId: "",
   vehicleSearch: "",
   financeDeposit: "",
   purchaseTimeframe: "",
   hasFinanceToSettle: "",
   settlementAmount: "",
+  // joint
   jointApplicant: false,
   jointFirstName: "",
   jointLastName: "",
@@ -121,12 +180,18 @@ export const initialApplicationData: ApplicationData = {
   jointDateOfBirth: "",
   jointEmploymentStatus: "",
   jointMonthlyIncome: "",
+  // consent
   termsAccepted: false,
   privacyAccepted: false,
   marketingConsent: false,
 };
 
-const AUTO_ADVANCE_STEPS: StepId[] = ["residential", "employment", "licence", "joint-choice"];
+const AUTO_ADVANCE_STEPS: StepId[] = [
+  "residential", "employment", "licence", "joint-choice",
+  "budget", "deposit", "car-type", "credit-rating", "when",
+  "address-duration", "living", "previous-address-duration",
+  "job-duration",
+];
 
 export function isAutoAdvanceStep(stepId: StepId): boolean {
   return AUTO_ADVANCE_STEPS.includes(stepId);
@@ -135,6 +200,8 @@ export function isAutoAdvanceStep(stepId: StepId): boolean {
 export function normalizeStepId(stepId: string): StepId {
   if (stepId === "basic-details") return "mobile";
   if (stepId === "address-history") return "previous-address";
+  if (stepId === "employment-duration") return "job-duration";
+  if (stepId === "residential") return "living";
   return stepId as StepId;
 }
 
@@ -144,6 +211,13 @@ export function needsPreviousEmployment(data: ApplicationData): boolean {
 }
 
 export function needsPreviousAddress(data: ApplicationData): boolean {
+  // v2 address tenure values
+  if (data.addressTenure) {
+    return ["Under 6 months", "6 to 12 months", "1 to 2 years", "2 to 3 years"].includes(
+      data.addressTenure,
+    );
+  }
+  // legacy values
   if (!data.yearsAtAddress) return false;
   return ["less-than-1-year", "1-2-years", "2-3-years"].includes(data.yearsAtAddress);
 }

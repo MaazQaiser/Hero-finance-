@@ -9,13 +9,29 @@ function cleanMobile(value: string): string {
   return value.replace(/\s+/g, "");
 }
 
-export function validateStep(stepId: StepId, data: ApplicationData): FieldErrors {
+export function validateStep(stepId: StepId | string, data: ApplicationData): FieldErrors {
   const errors: FieldErrors = {};
 
   switch (stepId) {
+    // v2 Section 0 — Quick questions (auto-advance, no validation needed)
+    case "budget":
+    case "deposit":
+    case "car-type":
+    case "credit-rating":
+    case "when":
+      break;
+
+    // v2 Section 1 — Details
+    case "name":
+      if (!data.firstName.trim()) errors.firstName = "Enter your first name";
+      if (!data.lastName.trim()) errors.lastName = "Enter your last name";
+      break;
+
     case "mobile":
       if (!cleanMobile(data.mobile)) {
-        errors.mobile = "Please enter your mobile number";
+        errors.mobile = "Enter your mobile number";
+      } else if (!/^0\d{9,10}$/.test(cleanMobile(data.mobile))) {
+        errors.mobile = "Enter a valid UK mobile number";
       }
       break;
 
@@ -35,9 +51,83 @@ export function validateStep(stepId: StepId, data: ApplicationData): FieldErrors
         const dob = new Date(data.dateOfBirth);
         const age = (Date.now() - dob.getTime()) / (365.25 * 24 * 60 * 60 * 1000);
         if (age < 18) errors.dateOfBirth = "You must be 18 or over to apply";
+        else if (age > 100) errors.dateOfBirth = "Enter a valid date of birth";
       }
       break;
 
+    // v2 Section 2 — Licence
+    case "licence":
+      if (!data.drivingLicence) errors.drivingLicence = "Select an option";
+      break;
+
+    // v2 Section 3 — Address
+    case "address":
+      if (!data.postcode.trim()) errors.postcode = "Enter your postcode";
+      else if (!postcodeRegex.test(data.postcode.trim())) {
+        errors.postcode = "Enter a valid UK postcode";
+      }
+      if (!data.address.trim()) errors.address = "Select your address";
+      break;
+
+    case "address-duration":
+      if (!data.addressTenure && !data.yearsAtAddress) {
+        errors.addressTenure = "Tell us how long you've lived here";
+      }
+      break;
+
+    case "living":
+      if (!data.livingStatus) errors.livingStatus = "Select your living situation";
+      break;
+
+    case "previous-address":
+      if (!data.previousPostcode.trim()) errors.previousPostcode = "Enter your previous postcode";
+      else if (!postcodeRegex.test(data.previousPostcode.trim())) {
+        errors.previousPostcode = "Enter a valid UK postcode";
+      }
+      if (!data.previousAddress.trim()) errors.previousAddress = "Select your previous address";
+      break;
+
+    case "previous-address-duration":
+      if (!data.previousAddressTenure) errors.previousAddressTenure = "Tell us how long you lived there";
+      break;
+
+    // v2 Section 4 — Work & income
+    case "employment":
+      if (!data.employmentStatusFull && !data.employmentStatus) {
+        errors.employmentStatusFull = "Select your employment status";
+      }
+      break;
+
+    case "employer":
+      if (!data.employerName.trim()) errors.employerName = "Enter your employer or business name";
+      if (!data.jobTitle.trim()) errors.jobTitle = "Enter your job title";
+      break;
+
+    case "job-duration":
+      if (!data.jobDuration && !data.employmentDuration) {
+        errors.jobDuration = "Select how long you've been in your role";
+      }
+      break;
+
+    case "income":
+      if (!data.monthlyIncome.trim()) {
+        errors.monthlyIncome = "Enter your monthly income";
+      } else if (Number(data.monthlyIncome) <= 0) {
+        errors.monthlyIncome = "Enter a valid monthly income";
+      }
+      break;
+
+    // v2 Section 5 — Confirm
+    case "consent":
+      if (!data.termsAccepted) {
+        errors.termsAccepted = "Please accept the Terms & Conditions to continue";
+      }
+      if (!data.privacyAccepted) {
+        errors.privacyAccepted = "Please accept the Privacy Policy to continue";
+      }
+      break;
+
+    // Legacy steps (kept for backward compat)
     case "employment-duration":
       if (!data.employmentDuration) {
         errors.employmentDuration = "Select how long you've been with your employer";
@@ -56,75 +146,12 @@ export function validateStep(stepId: StepId, data: ApplicationData): FieldErrors
       }
       break;
 
-    case "address":
-      if (!data.postcode.trim()) errors.postcode = "Enter your postcode";
-      else if (!postcodeRegex.test(data.postcode.trim())) {
-        errors.postcode = "Enter a valid UK postcode";
-      }
-      if (!data.address.trim()) errors.address = "Select your address";
-      break;
-
-    case "address-duration":
-      if (!data.yearsAtAddress) {
-        errors.yearsAtAddress = "Tell us how long you've lived here";
-      }
-      break;
-
-    case "previous-address":
-      if (!data.previousPostcode.trim()) errors.previousPostcode = "Enter your previous postcode";
-      else if (!postcodeRegex.test(data.previousPostcode.trim())) {
-        errors.previousPostcode = "Enter a valid UK postcode";
-      }
-      if (!data.previousAddress.trim()) errors.previousAddress = "Select your previous address";
-      break;
-
     case "residential":
       if (!data.residentialStatus) errors.residentialStatus = "Select your living situation";
       break;
 
-    case "employment":
-      if (!data.employmentStatus) errors.employmentStatus = "Select your employment status";
-      break;
-
-    case "income":
-      if (data.employmentStatus === "employed") {
-        if (!data.employerName.trim()) errors.employerName = "Enter your employer name";
-        if (!data.jobTitle.trim()) errors.jobTitle = "Enter your job title";
-      }
-      if (data.employmentStatus === "self-employed") {
-        if (!data.businessType.trim()) errors.businessType = "Enter your business type";
-        if (!data.yearsTrading) errors.yearsTrading = "Enter years trading";
-      }
-      if (data.employmentStatus === "retired") {
-        if (!data.incomeSource.trim()) errors.incomeSource = "Enter your income source";
-      }
-      if (!data.monthlyIncome.trim()) {
-        errors.monthlyIncome = "Enter your monthly income";
-      } else if (Number(data.monthlyIncome) <= 0) {
-        errors.monthlyIncome = "Enter a valid monthly income";
-      }
-      break;
-
-    case "licence":
-      if (!data.drivingLicence) errors.drivingLicence = "Select an option";
-      break;
-
     case "vehicle":
-      break;
-
     case "joint":
-      // Mock-friendly: allow any entered details through without format checks
-      break;
-
-    case "consent":
-      if (!data.termsAccepted) {
-        errors.termsAccepted = "Please accept the Terms & Conditions to continue";
-      }
-      if (!data.privacyAccepted) {
-        errors.privacyAccepted = "Please accept the Privacy Policy to continue";
-      }
-      break;
-
     case "review":
       break;
   }
@@ -136,6 +163,6 @@ export function hasErrors(errors: FieldErrors): boolean {
   return Object.keys(errors).length > 0;
 }
 
-export function isStepComplete(stepId: StepId, data: ApplicationData): boolean {
+export function isStepComplete(stepId: StepId | string, data: ApplicationData): boolean {
   return !hasErrors(validateStep(stepId, data));
 }

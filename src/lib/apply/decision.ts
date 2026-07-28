@@ -13,6 +13,11 @@ export interface FinanceDecision {
   termMonths?: number;
   lenderName?: string;
   expectedResponseHours?: number;
+  // v2 — customer-provided context
+  budgetBand?: string;
+  depositBand?: string;
+  carType?: string;
+  purchaseTimeframe?: string;
 }
 
 const DECISION_KEY = "hero-finance-decision";
@@ -26,12 +31,15 @@ export function generateDecision(data: ApplicationData): FinanceDecision {
   const referenceId = generateReferenceId();
   const applicantName = data.firstName || "there";
 
+  const context = {
+    budgetBand: data.budgetBand || undefined,
+    depositBand: data.depositBand || undefined,
+    carType: data.carType || undefined,
+    purchaseTimeframe: data.purchaseTimeframe || undefined,
+  };
+
   if (income > 0 && income < 1200) {
-    return {
-      state: "declined",
-      referenceId,
-      applicantName,
-    };
+    return { state: "declined", referenceId, applicantName, ...context };
   }
 
   if (income >= 1200 && income < 1800) {
@@ -40,6 +48,7 @@ export function generateDecision(data: ApplicationData): FinanceDecision {
       referenceId,
       applicantName,
       expectedResponseHours: 24,
+      ...context,
     };
   }
 
@@ -52,9 +61,7 @@ export function generateDecision(data: ApplicationData): FinanceDecision {
   const principal = approvedAmount * 0.9;
   const monthlyRate = apr / 100 / 12;
   const factor = Math.pow(1 + monthlyRate, termMonths);
-  const estimatedMonthly = Math.round(
-    (principal * monthlyRate * factor) / (factor - 1),
-  );
+  const estimatedMonthly = Math.round((principal * monthlyRate * factor) / (factor - 1));
 
   return {
     state: "approved",
@@ -65,6 +72,7 @@ export function generateDecision(data: ApplicationData): FinanceDecision {
     estimatedMonthly,
     termMonths,
     lenderName: "Close Brothers Motor Finance",
+    ...context,
   };
 }
 

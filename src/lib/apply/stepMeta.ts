@@ -1,9 +1,10 @@
 import { type StepId } from "./types";
 
-export const stepMeta: Record<
+/** @deprecated — used only by legacy flow. v2 uses sections.ts step meta. */
+export const stepMeta: Partial<Record<
   StepId,
   { title: string; helper: string; encouragement?: string }
-> = {
+>> = {
   residential: {
     title: "What's your current living situation?",
     helper: "This helps lenders understand your circumstances.",

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/Button";
 import { ApplyInput, ApplySelect } from "@/components/apply/ApplyField";
 import { lookupAddresses } from "@/lib/apply/mockAddresses";
 
@@ -59,9 +58,34 @@ export function AddressLookup({
         hint="UK postcode — we'll find your address."
       />
 
-      <Button type="button" variant="secondary" fullWidth size="lg" onClick={handleFindAddress}>
-        Find Address
-      </Button>
+      <button
+        type="button"
+        onClick={handleFindAddress}
+        style={{
+          width: "100%",
+          padding: "14px 18px",
+          background: "#F4F6F5",
+          border: "1.5px solid var(--aline-strong)",
+          borderRadius: "var(--aradius)",
+          fontFamily: "inherit",
+          fontSize: 16,
+          fontWeight: 600,
+          color: "var(--aink)",
+          cursor: "pointer",
+          letterSpacing: "-0.01em",
+          transition: "background 0.15s, border-color 0.15s",
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background = "#E8EDEA";
+          (e.currentTarget as HTMLButtonElement).style.borderColor = "#9DB5A8";
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.background = "#F4F6F5";
+          (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--aline-strong)";
+        }}
+      >
+        Find my address
+      </button>
 
       {lookupDone && addressOptions.length > 0 && (
         <ApplySelect

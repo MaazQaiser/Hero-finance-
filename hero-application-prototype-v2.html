@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hero Car Finance — application journey v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#12211B;
+  --ink-soft:#5C6B64;
+  --line:#E2E8E4;
+  --line-strong:#C7D2CC;
+  --paper:#FFFFFF;
+  --green:#0E7A4F;
+  --green-dark:#0A5D3C;
+  --green-wash:#E4F2EA;
+  --lime:#C4F04B;
+  --error:#B3261E;
+  --error-wash:#FDF2F1;
+  --r:14px;
+  --display:"Bricolage Grotesque","Inter",-apple-system,BlinkMacSystemFont,sans-serif;
+  --body:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--body);color:var(--ink);background:#DCE4E0;
+  -webkit-font-smoothing:antialiased;display:flex;justify-content:center;
+}
+.shell{
+  width:100%;max-width:480px;background:var(--paper);
+  display:flex;flex-direction:column;min-height:100dvh;position:relative;overflow:hidden;
+  box-shadow:0 0 0 1px rgba(18,33,27,.06),0 24px 60px rgba(18,33,27,.14);
+  transition:background .5s ease;
+}
+
+/* ---------- brand ---------- */
+.brand{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px}
+.wordmark{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:-.02em}
+.wordmark span{color:var(--green)}
+.saved{font-size:12px;color:var(--ink-soft);display:flex;align-items:center;gap:6px;opacity:0;transition:opacity .3s}
+.saved.on{opacity:1}
+.saved i{width:6px;height:6px;border-radius:50%;background:var(--green);display:block}
+
+/* ---------- SIGNATURE: six section rail with travelling car ---------- */
+.rail{padding:0 20px 16px}
+.rail-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px}
+.rail-name{font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:-.01em}
+.rail-count{font-size:12px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.rail-track{position:relative;padding-top:14px}
+.rail-bars{display:flex;gap:5px}
+.seg{flex:1;height:5px;border-radius:99px;background:rgba(18,33,27,.10);overflow:hidden;position:relative}
+.seg b{position:absolute;inset:0;width:0;border-radius:99px;background:var(--green);
+  transition:width .5s cubic-bezier(.32,.72,0,1)}
+.seg.current b{background:linear-gradient(90deg,var(--green),var(--lime))}
+.car{
+  position:absolute;top:-1px;left:0;width:26px;
+  transition:left .5s cubic-bezier(.32,.72,0,1);
+  transform:translateX(-50%);
+}
+.car svg{display:block}
+
+/* ---------- stage ---------- */
+.stage{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:22px 20px 8px}
+.q{animation:slidein .36s cubic-bezier(.32,.72,0,1)}
+.q.back{animation:slideback .36s cubic-bezier(.32,.72,0,1)}
+@keyframes slidein{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+@keyframes slideback{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:none}}
+
+h1{font-family:var(--display);font-weight:600;letter-spacing:-.027em;line-height:1.12;margin-bottom:8px}
+.warm h1{font-size:33px}
+.calm h1{font-size:26px}
+.help{font-size:14.5px;line-height:1.45;color:var(--ink-soft);margin-bottom:22px}
+
+/* ---------- choice cards ---------- */
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{
+  position:relative;width:100%;text-align:left;overflow:hidden;
+  font-family:var(--body);font-size:16.5px;font-weight:500;color:var(--ink);
+  background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r);
+  padding:17px 18px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  transition:border-color .15s,transform .12s,box-shadow .15s;
+}
+.opt span{position:relative;z-index:2}
+.opt::before{
+  content:"";position:absolute;inset:0;background:var(--green-wash);
+  transform:scaleX(0);transform-origin:left;transition:transform .28s cubic-bezier(.32,.72,0,1);z-index:1;
+}
+.opt:hover{border-color:var(--line-strong);box-shadow:0 2px 10px rgba(18,33,27,.05)}
+.opt:active{transform:scale(.985)}
+.opt:focus-visible{outline:2.5px solid var(--green);outline-offset:2px}
+.opt.chosen{border-color:var(--green)}
+.opt.chosen::before{transform:scaleX(1)}
+.opt .tick{width:20px;height:20px;flex:none;border-radius:50%;border:1.5px solid var(--line-strong);display:grid;place-items:center;transition:.2s}
+.opt.chosen .tick{background:var(--green);border-color:var(--green);transform:scale(1.08)}
+.opt.chosen .tick::after{content:"";width:9px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+
+/* ---------- fields ---------- */
+.field{margin-bottom:18px}
+.field label{display:block;font-size:13.5px;font-weight:600;margin-bottom:7px}
+.field .opt-note{font-weight:400;color:var(--ink-soft)}
+.ctrl{position:relative;display:flex;align-items:center}
+.ctrl .prefix{position:absolute;left:16px;font-size:17px;color:var(--ink-soft);pointer-events:none}
+input,select{
+  width:100%;font-family:var(--body);font-size:17px;color:var(--ink);background:var(--paper);
+  border:1.5px solid var(--line);border-radius:var(--r);padding:15px 16px;appearance:none;
+  transition:border-color .15s,box-shadow .15s;
+}
+input.has-prefix{padding-left:32px}
+select{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' fill='none'><path d='M1 1l6 6 6-6' stroke='%235C6B64' stroke-width='2' stroke-linecap='round'/></svg>");background-repeat:no-repeat;background-position:right 16px center;padding-right:42px}
+input:focus,select:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px var(--green-wash)}
+input::placeholder{color:#9DAAA3}
+.row{display:flex;gap:10px}
+.row .field{flex:1}
+.err{display:none;margin-top:7px;font-size:13px;color:var(--error);font-weight:500}
+.field.invalid input,.field.invalid select{border-color:var(--error);background:var(--error-wash)}
+.field.invalid .err{display:block}
+.btn-ghost{width:100%;font-family:var(--body);font-size:15.5px;font-weight:600;color:var(--ink);
+  background:rgba(18,33,27,.04);border:1.5px solid var(--line);border-radius:var(--r);padding:14px;cursor:pointer}
+.btn-ghost:hover{background:rgba(18,33,27,.07)}
+
+/* ---------- checks ---------- */
+.check{display:flex;gap:12px;align-items:flex-start;border:1.5px solid var(--line);border-radius:var(--r);
+  padding:15px 16px;margin-bottom:9px;cursor:pointer;font-size:14.5px;line-height:1.45;transition:.15s;background:var(--paper)}
+.check.on{border-color:var(--green);background:var(--green-wash)}
+.box{width:21px;height:21px;flex:none;border:1.5px solid var(--line-strong);border-radius:6px;display:grid;place-items:center;margin-top:1px;background:#fff}
+.check.on .box{background:var(--green);border-color:var(--green)}
+.check.on .box::after{content:"";width:9px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+.legend{font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin:4px 0 10px}
+.legend.two{margin-top:20px}
+
+/* ---------- footer ---------- */
+.foot{padding:12px 20px calc(16px + env(safe-area-inset-bottom));background:transparent}
+.assure{display:flex;align-items:center;gap:8px;justify-content:center;font-size:12.5px;color:var(--ink-soft);margin-bottom:11px;text-align:center;line-height:1.35}
+.cta{width:100%;font-family:var(--body);font-size:17px;font-weight:600;color:#fff;background:var(--green);
+  border:none;border-radius:var(--r);padding:17px;cursor:pointer;transition:.15s}
+.cta:hover{background:var(--green-dark)}
+.cta:active{transform:scale(.99)}
+.later{width:100%;background:none;border:none;font-family:var(--body);font-size:14px;font-weight:600;color:var(--ink-soft);padding:13px 0 2px;cursor:pointer}
+.backlink{background:none;border:none;font-family:var(--body);font-size:14.5px;font-weight:600;color:var(--ink-soft);cursor:pointer;padding:0}
+.rail-back{padding:12px 20px 0}
+
+/* ---------- section arrival ---------- */
+.arrive{
+  position:absolute;inset:0;z-index:30;background:var(--ink);color:#fff;
+  display:flex;flex-direction:column;justify-content:center;padding:0 34px;
+  animation:arrivein .34s cubic-bezier(.32,.72,0,1);
+}
+.arrive.out{animation:arriveout .3s cubic-bezier(.32,.72,0,1) forwards}
+@keyframes arrivein{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes arriveout{to{opacity:0;transform:translateY(-14px)}}
+.arrive .n{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--lime);margin-bottom:12px}
+.arrive .t{font-family:var(--display);font-size:34px;font-weight:600;letter-spacing:-.03em;line-height:1.08;margin-bottom:12px}
+.arrive .d{font-size:15px;line-height:1.5;color:#A6BAB0}
+
+/* ---------- decision ---------- */
+.decision{padding:26px 20px calc(24px + env(safe-area-inset-bottom))}
+.pop{animation:pop .55s cubic-bezier(.2,1.3,.4,1)}
+@keyframes pop{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:none}}
+.stamp{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:#fff;
+  font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:9px 15px;border-radius:99px;margin-bottom:18px}
+.decision h1{font-size:34px;margin-bottom:10px}
+.summary{border-radius:20px;overflow:hidden;margin:22px 0 18px;border:1.5px solid var(--line)}
+.summary .top{background:var(--ink);color:#fff;padding:22px}
+.summary .top .k{font-size:12.5px;color:#9FB3A9;margin-bottom:6px}
+.summary .top .v{font-family:var(--display);font-size:32px;font-weight:600;letter-spacing:-.025em;line-height:1.1}
+.summary .top .v em{font-style:normal;color:var(--lime)}
+.summary ul{list-style:none;padding:6px 20px 16px;background:#fff}
+.summary li{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.summary li:last-child{border:none}
+.summary li span:first-child{color:var(--ink-soft)}
+.summary li span:last-child{font-weight:600;text-align:right}
+.cars{display:flex;flex-direction:column;gap:10px;margin:6px 0 20px}
+.carcard{display:flex;gap:14px;align-items:center;border:1.5px solid var(--line);border-radius:16px;padding:13px 15px;background:#fff}
+.carcard .thumb{width:64px;height:46px;border-radius:10px;background:linear-gradient(140deg,#EAF1EC,#D8E5DD);display:grid;place-items:center;flex:none}
+.carcard .m{flex:1}
+.carcard .m b{display:block;font-size:15px;font-weight:600;letter-spacing:-.01em}
+.carcard .m span{font-size:12.5px;color:var(--ink-soft)}
+.carcard .p{text-align:right}
+.carcard .p b{display:block;font-family:var(--display);font-size:19px;font-weight:600;color:var(--green-dark)}
+.carcard .p span{font-size:11.5px;color:var(--ink-soft)}
+.next{background:#F2F7F4;border-radius:18px;padding:18px 20px;margin-bottom:16px}
+.next h3{font-family:var(--display);font-size:16px;font-weight:600;margin-bottom:10px}
+.next ol{padding-left:19px;font-size:14.5px;line-height:1.6;color:var(--ink-soft)}
+.next li::marker{color:var(--green);font-weight:700}
+.repex{border:1.5px solid var(--line);border-radius:14px;padding:15px 16px;font-size:12.5px;line-height:1.6;color:var(--ink-soft);margin-bottom:20px;background:#fff}
+.repex b{display:block;color:var(--ink);margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase}
+.secondary{width:100%;font-family:var(--body);font-size:16px;font-weight:600;color:var(--ink);background:#fff;
+  border:1.5px solid var(--line-strong);border-radius:var(--r);padding:16px;cursor:pointer;margin-top:9px}
+.sechead{font-family:var(--display);font-size:17px;font-weight:600;margin:4px 0 12px;letter-spacing:-.015em}
+
+/* ---------- loading ---------- */
+.loading{padding:90px 20px;text-align:center}
+.spin{width:44px;height:44px;margin:0 auto 20px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--green);animation:rot .8s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+.loading p{font-size:15px;color:var(--ink-soft)}
+
+/* ---------- notes ---------- */
+.notes-btn{position:fixed;bottom:16px;right:16px;z-index:40;background:var(--ink);color:#fff;border:none;
+  border-radius:99px;font-family:var(--body);font-size:13px;font-weight:600;padding:11px 16px;cursor:pointer;box-shadow:0 6px 20px rgba(18,33,27,.3)}
+.notes{position:fixed;inset:0;z-index:50;background:rgba(18,33,27,.55);display:none;justify-content:center;align-items:flex-end}
+.notes.open{display:flex}
+.notes-inner{background:#fff;width:100%;max-width:640px;max-height:88dvh;overflow-y:auto;border-radius:20px 20px 0 0;padding:24px 22px calc(30px + env(safe-area-inset-bottom))}
+.notes-inner h2{font-family:var(--display);font-size:21px;font-weight:600;margin-bottom:4px}
+.notes-inner p.sub{font-size:14px;color:var(--ink-soft);margin-bottom:18px}
+.notes-inner h3{font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--green-dark);margin:20px 0 9px}
+.notes-inner ul{list-style:none}
+.notes-inner li{font-size:14px;line-height:1.55;padding:7px 0 7px 20px;position:relative;color:#243830}
+.notes-inner li::before{content:"";position:absolute;left:2px;top:15px;width:6px;height:6px;border-radius:50%;background:var(--lime);border:1px solid var(--green)}
+.close-notes{width:100%;background:var(--ink);color:#fff;border:none;border-radius:var(--r);font-family:var(--body);font-size:15px;font-weight:600;padding:15px;margin-top:22px;cursor:pointer}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="shell" id="shell">
+  <div class="brand">
+    <div class="wordmark">Her<span>o</span></div>
+    <div class="saved" id="saved"><i></i> Progress saved</div>
+  </div>
+
+  <div class="rail" id="rail">
+    <div class="rail-top">
+      <div class="rail-name" id="railName">Quick questions</div>
+      <div class="rail-count" id="railCount">Section 1 of 6</div>
+    </div>
+    <div class="rail-track">
+      <div class="car" id="carMark">
+        <svg width="26" height="12" viewBox="0 0 26 12" fill="none">
+          <path d="M2 9h22M4.5 9c0-3 2.2-5.5 5-5.5h4c1.6 0 3.1.7 4.1 1.9L19.4 7h2.1c1.4 0 2.5 1 2.5 2" stroke="#12211B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <circle cx="8" cy="9.6" r="1.9" fill="#12211B"/><circle cx="18.5" cy="9.6" r="1.9" fill="#12211B"/>
+        </svg>
+      </div>
+      <div class="rail-bars" id="railBars"></div>
+    </div>
+  </div>
+
+  <div class="rail-back" id="backWrap" style="display:none">
+    <button class="backlink" id="backBtn">← Back</button>
+  </div>
+
+  <div class="stage" id="stage"></div>
+  <div class="foot" id="foot"></div>
+</div>
+
+<button class="notes-btn" id="notesBtn">Build notes</button>
+<div class="notes" id="notes">
+  <div class="notes-inner">
+    <h2>Build notes for Appifest</h2>
+    <p class="sub">v2. Behaviour matters more than styling. Every rule below is deliberate.</p>
+
+    <h3>Structure</h3>
+    <ul>
+      <li>Six named sections. Never show a total question count and never show a time estimate.</li>
+      <li>One question per screen, one page. Client side transitions only, no reload.</li>
+      <li>All questions in a section stay together. Employment and address are never split.</li>
+      <li>Section rail fills within the current segment. The car marker travels the whole journey.</li>
+      <li>Section arrival card shows on entering sections two to six. 900ms, tap to skip. A/B test whether it stays.</li>
+    </ul>
+
+    <h3>Deposit</h3>
+    <ul>
+      <li>Deposit sits in section one as a one tap band. It changes the amount of credit and therefore the affordability assessment.</li>
+      <li>Pass the band to Autoconvert with the proposal. The indicative decision must be calculated on budget minus deposit, not on an arbitrary figure.</li>
+      <li>Part exchange is deliberately excluded from this journey. It belongs after approval, on vehicle selection, as a yes or no that captures registration and mileage only, routed to the team or SCI to value.</li>
+    </ul>
+
+    <h3>Interaction</h3>
+    <ul>
+      <li>Choice questions auto advance on tap. No Continue button on those screens.</li>
+      <li>Selection plays a fill sweep and fires a haptic where supported. This interaction happens fourteen times.</li>
+      <li>Typed fields that belong together share a screen: name, employer and job title, postcode and address.</li>
+      <li>Correct keyboard per field: numeric for mobile and income, email keyboard for email, native date picker for date of birth.</li>
+      <li>Validation fires on submit or blur only. Never on load.</li>
+      <li>Back never loses an answer.</li>
+      <li>Every answer posts to the backend as it is given, so an abandoned application is still a callable lead.</li>
+    </ul>
+
+    <h3>Conditional logic</h3>
+    <ul>
+      <li>Employer, job title and time in role are skipped for retired, student, unemployed, receiving benefits and homemaker.</li>
+      <li>Under three years at current address triggers a previous address block. Loop until three years is captured.</li>
+      <li>Joint applicant selection captures the second applicant after the main applicant completes.</li>
+    </ul>
+
+    <h3>Tone</h3>
+    <ul>
+      <li>Warm and open through sections one to three, where nothing sensitive is being asked.</li>
+      <li>Calm and quiet through address, income and consent. Smaller headlines, white background, no flourish.</li>
+      <li>No fake encouragement messages anywhere. The section name does that job honestly.</li>
+      <li>One trust line per section, matched to the question being asked.</li>
+      <li>First name used once, on the decision screen.</li>
+    </ul>
+
+    <h3>Decision screen (compliance critical)</h3>
+    <ul>
+      <li>Approved in principle, never approved. Subject to full underwriting, ID, proofs and the vehicle.</li>
+      <li>Any APR shown must sit with a full representative example.</li>
+      <li>Anchor on the budget and deposit the customer gave, never an invented approval figure.</li>
+      <li>Matching stock pulled inline. The highest intent moment in the journey must not be a dead end.</li>
+      <li>A decline and a refer path are still to be built. Decline will carry real volume on this traffic.</li>
+      <li>Final wording and figures go through FCA compliance review before launch.</li>
+    </ul>
+
+    <button class="close-notes" id="closeNotes">Close</button>
+  </div>
+</div>
+
+<script>
+const A={}; let idx=0, goingBack=false, lastSec=-1;
+
+const SECTIONS=[
+  {name:"Quick questions",tone:"warm",tint:"#EFF7F1",
+   title:"Four quick questions",desc:"No personal details yet. Just enough to know what we are looking for.",
+   assure:"Soft search only. No impact on your credit score."},
+  {name:"Your details",tone:"warm",tint:"#F2F7F3",
+   title:"Now a bit about you",desc:"So we can send your decision and save your progress.",
+   assure:"FCA regulated dealer. Your details stay with us."},
+  {name:"Your licence",tone:"warm",tint:"#F2F7F3",
+   title:"Your licence",desc:"One question. Lenders need to know what you hold.",
+   assure:"FCA regulated dealer. Your details stay with us."},
+  {name:"Your address",tone:"calm",tint:"#FFFFFF",
+   title:"Where you live",desc:"Lenders need three years of address history.",
+   assure:"Encrypted and used only for your application."},
+  {name:"Work and income",tone:"calm",tint:"#FFFFFF",
+   title:"Work and income",desc:"Used only to check what you can comfortably afford.",
+   assure:"Used only to check what you can comfortably afford."},
+  {name:"Confirm",tone:"calm",tint:"#FAFCFA",
+   title:"Last step",desc:"Two confirmations, then we check your options.",
+   assure:"Soft search only. No impact on your credit score."}
+];
+
+function steps(){
+  const s=[]; const p=o=>s.push(o);
+
+  p({id:"budget",sec:0,type:"choice",q:"What monthly payment are you after?",
+    help:"A rough figure is fine. We fine tune it once you pick a car.",
+    opts:["Under £200","£200 to £300","£300 to £400","£400 to £500","Over £500"]});
+  p({id:"deposit",sec:0,type:"choice",q:"How much deposit do you have?",
+    help:"A deposit lowers your monthly payment and widens your options. None is fine too.",
+    opts:["None","Under £500","£500 to £1,000","£1,000 to £2,500","Over £2,500"]});
+  p({id:"cartype",sec:0,type:"choice",q:"What kind of car do you need?",
+    opts:["Small car","Family car or estate","SUV","Van or pickup","Not sure yet"]});
+  p({id:"credit",sec:0,type:"choice",q:"How would you rate your credit?",
+    help:"Be honest. We work with lenders across every credit profile.",
+    opts:["Excellent","Good","Fair","Poor","Not sure"]});
+  p({id:"when",sec:0,type:"choice",q:"When do you need it?",
+    opts:["This week","Within a month","1 to 3 months","Just looking for now"]});
+
+  p({id:"name",sec:1,type:"form",q:"First, your name.",help:"As it appears on your driving licence.",
+    fields:[{k:"first",label:"First name",ph:"Daniel",row:true},{k:"last",label:"Last name",ph:"Smith",row:true}]});
+  p({id:"mobile",sec:1,type:"form",q:"Your mobile number.",
+    help:"We text your decision and a link to pick up where you left off.",
+    fields:[{k:"mobile",label:"Mobile number",ph:"07700 900000",mode:"tel"}]});
+  p({id:"email",sec:1,type:"form",q:"And your email.",
+    help:"Your decision and finance documents are sent here.",
+    fields:[{k:"email",label:"Email address",ph:"you@email.com",mode:"email"}]});
+  p({id:"dob",sec:1,type:"form",q:"Your date of birth.",help:"You must be 18 or over to apply.",
+    fields:[{k:"dob",label:"Date of birth",type:"date"}]});
+  p({id:"joint",sec:1,type:"choice",q:"Applying on your own?",
+    help:"A second applicant can improve the options available to you.",
+    opts:["Just me","With someone else"]});
+
+  p({id:"licence",sec:2,type:"choice",q:"What licence do you hold?",
+    opts:["Full UK licence","Provisional licence","EU or international licence","No licence"]});
+
+  p({id:"addr",sec:3,type:"address",q:"Where do you live?",help:"Enter your postcode, then pick your address."});
+  p({id:"addrtime",sec:3,type:"choice",q:"How long have you lived there?",
+    opts:["Under 6 months","6 to 12 months","1 to 2 years","2 to 3 years","Over 3 years"]});
+  p({id:"living",sec:3,type:"choice",q:"What's your situation there?",
+    opts:["Homeowner with a mortgage","Homeowner, no mortgage","Renting privately",
+          "Renting from council or housing association","Living with parents or family","Other"]});
+  if(["Under 6 months","6 to 12 months","1 to 2 years","2 to 3 years"].includes(A.addrtime)){
+    p({id:"prevaddr",sec:3,type:"address",q:"Your previous address?",help:"Lenders need three years of history."});
+    p({id:"prevtime",sec:3,type:"choice",q:"How long did you live there?",
+      opts:["Under 1 year","1 to 2 years","2 to 3 years","Over 3 years"]});
+  }
+
+  p({id:"employment",sec:4,type:"choice",q:"What's your employment status?",
+    opts:["Employed full time","Employed part time","Self employed","Retired","Student","Unemployed","Receiving benefits","Homemaker"]});
+  if(["Employed full time","Employed part time","Self employed"].includes(A.employment)){
+    const se=A.employment==="Self employed";
+    p({id:"employer",sec:4,type:"form",q:se?"Tell us about your business.":"Where do you work?",
+      fields:[{k:"employer",label:se?"Business name":"Employer name",ph:se?"Smith Joinery":"Oakwood Motor Company"},
+              {k:"jobtitle",label:"Job title",ph:"Site manager"}]});
+    p({id:"jobtime",sec:4,type:"choice",q:se?"How long have you been trading?":"How long have you worked there?",
+      opts:["Under 3 months","3 to 6 months","6 to 12 months","1 to 3 years","Over 3 years"]});
+  }
+  p({id:"income",sec:4,type:"form",q:"Your monthly income.",help:"Before tax. Include regular second income.",
+    fields:[{k:"income",label:"Monthly income before tax",prefix:"£",ph:"2,500",mode:"numeric"},
+            {k:"other",label:'Other regular income <span class="opt-note">— optional</span>',prefix:"£",ph:"0",mode:"numeric",optional:true}]});
+
+  p({id:"confirm",sec:5,type:"confirm",q:"Ready to check your options.",
+    help:"This is a soft search. It will not affect your credit score."});
+  return s;
+}
+
+const $=id=>document.getElementById(id);
+const stage=$("stage"), foot=$("foot"), shell=$("shell");
+const firstName=()=>(A.first||"").trim().split(" ")[0];
+function buzz(){ if(navigator.vibrate) navigator.vibrate(12); }
+function showSaved(){const e=$("saved");e.classList.add("on");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("on"),2200);}
+
+function rail(step){
+  const list=steps(), sec=step.sec;
+  $("railName").textContent=SECTIONS[sec].name;
+  $("railCount").textContent="Section "+(sec+1)+" of 6";
+  const inSec=list.filter(s=>s.sec===sec);
+  const pos=inSec.findIndex(s=>s.id===step.id);
+  const pct=(pos/inSec.length)*100;
+  const bars=$("railBars"); bars.innerHTML="";
+  for(let i=0;i<6;i++){
+    const d=document.createElement("div");
+    d.className="seg"+(i<sec?" done":"")+(i===sec?" current":"");
+    d.innerHTML="<b></b>"; bars.appendChild(d);
+    if(i<sec) d.querySelector("b").style.width="100%";
+    else if(i===sec) requestAnimationFrame(()=>d.querySelector("b").style.width=Math.max(pct,6)+"%");
+  }
+  const overall=((sec+pos/inSec.length)/6)*100;
+  $("carMark").style.left=Math.min(overall,97)+"%";
+  $("backWrap").style.display=idx>0?"block":"none";
+}
+
+function render(){
+  const list=steps();
+  if(idx>=list.length) return runSearch();
+  const step=list[idx];
+
+  if(step.sec!==lastSec && step.sec>0 && !goingBack){ return arrive(step); }
+  lastSec=step.sec;
+
+  shell.style.background=SECTIONS[step.sec].tint;
+  rail(step);
+
+  let h='<div class="q '+SECTIONS[step.sec].tone+(goingBack?' back':'')+'">';
+  h+='<h1>'+step.q+'</h1>';
+  if(step.help) h+='<p class="help">'+step.help+'</p>';
+
+  if(step.type==="choice"){
+    h+='<div class="opts">';
+    step.opts.forEach(o=>{
+      h+='<button class="opt'+(A[step.id]===o?" chosen":"")+'" data-v="'+o+'"><span>'+o+'</span><span class="tick"></span></button>';
+    });
+    h+='</div>';
+  }
+  if(step.type==="form"){
+    const r=step.fields.filter(f=>f.row);
+    h+= r.length===2 ? '<div class="row">'+r.map(fieldHTML).join('')+'</div>' : step.fields.map(fieldHTML).join('');
+  }
+  if(step.type==="address"){
+    const k=step.id;
+    h+='<div class="field" id="f_'+k+'_pc"><label>Postcode</label><div class="ctrl">'+
+       '<input id="'+k+'_pc" value="'+(A[k+"_pc"]||"")+'" placeholder="M1 1AA" autocomplete="postal-code" spellcheck="false"></div>'+
+       '<div class="err">Enter a valid UK postcode</div></div>'+
+       '<button class="btn-ghost" id="find_'+k+'">Find my address</button>'+
+       '<div id="list_'+k+'" style="margin-top:18px">'+(A[k+"_options"]?addrSel(k):"")+'</div>';
+  }
+  if(step.type==="confirm"){
+    h+='<div class="legend">Required</div>'+
+       chk("t_terms","I agree to the Terms and Conditions and understand this is a finance application.")+
+       chk("t_priv","I have read and accept the Privacy Policy.")+
+       '<div class="legend two">Optional</div>'+
+       chk("t_mkt","Send me updates about cars and offers.")+
+       '<div class="err" id="consentErr" style="margin-top:4px">Accept the required policies to continue</div>';
+  }
+  h+='</div>';
+  stage.innerHTML=h; stage.scrollTop=0; goingBack=false;
+
+  let f='<div class="assure"><svg width="14" height="16" viewBox="0 0 14 16" fill="none"><path d="M7 1L1 3.5v4.2C1 11.3 3.6 14.4 7 15c3.4-.6 6-3.7 6-7.3V3.5L7 1z" stroke="#0E7A4F" stroke-width="1.5" stroke-linejoin="round"/></svg>'+SECTIONS[step.sec].assure+'</div>';
+  if(step.type!=="choice") f+='<button class="cta" id="cta">'+(step.type==="confirm"?"Run my soft search":"Continue")+'</button>';
+  if(step.sec>=2) f+='<button class="later" id="later">Save and continue later</button>';
+  foot.innerHTML=f;
+  wire(step);
+}
+
+function arrive(step){
+  const s=SECTIONS[step.sec];
+  const el=document.createElement("div");
+  el.className="arrive";
+  el.innerHTML='<div class="n">Section '+(step.sec+1)+' of 6</div><div class="t">'+s.title+'</div><div class="d">'+s.desc+'</div>';
+  shell.appendChild(el);
+  const go=()=>{ el.classList.add("out"); setTimeout(()=>{el.remove(); lastSec=step.sec; render();},280); };
+  el.onclick=go;
+  setTimeout(go,900);
+}
+
+function fieldHTML(f){
+  const v=A[f.k]?String(A[f.k]).replace(/"/g,"&quot;"):"";
+  const type=f.type?' type="'+f.type+'"':(f.mode==="email"?' type="email"':'');
+  return '<div class="field" id="f_'+f.k+'"><label for="'+f.k+'">'+f.label+'</label><div class="ctrl">'+
+    (f.prefix?'<span class="prefix">'+f.prefix+'</span>':'')+
+    '<input id="'+f.k+'"'+(f.prefix?' class="has-prefix"':'')+type+(f.mode?' inputmode="'+f.mode+'"':'')+
+    ' value="'+v+'" placeholder="'+(f.ph||"")+'"></div><div class="err">This is needed to continue</div></div>';
+}
+function chk(id,t){return '<label class="check'+(A[id]?" on":"")+'" data-k="'+id+'"><span class="box"></span><span>'+t+'</span></label>';}
+function addrSel(k){
+  const o=A[k+"_options"]||[];
+  return '<div class="field" id="f_'+k+'_sel"><label>Select your address</label><select id="'+k+'_sel">'+
+    '<option value="">Choose your address</option>'+
+    o.map(x=>'<option'+(A[k+"_full"]===x?" selected":"")+'>'+x+'</option>').join('')+
+    '</select><div class="err">Select your address</div></div>';
+}
+
+function wire(step){
+  document.querySelectorAll(".opt").forEach(b=>{
+    b.onclick=()=>{
+      A[step.id]=b.dataset.v; buzz();
+      document.querySelectorAll(".opt").forEach(x=>x.classList.remove("chosen"));
+      b.classList.add("chosen"); showSaved();
+      setTimeout(()=>{idx++;render();},260);
+    };
+  });
+  const l=$("later"); if(l) l.onclick=()=>{showSaved();alert("Prototype: sends SMS and email with a resume link, then closes.");};
+  if(step.type==="address"){
+    const k=step.id;
+    $("find_"+k).onclick=()=>{
+      const pc=$(k+"_pc").value.trim().toUpperCase();
+      const ok=/^[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2}$/.test(pc);
+      const fl=$("f_"+k+"_pc");
+      if(!ok){fl.classList.add("invalid");return;}
+      fl.classList.remove("invalid"); A[k+"_pc"]=pc;
+      A[k+"_options"]=["12 High Street, "+pc,"14 High Street, "+pc,"16 High Street, "+pc,"Flat 2, 18 High Street, "+pc];
+      $("list_"+k).innerHTML=addrSel(k);
+      $(k+"_sel").onchange=e=>{A[k+"_full"]=e.target.value;showSaved();};
+      $(k+"_sel").focus();
+    };
+    const s=$(k+"_sel"); if(s) s.onchange=e=>{A[k+"_full"]=e.target.value;showSaved();};
+  }
+  if(step.type==="confirm"){
+    document.querySelectorAll(".check").forEach(c=>{
+      c.onclick=()=>{const k=c.dataset.k;A[k]=!A[k];c.classList.toggle("on",!!A[k]);buzz();};
+    });
+  }
+  const c=$("cta"); if(c) c.onclick=()=>{ if(valid(step)){showSaved();idx++;render();} };
+  $("backBtn").onclick=()=>{ if(idx>0){idx--;goingBack=true;render();} };
+}
+
+function valid(step){
+  let ok=true;
+  if(step.type==="form"){
+    step.fields.forEach(f=>{
+      const el=$(f.k),w=$("f_"+f.k),v=el.value.trim();
+      let bad=!v&&!f.optional;
+      if(v&&f.k==="email") bad=!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v);
+      if(v&&f.k==="mobile") bad=!/^0\d{9,10}$/.test(v.replace(/\s/g,""));
+      if(v&&f.k==="dob"){const a=(Date.now()-new Date(v))/31557600000;bad=a<18||a>100;
+        if(bad)w.querySelector(".err").textContent="You must be 18 or over to apply";}
+      w.classList.toggle("invalid",bad); if(bad) ok=false; else A[f.k]=v;
+    });
+  }
+  if(step.type==="address"){
+    const k=step.id;
+    if(!A[k+"_full"]){ const s=$("f_"+k+"_sel"); (s||$("f_"+k+"_pc")).classList.add("invalid"); ok=false; }
+  }
+  if(step.type==="confirm"){
+    const g=A.t_terms&&A.t_priv;
+    $("consentErr").style.display=g?"none":"block";
+    if(!g) ok=false;
+  }
+  return ok;
+}
+
+function runSearch(){
+  $("backWrap").style.display="none";
+  shell.style.background="#FFFFFF";
+  document.querySelectorAll(".seg b").forEach(b=>b.style.width="100%");
+  $("carMark").style.left="97%";
+  $("railName").textContent="Checking your options";
+  $("railCount").textContent="";
+  stage.innerHTML='<div class="loading"><div class="spin"></div><p>Running your soft search across our lender panel…</p></div>';
+  foot.innerHTML="";
+  setTimeout(decision,2100);
+}
+
+function decision(){
+  $("rail").style.display="none"; buzz();
+  const b=A.budget||"your budget", d=A.deposit||"None";
+  stage.innerHTML='<div class="decision">'+
+    '<div class="pop"><div class="stamp">✓ Approved in principle</div></div>'+
+    '<h1>Good news'+(firstName()?", "+firstName():"")+".</h1>"+
+    '<p class="help">A lender on our panel is happy to proceed based on your soft search. Nothing here has touched your credit score.</p>'+
+    '<div class="summary"><div class="top">'+
+      '<div class="k">Your budget</div><div class="v"><em>'+b+'</em> per month</div></div>'+
+      '<ul>'+
+        '<li><span>Deposit</span><span>'+d+'</span></li>'+
+        '<li><span>Looking for</span><span>'+(A.cartype||"—")+'</span></li>'+
+        '<li><span>Timeframe</span><span>'+(A.when||"—")+'</span></li>'+
+        '<li><span>Status</span><span>Approved in principle</span></li>'+
+      '</ul></div>'+
+    '<div class="sechead">Three in stock that fit</div>'+
+    '<div class="cars">'+car("Ford Puma 1.0 ST-Line","2021 · 34,100 miles","£249")+
+      car("Nissan Qashqai Acenta","2020 · 41,800 miles","£262")+
+      car("Vauxhall Corsa SRi","2022 · 22,400 miles","£231")+'</div>'+
+    '<div class="next"><h3>What happens next</h3><ol>'+
+      '<li>Pick a car, or tell us what you want and we will source it.</li>'+
+      '<li>We confirm your figures against that car and your final APR.</li>'+
+      '<li>ID and proof of income checked, then your agreement is issued.</li>'+
+      '<li>AA inspection completed, then delivery or collection.</li></ol></div>'+
+    '<div class="repex"><b>Representative example</b>'+
+      'Borrowing £12,000 over 60 months at 12.9% APR representative. 60 monthly payments of £268.13. '+
+      'Total amount payable £16,087.80. Total cost of credit £4,087.80. Rate fixed. Approval in principle is subject to full '+
+      'underwriting, identity and income verification and the vehicle chosen. Hero Car Finance is a credit broker, not a lender. '+
+      'Vehicles and figures shown are illustrative and must be signed off by compliance before launch.</div>'+
+    '<button class="cta">See all cars that fit '+b+'</button>'+
+    '<button class="secondary">Speak to a finance specialist</button></div>';
+  foot.innerHTML="";
+}
+function car(n,m,p){
+  return '<div class="carcard"><div class="thumb">'+
+    '<svg width="34" height="16" viewBox="0 0 26 12" fill="none"><path d="M2 9h22M4.5 9c0-3 2.2-5.5 5-5.5h4c1.6 0 3.1.7 4.1 1.9L19.4 7h2.1c1.4 0 2.5 1 2.5 2" stroke="#0E7A4F" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="9.6" r="1.9" fill="#0E7A4F"/><circle cx="18.5" cy="9.6" r="1.9" fill="#0E7A4F"/></svg>'+
+    '</div><div class="m"><b>'+n+'</b><span>'+m+'</span></div>'+
+    '<div class="p"><b>'+p+'</b><span>per month</span></div></div>';
+}
+
+$("notesBtn").onclick=()=>$("notes").classList.add("open");
+$("closeNotes").onclick=()=>$("notes").classList.remove("open");
+$("notes").onclick=e=>{if(e.target.id==="notes")$("notes").classList.remove("open");};
+render();
+</script>
+</body>
+</html>

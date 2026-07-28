@@ -1,37 +1,22 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ApplyBridgeScreen } from "@/components/apply/entry/ApplyBridgeScreen";
-import { ApplyWelcomeScreen } from "@/components/apply/entry/ApplyWelcomeScreen";
-import { ApplyLoadingScreen } from "@/components/apply/ApplyLoadingScreen";
-import { ELIGIBILITY_LOADING_DURATION_MS } from "@/components/apply/loading/EligibilityLoading";
-import { ApplyNetworkError } from "@/components/apply/ApplyNetworkError";
-import { ApplyProgressHeader } from "@/components/apply/ApplyProgressHeader";
-import { ApplySessionTimeout } from "@/components/apply/ApplySessionTimeout";
+import {
+  SECTIONS,
+  getV2Steps,
+  getSectionRailProgress,
+  type V2StepMeta,
+} from "@/lib/apply/sections";
+import { ApplyBrandBar } from "@/components/apply/shell/ApplyBrandBar";
+import { SectionRail } from "@/components/apply/shell/SectionRail";
+import { SectionArrival } from "@/components/apply/shell/SectionArrival";
 import { ApplyStepContent } from "@/components/apply/ApplyStepContent";
-import { ApplyStickyFooter } from "@/components/apply/ApplyStickyFooter";
-import { AmbientTrust } from "@/components/apply/AmbientTrust";
-import { AnimatedPage } from "@/components/motion/AnimatedPage";
-import { ExitIntentModal } from "@/components/apply/ExitIntentModal";
+import { ApplySessionTimeout } from "@/components/apply/ApplySessionTimeout";
+import { ApplyNetworkError } from "@/components/apply/ApplyNetworkError";
 import { SaveProgressModal } from "@/components/apply/SaveProgressModal";
 import { ResumeApplicationScreen } from "@/components/apply/save/ResumeApplicationScreen";
-import { JourneyVariantProvider, useJourneyVariant } from "@/components/apply/JourneyVariantProvider";
-import { VehicleJourneySummary } from "@/components/apply/VehicleJourneySummary";
-import {
-  applyJourneyDefaults,
-  getJourneyBehaviour,
-  getStepMetaForJourney,
-} from "@/lib/journey/journeyBehaviour";
-import { getVehicleById } from "@/data/vehicles";
 import { mockSavedApplication } from "@/lib/apply/mockSaveProgress";
-import { saveContinueContent } from "@/config/saveContinueContent";
-import { stepMeta } from "@/lib/apply/stepMeta";
-import { personalizeStepMeta } from "@/lib/apply/stepPersonalization";
-import {
-  getTrustMessageKeyForStep,
-  getTrustMessage,
-} from "@/config/trustMessages";
 import {
   clearProgress,
   getProgressAgeMs,
@@ -43,476 +28,259 @@ import {
 import {
   type ApplicationData,
   type StepId,
-  getPostBridgeSteps,
-  getPreBridgeSteps,
-  getTotalStepCount,
-  INTRO_SCREEN_COUNT,
-  isAutoAdvanceStep,
   normalizeStepId,
 } from "@/lib/apply/types";
 import { generateDecision, saveDecision } from "@/lib/apply/decision";
-import {
-  clearPreviousAddressIfNotNeeded,
-  getFormStepNumber,
-  getNextFormStepId,
-  getPrevFormStepId,
-  resolveActiveFormStepId,
-} from "@/lib/apply/navigation";
 import { isStepComplete, validateStep } from "@/lib/apply/validation";
 
+const LOADING_DURATION_MS = 2100;
+
+type FlowPhase = "flow" | "loading" | "session-expired" | "network-error" | "resume-hub";
+
 interface ApplyFlowProps {
-  vehicleId?: string;
   resume?: boolean;
   sessionExpired?: boolean;
   simulateNetworkError?: boolean;
+  vehicleId?: string;
   campaign?: string;
   variant?: string;
   source?: string;
 }
 
-type FlowPhase =
-  | "welcome"
-  | "qualifying"
-  | "bridge"
-  | "form"
-  | "loading"
-  | "session-expired"
-  | "network-error"
-  | "resume-sent"
-  | "resume-hub";
-
-function getPhaseForStep(stepId: StepId): FlowPhase {
-  if (getPreBridgeSteps().includes(stepId)) return "qualifying";
-  return "form";
-}
-
-function shouldSkipWelcome(resume: boolean, sessionExpired: boolean): boolean {
-  if (sessionExpired) return true;
-  if (!resume) return false;
-
-  const saved = loadProgress();
-  if (!saved) return false;
-
-  const age = getProgressAgeMs();
-  if (age !== null && age > SESSION_TIMEOUT_MS) return true;
-
-  const stepId = normalizeStepId(saved.stepId);
-  return Boolean(
-    saved.data.mobile ||
-      saved.data.residentialStatus ||
-      saved.data.employmentStatus ||
-      stepId !== "mobile",
-  );
-}
-
 export function ApplyFlow({
-  vehicleId,
   resume = false,
   sessionExpired = false,
   simulateNetworkError = false,
-  campaign,
-  variant,
-  source,
 }: ApplyFlowProps) {
-  return (
-    <JourneyVariantProvider
-      campaign={campaign}
-      variant={variant}
-      vehicleId={vehicleId}
-      source={source}
-    >
-      <ApplyFlowContent
-        vehicleId={vehicleId}
-        resume={resume}
-        sessionExpired={sessionExpired}
-        simulateNetworkError={simulateNetworkError}
-      />
-    </JourneyVariantProvider>
-  );
-}
-
-function ApplyFlowContent({
-  vehicleId,
-  resume = false,
-  sessionExpired = false,
-  simulateNetworkError = false,
-}: Omit<ApplyFlowProps, "campaign" | "variant" | "source">) {
   const router = useRouter();
   const networkRetried = useRef(false);
-  const journey = useJourneyVariant();
-  const behaviour = useMemo(() => getJourneyBehaviour(journey.id), [journey.id]);
-  const journeyDefaultsApplied = useRef(false);
-
-  const [data, setData] = useState<ApplicationData>(() =>
-    mergeInitialData(vehicleId, resume),
-  );
+  const [data, setData] = useState<ApplicationData>(() => mergeInitialData(undefined, resume));
+  const [stepIndex, setStepIndex] = useState(0);
   const [phase, setPhase] = useState<FlowPhase>(() =>
-    sessionExpired ? "session-expired" : "welcome",
+    sessionExpired ? "session-expired" : "flow",
   );
-  const [qualifyingIndex, setQualifyingIndex] = useState(0);
-  const [formStepId, setFormStepId] = useState<StepId>("email");
-  const [entryResolved, setEntryResolved] = useState(sessionExpired);
+  const [arrivalSection, setArrivalSection] = useState<number | null>(null);
+  const [savedFlash, setSavedFlash] = useState(false);
   const [saveModalOpen, setSaveModalOpen] = useState(false);
-  const [exitOpen, setExitOpen] = useState(false);
-  const [saveMobile, setSaveMobile] = useState("");
-  const [sendingResume, setSendingResume] = useState(false);
-  const [backNotice, setBackNotice] = useState<string | null>(null);
-  const backNoticeIndex = useRef(0);
+  const [goingBack, setGoingBack] = useState(false);
 
-  const preBridgeSteps = useMemo(() => getPreBridgeSteps(), []);
-  const totalSteps = useMemo(() => getTotalStepCount(data), [data]);
+  const steps = useMemo(() => getV2Steps(data), [data]);
+  const safeIndex = Math.min(stepIndex, Math.max(steps.length - 1, 0));
+  const currentStep: V2StepMeta = steps[safeIndex] ?? steps[0];
+  const { sectionIndex, segmentPct } = getSectionRailProgress(steps, safeIndex);
+  const currentSection = SECTIONS[sectionIndex];
+  const isChoice = currentStep?.stepType === "choice";
+  const showSaveLater = sectionIndex >= 2;
 
-  const currentQualifyingStepId = preBridgeSteps[qualifyingIndex] ?? "residential";
-  const currentFormStepId = resolveActiveFormStepId(formStepId, data);
-  const currentStepId =
-    phase === "qualifying" ? currentQualifyingStepId : phase === "form" ? currentFormStepId : "mobile";
-  const meta = personalizeStepMeta(
-    currentStepId,
-    getStepMetaForJourney(currentStepId, behaviour, stepMeta[currentStepId]),
-    data,
-  );
-  const summaryVehicle =
-    behaviour.showVehicleSummary && data.vehicleId
-      ? getVehicleById(data.vehicleId)
-      : null;
-  const isMobileStep = phase === "qualifying" && currentQualifyingStepId === "mobile";
-  const showStickyFooter = phase === "form" || isMobileStep;
   const fieldErrors = useMemo(
-    () =>
-      phase === "qualifying" || phase === "form"
-        ? validateStep(currentStepId, data)
-        : {},
-    [currentStepId, data, phase],
+    () => (currentStep ? validateStep(currentStep.id, data) : {}),
+    [currentStep, data],
   );
-  const canContinue = phase === "form" || isMobileStep ? isStepComplete(currentStepId, data) : true;
-  const ambientTrustKey =
-    phase === "qualifying" || phase === "form"
-      ? getTrustMessageKeyForStep(currentStepId)
-      : null;
+  const canContinue = currentStep ? isStepComplete(currentStep.id, data) : false;
 
-  const progressStepNumber =
-    phase === "qualifying"
-      ? qualifyingIndex + 2
-      : phase === "bridge"
-        ? INTRO_SCREEN_COUNT
-        : getFormStepNumber(currentFormStepId, data, INTRO_SCREEN_COUNT);
-
+  // Clamp stepIndex if step list shrinks due to conditional logic
   useEffect(() => {
-    if (sessionExpired) {
-      setEntryResolved(true);
-      return;
+    if (stepIndex >= steps.length && steps.length > 0) {
+      setStepIndex(steps.length - 1);
     }
+  }, [steps.length, stepIndex]);
 
-    if (resume) {
-      const age = getProgressAgeMs();
-      if (age !== null && age > SESSION_TIMEOUT_MS) {
-        setPhase("session-expired");
-        setEntryResolved(true);
-        return;
-      }
-
-      // Design prototype: land on the resume hub before jumping back into steps
-      setPhase("resume-hub");
-      setEntryResolved(true);
-      return;
-    }
-
-    if (shouldSkipWelcome(resume, sessionExpired)) {
-      const saved = loadProgress();
-      if (saved) {
-        const stepId = normalizeStepId(saved.stepId);
-        const nextPhase = getPhaseForStep(stepId);
-        const preIndex = preBridgeSteps.indexOf(stepId);
-        const postIndex = getPostBridgeSteps(saved.data).indexOf(stepId);
-
-        if (preIndex >= 0) {
-          setQualifyingIndex(preIndex);
-          setPhase("qualifying");
-        } else if (postIndex >= 0) {
-          setFormStepId(stepId);
-          setPhase("form");
-        } else {
-          setPhase(nextPhase);
-        }
-      } else {
-        setPhase("qualifying");
-      }
-    }
-
-    setEntryResolved(true);
-  }, [preBridgeSteps, resume, sessionExpired]);
-
+  // Resume progress hydration
   useEffect(() => {
     if (!resume) return;
+    const age = getProgressAgeMs();
+    if (age !== null && age > SESSION_TIMEOUT_MS) {
+      setPhase("session-expired");
+      return;
+    }
     const saved = loadProgress();
     if (!saved) return;
 
-    const stepId = normalizeStepId(saved.stepId);
-    setData((current) => ({ ...current, ...saved.data }));
-    setSaveMobile(saved.data.mobile || "");
-
-    const preIndex = preBridgeSteps.indexOf(stepId);
-    if (preIndex >= 0) {
-      setQualifyingIndex(preIndex);
+    setData((cur) => ({ ...cur, ...saved.data }));
+    const merged = { ...data, ...saved.data };
+    const savedStepId = normalizeStepId(saved.stepId);
+    const rebuiltSteps = getV2Steps(merged);
+    const idx = rebuiltSteps.findIndex((s) => s.id === savedStepId);
+    if (idx >= 0) {
+      setStepIndex(idx);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resume]);
 
-    const postIndex = getPostBridgeSteps(saved.data).indexOf(stepId);
-    if (postIndex >= 0) {
-      setFormStepId(stepId);
-    }
-  }, [preBridgeSteps, resume]);
-
+  // Scroll to top on step change
   useEffect(() => {
-    if (phase !== "form") return;
-    const resolved = resolveActiveFormStepId(formStepId, data);
-    if (resolved !== formStepId) {
-      setFormStepId(resolved);
-    }
-  }, [data, formStepId, phase]);
+    if (phase !== "flow") return;
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [safeIndex, phase]);
 
+  // Auto-save
   useEffect(() => {
-    if (journeyDefaultsApplied.current) return;
-    journeyDefaultsApplied.current = true;
-    setData((current) => applyJourneyDefaults(current, behaviour));
-  }, [behaviour]);
+    if (phase !== "flow" || !currentStep) return;
+    saveProgress(data, currentStep.id as StepId);
+  }, [currentStep, data, phase]);
 
+  // Prevent accidental navigation away
   useEffect(() => {
-    if (data.mobile && !saveMobile) setSaveMobile(data.mobile);
-  }, [data.mobile, saveMobile]);
-
-  useEffect(() => {
-    if (!["welcome", "qualifying", "bridge", "form"].includes(phase)) return;
-    saveProgress(data, currentStepId);
-  }, [currentStepId, data, phase]);
-
-  useEffect(() => {
-    if (!["welcome", "qualifying", "bridge", "form"].includes(phase)) return;
-    if (window.scrollY > 0) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  }, [currentStepId, phase]);
-
-  useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (!["welcome", "qualifying", "bridge", "form"].includes(phase)) return;
-      event.preventDefault();
-      event.returnValue = "";
+    const handler = (e: BeforeUnloadEvent) => {
+      if (phase !== "flow") return;
+      e.preventDefault();
+      e.returnValue = "";
     };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
   }, [phase]);
 
-  const updateData = useCallback((updates: Partial<ApplicationData>) => {
-    setData((current) => {
-      const next = { ...current, ...updates };
-
-      if ("yearsAtAddress" in updates) {
-        return { ...next, ...clearPreviousAddressIfNotNeeded(next) };
-      }
-
-      return next;
-    });
+  const flashSaved = useCallback(() => {
+    setSavedFlash(true);
+    const t = window.setTimeout(() => setSavedFlash(false), 2200);
+    return () => window.clearTimeout(t);
   }, []);
 
-  const goBack = useCallback(() => {
-    const messages = saveContinueContent.backNavigation;
-    setBackNotice(messages[backNoticeIndex.current % messages.length]);
-    backNoticeIndex.current += 1;
-
-    if (phase === "form") {
-      const prevStepId = getPrevFormStepId(currentFormStepId, data);
-      if (!prevStepId) {
-        setPhase("bridge");
-        return;
-      }
-      setFormStepId(prevStepId);
-      return;
-    }
-
-    if (phase === "bridge") {
-      setPhase("qualifying");
-      setQualifyingIndex(preBridgeSteps.length - 1);
-      return;
-    }
-
-    if (phase === "qualifying") {
-      if (qualifyingIndex === 0) {
-        setPhase("welcome");
-        return;
-      }
-      setQualifyingIndex((index) => Math.max(index - 1, 0));
-    }
-  }, [currentFormStepId, data, phase, preBridgeSteps.length, qualifyingIndex]);
+  const updateData = useCallback((updates: Partial<ApplicationData>) => {
+    setData((cur) => ({ ...cur, ...updates }));
+  }, []);
 
   const submitApplication = useCallback(() => {
     setPhase("loading");
-
     window.setTimeout(() => {
       const decision = generateDecision(data);
       saveDecision(decision);
       clearProgress();
       router.push(`/apply/decision?state=${decision.state}`);
-    }, ELIGIBILITY_LOADING_DURATION_MS);
+    }, LOADING_DURATION_MS);
   }, [data, router]);
 
-  const goNextQualifying = useCallback(() => {
-    if (qualifyingIndex < preBridgeSteps.length - 1) {
-      setQualifyingIndex((index) => index + 1);
-      return;
-    }
+  const goNext = useCallback(() => {
+    if (!currentStep) return;
+    if (!isChoice && !canContinue) return;
 
-    setPhase("bridge");
-  }, [preBridgeSteps.length, qualifyingIndex]);
+    flashSaved();
+    saveProgress(data, currentStep.id as StepId);
 
-  const goNextForm = useCallback(() => {
-    if (!isStepComplete(currentFormStepId, data)) return;
+    const nextIndex = safeIndex + 1;
 
-    if (currentFormStepId === "consent") {
+    if (nextIndex >= steps.length) {
       if (simulateNetworkError && !networkRetried.current) {
         networkRetried.current = true;
         setPhase("network-error");
         return;
       }
-
       submitApplication();
       return;
     }
 
-    const nextStepId = getNextFormStepId(currentFormStepId, data);
-    if (nextStepId) {
-      setFormStepId(nextStepId);
-    }
-  }, [currentFormStepId, data, simulateNetworkError, submitApplication]);
+    const nextSec = steps[nextIndex].sectionIndex;
+    setGoingBack(false);
+    setStepIndex(nextIndex);
 
-  const goNext = useCallback(() => {
-    setBackNotice(null);
-
-    if (phase === "qualifying") {
-      if (isMobileStep && !isStepComplete("mobile", data)) return;
-      goNextQualifying();
-      return;
+    if (nextSec > sectionIndex) {
+      setArrivalSection(nextSec);
     }
+  }, [
+    currentStep, isChoice, canContinue, flashSaved, data,
+    safeIndex, steps, sectionIndex, simulateNetworkError, submitApplication,
+  ]);
 
-    if (phase === "form") {
-      goNextForm();
-    }
-  }, [data, goNextForm, goNextQualifying, isMobileStep, phase]);
+  const goBack = useCallback(() => {
+    if (safeIndex === 0) return;
+    setGoingBack(true);
+    setArrivalSection(null);
+    setStepIndex(safeIndex - 1);
+  }, [safeIndex]);
 
   const handleAutoAdvance = useCallback(() => {
-    if (phase !== "qualifying" || !isAutoAdvanceStep(currentQualifyingStepId)) return;
-    window.setTimeout(() => goNextQualifying(), 280);
-  }, [currentQualifyingStepId, goNextQualifying, phase]);
-
-  useEffect(() => {
-    if (!backNotice) return;
-    const timer = window.setTimeout(() => setBackNotice(null), 4000);
-    return () => window.clearTimeout(timer);
-  }, [backNotice]);
+    window.setTimeout(() => goNext(), 260);
+  }, [goNext]);
 
   const handleSaveClick = useCallback(() => {
-    saveProgress(data, currentStepId);
+    if (currentStep) saveProgress(data, currentStep.id as StepId);
     setSaveModalOpen(true);
-  }, [currentStepId, data]);
-
-  const sendResumeLink = useCallback(
-    (mobile: string) => {
-      setSendingResume(true);
-      saveProgress({ ...data, mobile }, currentStepId);
-
-      window.setTimeout(() => {
-        setSendingResume(false);
-        setSaveModalOpen(false);
-        setExitOpen(false);
-        setPhase("resume-hub");
-      }, 800);
-    },
-    [currentStepId, data],
-  );
-
-  const handleContinueLater = useCallback(() => {
-    saveProgress(data, currentStepId);
-    setSaveModalOpen(false);
-    setPhase("resume-hub");
-  }, [currentStepId, data]);
-
-  const handleReturnToApplication = useCallback(() => {
-    setSaveModalOpen(false);
-  }, []);
-
-  const handleSendFromExit = useCallback(() => {
-    sendResumeLink(data.mobile || saveMobile);
-  }, [data.mobile, saveMobile, sendResumeLink]);
+  }, [currentStep, data]);
 
   const handleResumeFromTimeout = useCallback(() => {
     const saved = loadProgress();
     if (saved) {
-      const stepId = normalizeStepId(saved.stepId);
-      setData((current) => ({ ...current, ...saved.data }));
-      const preIndex = preBridgeSteps.indexOf(stepId);
-      const postIndex = getPostBridgeSteps(saved.data).indexOf(stepId);
-      if (preIndex >= 0) {
-        setQualifyingIndex(preIndex);
-        setPhase("qualifying");
-        return;
-      }
-      if (postIndex >= 0) {
-        setFormStepId(stepId);
-        setPhase("form");
-        return;
-      }
+      setData((cur) => ({ ...cur, ...saved.data }));
+      const rebuiltSteps = getV2Steps({ ...data, ...saved.data });
+      const idx = rebuiltSteps.findIndex((s) => s.id === normalizeStepId(saved.stepId));
+      setStepIndex(idx >= 0 ? idx : 0);
+    } else {
+      setStepIndex(0);
     }
-    // Prototype fallback when no real progress exists
-    setPhase("form");
-    setFormStepId("email");
-  }, [preBridgeSteps]);
+    setPhase("flow");
+  }, [data]);
 
   const handleStartAgain = useCallback(() => {
     clearProgress();
-    setData(mergeInitialData(vehicleId, false));
-    setQualifyingIndex(0);
-    setFormStepId("email");
-    setPhase("welcome");
-  }, [vehicleId]);
-
-  const handleContinueFromWelcome = useCallback(() => {
-    setPhase("qualifying");
-    setQualifyingIndex(0);
+    setData(mergeInitialData(undefined, false));
+    setStepIndex(0);
+    setArrivalSection(null);
+    setGoingBack(false);
+    setPhase("flow");
   }, []);
 
-  const handleContinueFromBridge = useCallback(() => {
-    setPhase("form");
-    setFormStepId("email");
-  }, []);
-
-  const handleNetworkRetry = useCallback(() => {
-    setPhase("form");
-    submitApplication();
-  }, [submitApplication]);
-
-  const saveModal = (
-    <SaveProgressModal
-      open={saveModalOpen}
-      onContinueLater={handleContinueLater}
-      onReturnToApplication={handleReturnToApplication}
-    />
-  );
+  // ── Infrastructure screens ──────────────────────────────────────────────
 
   if (phase === "loading") {
-    return <ApplyLoadingScreen vehicle={summaryVehicle} />;
+    return (
+      <div className="apply-shell-outer">
+        <div
+          className="apply-shell"
+          style={{ "--a-tint": "#FAFCFA" } as React.CSSProperties}
+        >
+          <ApplyBrandBar savedFlash={false} />
+          <SectionRail sectionIndex={5} segmentPct={100} loadingMode />
+          <div
+            style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "90px 20px",
+              textAlign: "center",
+            }}
+          >
+            <div
+              style={{
+                width: 44,
+                height: 44,
+                borderRadius: "50%",
+                border: "3px solid #E2E8E4",
+                borderTopColor: "#0E7A4F",
+                marginBottom: 20,
+              }}
+              className="a-spinner"
+            />
+            <p style={{ fontSize: 15, color: "#5C6B64" }}>
+              Running your soft search across our lender panel…
+            </p>
+          </div>
+          <style>{`
+            .a-spinner { animation: a-spin 0.8s linear infinite; }
+            @keyframes a-spin { to { transform: rotate(360deg); } }
+          `}</style>
+        </div>
+      </div>
+    );
   }
 
   if (phase === "session-expired") {
     return (
-      <ApplySessionTimeout onResume={handleResumeFromTimeout} onStartAgain={handleStartAgain} />
+      <ApplySessionTimeout
+        onResume={handleResumeFromTimeout}
+        onStartAgain={handleStartAgain}
+      />
     );
   }
 
   if (phase === "network-error") {
-    return <ApplyNetworkError onRetry={handleNetworkRetry} />;
+    return (
+      <ApplyNetworkError onRetry={() => { setPhase("flow"); submitApplication(); }} />
+    );
   }
 
-  if (phase === "resume-sent" || phase === "resume-hub") {
+  if (phase === "resume-hub") {
     return (
       <ResumeApplicationScreen
         saved={mockSavedApplication}
@@ -523,110 +291,183 @@ function ApplyFlowContent({
     );
   }
 
-  if (!entryResolved && resume) {
-    return <div className="min-h-[100svh] bg-paper" aria-busy="true" />;
-  }
+  if (!currentStep) return null;
 
-  if (phase === "welcome") {
-    return (
-      <>
-        <AnimatedPage pageKey="welcome">
-          <ApplyWelcomeScreen
-            onContinue={handleContinueFromWelcome}
-            onSaveLater={handleSaveClick}
-            vehicleId={vehicleId}
-          />
-        </AnimatedPage>
-        {saveModal}
-      </>
-    );
-  }
+  const sectionTint = currentSection?.tint ?? "#EFF7F1";
+  const tone = currentSection?.tone ?? "warm";
 
-  if (phase === "bridge") {
-    return (
-      <>
-        <div className="min-h-[100svh] bg-paper">
-          <ApplyProgressHeader
-            stepNumber={INTRO_SCREEN_COUNT}
-            totalSteps={totalSteps}
-            onBack={goBack}
-            canGoBack
-            backNotice={backNotice}
-          />
-          <AnimatedPage pageKey="bridge">
-            <ApplyBridgeScreen onContinue={handleContinueFromBridge} vehicleId={vehicleId} />
-          </AnimatedPage>
-        </div>
-        {saveModal}
-      </>
-    );
-  }
+  return (
+    <div className="apply-shell-outer">
+      <div
+        className="apply-shell"
+        style={{ "--a-tint": sectionTint } as React.CSSProperties}
+      >
+        {/* Brand bar */}
+        <ApplyBrandBar savedFlash={savedFlash} />
 
-  if (phase === "qualifying" || phase === "form") {
-    return (
-      <div className="min-h-[100svh] bg-paper">
-        <ApplyProgressHeader
-          stepNumber={progressStepNumber}
-          totalSteps={totalSteps}
-          onBack={goBack}
-          canGoBack
-          backNotice={backNotice}
-        />
+        {/* 6-segment rail */}
+        <SectionRail sectionIndex={sectionIndex} segmentPct={segmentPct} />
 
-        <main className={`mx-auto max-w-lg px-5 pt-6 ${phase === "form" ? "pb-44" : "pb-40"}`}>
-          <AnimatedPage pageKey={`${phase}-${currentStepId}`}>
-            <p className="eyebrow">Finance application</p>
-            <h1 className="mt-3 text-2xl font-medium text-ink md:text-3xl">{meta.title}</h1>
-            <p className="mt-3 text-sm leading-relaxed text-muted">{meta.helper}</p>
+        {/* Back link */}
+        {safeIndex > 0 && (
+          <div style={{ padding: "12px 20px 0" }}>
+            <button
+              type="button"
+              onClick={goBack}
+              style={{
+                background: "none",
+                border: "none",
+                fontFamily: "inherit",
+                fontSize: 14.5,
+                fontWeight: 600,
+                color: "var(--aink-soft)",
+                cursor: "pointer",
+                padding: 0,
+              }}
+            >
+              ← Back
+            </button>
+          </div>
+        )}
 
-            {meta.encouragement && phase === "form" && currentFormStepId !== "email" && (
-              <p className="mt-2 text-sm text-green-deep">{meta.encouragement}</p>
-            )}
+        {/* Scrollable stage */}
+        <main
+          key={currentStep.id}
+          className={goingBack ? "a-slideback" : "a-slidein"}
+          style={{
+            flex: 1,
+            overflowY: "auto",
+            WebkitOverflowScrolling: "touch",
+            padding: "22px 20px 8px",
+          }}
+        >
+          <h1
+            style={{
+              fontWeight: 600,
+              letterSpacing: "-0.027em",
+              lineHeight: 1.12,
+              marginBottom: 8,
+              fontSize: tone === "warm" ? 33 : 26,
+              color: "var(--aink)",
+            }}
+          >
+            {currentStep.id === "employer" && data.employmentStatusFull === "self-employed"
+              ? "Tell us about your business."
+              : currentStep.id === "job-duration" && data.employmentStatusFull === "self-employed"
+                ? "How long have you been trading?"
+                : currentStep.title}
+          </h1>
 
-            {summaryVehicle ? <VehicleJourneySummary vehicle={summaryVehicle} compact /> : null}
+          {currentStep.help && (
+            <p
+              style={{
+                fontSize: 14.5,
+                lineHeight: 1.45,
+                color: "var(--aink-soft)",
+                marginBottom: 22,
+              }}
+            >
+              {currentStep.help}
+            </p>
+          )}
 
-            <div className="mt-8">
-              <ApplyStepContent
-                key={currentStepId}
-                stepId={currentStepId}
-                data={data}
-                onChange={updateData}
-                onAutoAdvance={phase === "qualifying" ? handleAutoAdvance : undefined}
-                fieldErrors={fieldErrors}
-                behaviour={behaviour}
-              />
-            </div>
-
-            {ambientTrustKey && !showStickyFooter && (
-              <div className="mt-10">
-                <AmbientTrust message={getTrustMessage(ambientTrustKey)} />
-              </div>
-            )}
-          </AnimatedPage>
+          <div style={{ marginTop: currentStep.help ? 0 : 22 }}>
+            <ApplyStepContent
+              key={currentStep.id}
+              stepId={currentStep.id}
+              data={data}
+              onChange={updateData}
+              onAutoAdvance={isChoice ? handleAutoAdvance : undefined}
+              fieldErrors={fieldErrors}
+            />
+          </div>
         </main>
 
-        {showStickyFooter && (
-          <ApplyStickyFooter
-            onContinue={goNext}
-            onSave={handleSaveClick}
-            continueLabel={currentStepId === "consent" ? "Run my soft search" : "Continue"}
-            continueDisabled={!canContinue}
-            trustKey={ambientTrustKey}
+        {/* Footer — always rendered; CTA hidden for choice steps */}
+        <footer
+          style={{
+            padding: "12px 20px calc(16px + env(safe-area-inset-bottom))",
+            background: "transparent",
+            flexShrink: 0,
+          }}
+        >
+          {/* Shield + trust line — shown on every step */}
+          {currentSection && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                justifyContent: "center",
+                fontSize: 12.5,
+                color: "var(--aink-soft)",
+                marginBottom: 11,
+                textAlign: "center",
+                lineHeight: 1.35,
+              }}
+            >
+              <svg width="14" height="16" viewBox="0 0 14 16" fill="none" aria-hidden>
+                <path
+                  d="M7 1L1 3.5v4.2C1 11.3 3.6 14.4 7 15c3.4-.6 6-3.7 6-7.3V3.5L7 1z"
+                  stroke="#0E7A4F"
+                  strokeWidth="1.5"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              {currentSection.assure}
+            </div>
+          )}
+
+          {/* CTA — only on non-choice steps */}
+          {!isChoice && (
+            <button
+              type="button"
+              className="a-cta"
+              onClick={goNext}
+              disabled={!canContinue}
+            >
+              {currentStep.stepType === "confirm" ? "Run my soft search" : "Continue"}
+            </button>
+          )}
+
+          {/* Save later — shown from section 2 onward on all steps */}
+          {showSaveLater && (
+            <button
+              type="button"
+              onClick={handleSaveClick}
+              style={{
+                width: "100%",
+                background: "none",
+                border: "none",
+                fontFamily: "inherit",
+                fontSize: 14,
+                fontWeight: 600,
+                color: "var(--aink-soft)",
+                padding: "13px 0 2px",
+                cursor: "pointer",
+              }}
+            >
+              Save and continue later
+            </button>
+          )}
+        </footer>
+
+        {/* Section arrival overlay */}
+        {arrivalSection !== null && (
+          <SectionArrival
+            section={SECTIONS[arrivalSection]}
+            sectionIndex={arrivalSection}
+            onDone={() => setArrivalSection(null)}
           />
         )}
 
-        {saveModal}
-
-        <ExitIntentModal
-          open={exitOpen}
-          onSendResume={handleSendFromExit}
-          onContinue={() => setExitOpen(false)}
-          onLeave={() => router.push("/")}
-          sending={sendingResume}
+        {/* Save later modal */}
+        <SaveProgressModal
+          open={saveModalOpen}
+          onContinueLater={() => { setSaveModalOpen(false); setPhase("resume-hub"); }}
+          onReturnToApplication={() => setSaveModalOpen(false)}
         />
       </div>
-    );
-  }
-
-  return null;
+    </div>
+  );
 }

@@ -2,13 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { ApprovedDecision } from "@/components/decision/ApprovedDecision";
 import { DeclinedDecision } from "@/components/decision/DeclinedDecision";
 import { PendingDecision } from "@/components/decision/PendingDecision";
-import { DecisionStickyFooter } from "@/components/decision/DecisionStickyFooter";
-import { WarrantySelection } from "@/components/decision/warranty/WarrantySelection";
-import { AnimatedPage } from "@/components/motion/AnimatedPage";
 import {
   type DecisionState,
   type FinanceDecision,
@@ -20,12 +16,8 @@ interface DecisionFlowProps {
   stateOverride?: string;
 }
 
-type ApprovedStage = "summary" | "warranty";
-
 export function DecisionFlow({ stateOverride }: DecisionFlowProps) {
-  const router = useRouter();
   const [decision, setDecision] = useState<FinanceDecision | null>(null);
-  const [approvedStage, setApprovedStage] = useState<ApprovedStage>("summary");
 
   useEffect(() => {
     const saved = loadDecision();
@@ -47,68 +39,74 @@ export function DecisionFlow({ stateOverride }: DecisionFlowProps) {
         termMonths: 48,
         lenderName: "Close Brothers Motor Finance",
         expectedResponseHours: 24,
+        budgetBand: "£200 to £300",
+        depositBand: "None",
+        carType: "Family car or estate",
+        purchaseTimeframe: "Within a month",
       });
     }
   }, [stateOverride]);
 
   if (!decision) {
     return (
-      <div className="flex min-h-[100svh] items-center justify-center px-5 text-center">
-        <p className="text-muted">Loading your decision...</p>
+      <div
+        className="apply-shell-outer"
+        style={{ alignItems: "center", justifyContent: "center" }}
+      >
+        <p style={{ color: "#5C6B64", fontSize: 15 }}>Loading your decision…</p>
       </div>
     );
   }
 
   const state: DecisionState = decision.state;
-  const showWarranty = state === "approved" && approvedStage === "warranty";
-
-  const handleWarrantyContinue = () => {
-    // Frontend prototype only — selection is not persisted or charged
-    router.push("/cars");
-  };
 
   return (
-    <>
-      <header className="border-b border-line bg-paper/90 px-5 py-4 backdrop-blur-2xl">
-        <div className="mx-auto flex max-w-lg items-center justify-between">
-          <Link href="/" className="text-sm text-muted hover:text-ink">
-            Hero Car Finance
+    <div className="apply-shell-outer">
+      <div
+        className="apply-shell"
+        style={{
+          "--a-tint":
+            state === "approved" ? "#FAFCFA" : state === "pending" ? "#FAFCFA" : "#FDF2F1",
+        } as React.CSSProperties}
+      >
+        {/* Header */}
+        <header
+          style={{
+            padding: "16px 20px 12px",
+            borderBottom: "1px solid #E2E8E4",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Link
+            href="/"
+            style={{
+              fontWeight: 700,
+              fontSize: 20,
+              letterSpacing: "-0.02em",
+              textDecoration: "none",
+              color: "#12211B",
+            }}
+          >
+            Her<span style={{ color: "#0E7A4F" }}>o</span>
           </Link>
-          <p className="text-xs tracking-wide text-muted">
-            {showWarranty
-              ? "Protection"
-              : state === "approved"
-                ? "Approved"
-                : state === "pending"
-                  ? "Processing"
-                  : "Under review"}
-          </p>
-        </div>
-      </header>
+          <span style={{ fontSize: 12, color: "#5C6B64", letterSpacing: "0.04em" }}>
+            {state === "approved"
+              ? "Approved in principle"
+              : state === "pending"
+                ? "Processing"
+                : "Under review"}
+          </span>
+        </header>
 
-      <main className="mx-auto max-w-lg px-5 py-8">
-        <AnimatedPage pageKey={`${state}-${approvedStage}`}>
-          {state === "approved" && approvedStage === "summary" && (
-            <ApprovedDecision
-              decision={decision}
-              onOpenWarranty={() => setApprovedStage("warranty")}
-            />
-          )}
-          {showWarranty && <WarrantySelection onContinue={handleWarrantyContinue} />}
+        {/* Decision content */}
+        <div style={{ overflowY: "auto", flex: 1 }}>
+          {state === "approved" && <ApprovedDecision decision={decision} />}
           {state === "declined" && <DeclinedDecision decision={decision} />}
           {state === "pending" && <PendingDecision decision={decision} />}
-        </AnimatedPage>
-      </main>
-
-      <DecisionStickyFooter
-        state={state}
-        hide={showWarranty}
-        onApprovedContinue={
-          state === "approved" && approvedStage === "summary"
-            ? () => setApprovedStage("warranty")
-            : undefined
-        }
-      />
-    </>
+        </div>
+      </div>
+    </div>
   );
 }
