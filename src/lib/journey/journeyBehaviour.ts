@@ -78,7 +78,7 @@ export const journeyBehaviours: Record<JourneyBehaviourId, JourneyBehaviour> = {
 
   noDeposit: {
     id: "noDeposit",
-    defaultData: { financeDeposit: "0" },
+    defaultData: { financeDeposit: "" },
     showDepositField: true,
     depositHelperText: "We'll explore finance options without an upfront deposit.",
   },

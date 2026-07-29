@@ -304,7 +304,6 @@ export function ApplyStepContent({
           id="dob"
           label="Date of birth"
           type="date"
-          autoFocus
           value={data.dateOfBirth}
           onChange={(e) => onChange({ dateOfBirth: e.target.value })}
           error={fieldErrors.dateOfBirth}
@@ -318,7 +317,13 @@ export function ApplyStepContent({
       return (
         <ChoiceList
           options={["Just me", "With someone else"]}
-          value={data.jointApplicant ? "With someone else" : "Just me"}
+          value={
+            data.jointApplicant === null
+              ? ""
+              : data.jointApplicant
+                ? "With someone else"
+                : "Just me"
+          }
           onSelect={(v) => autoSelect({ jointApplicant: v === "With someone else" })}
         />
       );
@@ -529,7 +534,7 @@ export function ApplyStepContent({
             autoFocus
             prefix="£"
             value={data.monthlyIncome}
-            onChange={(e) => onChange({ monthlyIncome: e.target.value })}
+            onChange={(e) => onChange({ monthlyIncome: e.target.value.replace(/[^\d]/g, "") })}
             error={fieldErrors.monthlyIncome}
           />
           <ShellInput
@@ -537,11 +542,11 @@ export function ApplyStepContent({
             label="Other regular income"
             type="text"
             inputMode="numeric"
-            placeholder="0"
+            placeholder="e.g. 200"
             optional
             prefix="£"
             value={data.otherIncome}
-            onChange={(e) => onChange({ otherIncome: e.target.value })}
+            onChange={(e) => onChange({ otherIncome: e.target.value.replace(/[^\d]/g, "") })}
           />
         </div>
       );

@@ -74,8 +74,8 @@ export interface ApplicationData {
   hasFinanceToSettle: "" | "yes" | "no";
   settlementAmount: string;
 
-  // Joint
-  jointApplicant: boolean;
+  // Joint — null until the user picks on the joint-choice step
+  jointApplicant: boolean | null;
   jointFirstName: string;
   jointLastName: string;
   jointMobile: string;
@@ -173,7 +173,7 @@ export const initialApplicationData: ApplicationData = {
   hasFinanceToSettle: "",
   settlementAmount: "",
   // joint
-  jointApplicant: false,
+  jointApplicant: null,
   jointFirstName: "",
   jointLastName: "",
   jointMobile: "",

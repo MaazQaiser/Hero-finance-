@@ -55,6 +55,8 @@ export function ApplyFlow({
   const router = useRouter();
   const networkRetried = useRef(false);
   const [data, setData] = useState<ApplicationData>(() => mergeInitialData(undefined, resume));
+  const dataRef = useRef(data);
+  dataRef.current = data;
   const [stepIndex, setStepIndex] = useState(0);
   const [phase, setPhase] = useState<FlowPhase>(() =>
     sessionExpired ? "session-expired" : "flow",
@@ -143,12 +145,12 @@ export function ApplyFlow({
   const submitApplication = useCallback(() => {
     setPhase("loading");
     window.setTimeout(() => {
-      const decision = generateDecision(data);
+      const decision = generateDecision(dataRef.current);
       saveDecision(decision);
       clearProgress();
       router.push(`/apply/decision?state=${decision.state}`);
     }, LOADING_DURATION_MS);
-  }, [data, router]);
+  }, [router]);
 
   const goNext = useCallback(() => {
     if (!currentStep) return;

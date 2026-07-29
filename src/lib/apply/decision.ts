@@ -27,13 +27,15 @@ export function generateReferenceId(): string {
 }
 
 export function generateDecision(data: ApplicationData): FinanceDecision {
-  const income = Number(data.monthlyIncome) || 0;
+  // Strip currency symbols / commas so "2,500" or "£2500" parse correctly
+  const income = Number(String(data.monthlyIncome).replace(/[£,\s]/g, "")) || 0;
   const referenceId = generateReferenceId();
   const applicantName = data.firstName || "there";
 
   const context = {
     budgetBand: data.budgetBand || undefined,
-    depositBand: data.depositBand || undefined,
+    // Keep "None" as a real value — don't treat it as empty
+    depositBand: data.depositBand.trim() ? data.depositBand : undefined,
     carType: data.carType || undefined,
     purchaseTimeframe: data.purchaseTimeframe || undefined,
   };
