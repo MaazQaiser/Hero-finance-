@@ -3,19 +3,18 @@
 import Image from "next/image";
 import { useState } from "react";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
-import { useLandingVariant } from "@/components/landing/LandingVariantProvider";
 
 const steps = [
   {
     number: "01",
-    label: "Check eligibility",
+    label: "See what you can afford",
     image: "/images/how-it-works/check-eligibility.jpg",
     imageAlt: "Person checking car finance eligibility on their phone",
     objectPosition: "center",
   },
   {
     number: "02",
-    label: "Get approved",
+    label: "Get your decision",
     image: "/images/finance/fixed-payments.jpg",
     imageAlt: "Customer and dealer shaking hands after finance approval",
     objectPosition: "center",
@@ -36,9 +35,11 @@ const steps = [
   },
 ];
 
+const SOFT_SEARCH_BODY =
+  "See what you can afford with a soft search that has no impact on your credit score, then browse AA-inspected stock and arrange the finance and the car with one team.";
+
 export function HowItWorksV2() {
   const [activeStep, setActiveStep] = useState(0);
-  const { variant } = useLandingVariant();
   const step = steps[activeStep];
 
   return (
@@ -46,7 +47,7 @@ export function HowItWorksV2() {
       <div className="w-full px-5">
         <ScrollReveal>
           <h2 className="max-w-3xl font-display text-2xl uppercase leading-tight tracking-tight sm:text-3xl lg:text-[2.5rem]">
-            <span className="font-extrabold text-ink">How it works </span>
+            <span className="font-extrabold text-ink">How car finance works </span>
             <span className="font-medium">
               <span className="text-ink">from planning </span>
               <span className="text-green">to keys</span>
@@ -98,11 +99,12 @@ export function HowItWorksV2() {
             <div className="grid h-full overflow-hidden rounded-[32px] bg-paper lg:grid-cols-[minmax(0,35%)_1fr] lg:items-stretch">
               <div className="flex flex-col p-8 md:p-10 lg:pr-4">
                 <h3 className="font-display text-2xl font-extrabold tracking-tight text-ink md:text-3xl">
-                  One roof for your car and HP finance
+                  One place for your car and your finance
                 </h3>
                 <p className="mt-4 text-base leading-relaxed text-muted">
-                  Unlike traditional brokers, Hero owns the stock. Browse AA-inspected vehicles, see
-                  your monthly payment, and reserve — all without chasing a dealer.
+                  We arrange your car finance through a panel of lenders and supply the car, so it is
+                  all in one place. Browse AA-inspected vehicles, see the monthly payment, and
+                  reserve, with no chasing a separate dealer.
                 </p>
               </div>
 
@@ -124,9 +126,9 @@ export function HowItWorksV2() {
                 Soft search
               </p>
               <h3 className="mt-4 font-display text-2xl font-extrabold tracking-tight text-white md:text-3xl">
-                {variant.firstReassurance}
+                Soft search, no impact on your credit score.
               </h3>
-              <p className="mt-3 text-sm leading-relaxed text-white/85">{variant.supportingCopy}</p>
+              <p className="mt-3 text-sm leading-relaxed text-white/85">{SOFT_SEARCH_BODY}</p>
             </div>
           </ScrollReveal>
         </div>

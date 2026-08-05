@@ -33,7 +33,7 @@ export function HeroEligibilityCard({
   variant = "default",
   introHeadline = "Check your eligibility in minutes",
   introBody = "A few quick questions, then a soft search that won't affect your credit score.",
-  ctaLabel = "Check my eligibility",
+  ctaLabel = "See what you can afford",
   trustMessage = "Soft search only · no impact on your credit file",
   applyHref = "/apply",
 }: HeroEligibilityCardProps) {

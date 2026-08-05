@@ -49,7 +49,7 @@ export function HeaderV2() {
             href="#hero-eligibility"
             className="hidden rounded-full bg-green px-6 py-2.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(91,43,212,0.3)] transition-all hover:bg-green-deep md:inline-flex"
           >
-            Check eligibility
+            See what you can afford
           </Link>
 
           <button
@@ -81,7 +81,7 @@ export function HeaderV2() {
             onClick={() => setMenuOpen(false)}
             className="mt-2 inline-flex rounded-full bg-green px-6 py-2.5 text-sm font-semibold text-white"
           >
-            Check eligibility
+            See what you can afford
           </Link>
         </nav>
       )}

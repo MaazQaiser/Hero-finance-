@@ -71,8 +71,8 @@ export function FeaturedCarsV2() {
                 Featured cars
               </h2>
               <p className="mt-4 max-w-sm text-base leading-relaxed text-muted md:text-lg">
-                AA Pass on every car. Aviloo battery checks on EVs and hybrids — clear monthly HP,
-                ready to reserve.
+                A wide selection of AA-inspected stock with clear monthly payments, ready to reserve
+                online.
               </p>
             </div>
           </ScrollReveal>

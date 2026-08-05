@@ -98,7 +98,7 @@ export function FooterV2() {
                 href="/apply"
                 className="mt-3 inline-flex min-h-11 items-center justify-center rounded-full bg-green-bright px-6 text-sm font-bold text-ink transition-colors hover:bg-green-bright/90 sm:text-base"
               >
-                Check eligibility
+                See what you can afford
               </Link>
             </div>
           </div>

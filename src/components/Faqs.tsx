@@ -55,7 +55,7 @@ export function Faqs() {
     <section id="faqs" className="section-padding bg-paper">
       <div className="container-site max-w-4xl">
         <ScrollReveal>
-          <p className="text-xl text-ink">Common questions</p>
+          <p className="text-xl text-ink">Common questions about car finance</p>
         </ScrollReveal>
 
         <ScrollReveal delay={80}>

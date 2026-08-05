@@ -46,7 +46,9 @@ export function FinalCta() {
                 </div>
 
                 <p className="mt-5 text-base leading-relaxed text-muted">
-                  {variant.supportingCopy}
+                  {variant.id === "default"
+                    ? "See what you can afford with a soft search that has no impact on your credit score, then browse AA-inspected stock and arrange the finance and the car with one team."
+                    : variant.supportingCopy}
                 </p>
 
                 <div className="mt-8 space-y-3">

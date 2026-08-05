@@ -12,14 +12,17 @@ export function WhyHeroV2() {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
             </svg>
-            Serving UK drivers since 2010
+            Part of Oakwood Motor Company group, trading 20+ years
           </span>
 
-          <h2 className="mt-8 max-w-5xl font-display text-3xl font-normal leading-[1.4] tracking-tight text-ink sm:text-4xl lg:text-[2.75rem] lg:leading-[1.45] xl:text-5xl">
-            We are a finance-first dealer focused on creating a stress-free path to your next car.
-            Our work supports soft-search eligibility, owned stock, and one team from approval to
-            keys.
+          <h2 className="mt-8 max-w-5xl font-display text-3xl font-extrabold leading-[1.25] tracking-tight text-ink sm:text-4xl lg:text-[2.75rem] lg:leading-[1.2] xl:text-5xl">
+            Car finance and your car, from one team.
           </h2>
+          <p className="mt-5 max-w-3xl text-base leading-relaxed text-muted md:text-lg">
+            We arrange your car finance through a panel of lenders, including specialists for bad
+            credit, and supply the car ourselves, so the finance and the car come from one place.
+            One application, one team, from the first soft search to the keys.
+          </p>
         </ScrollReveal>
 
         <div className="mt-10 grid gap-5 md:grid-cols-3 lg:mt-12 lg:gap-6">
@@ -63,7 +66,7 @@ export function WhyHeroV2() {
                   10,000+
                 </p>
                 <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/85">
-                  Drivers financed through Hero — with AA-inspected stock and clear monthly HP
+                  Drivers financed through Hero — with AA-inspected stock and clear monthly
                   payments.
                 </p>
               </div>
@@ -77,8 +80,8 @@ export function WhyHeroV2() {
                   What we do best
                 </h3>
                 <p className="mt-4 text-sm leading-relaxed text-white/85">
-                  Unlike traditional brokers, Hero owns the stock, runs soft-search eligibility, and
-                  manages your journey from check to keys.
+                  We arrange car finance across a panel of lenders and supply the car ourselves,
+                  running the journey from the first soft search to the keys.
                 </p>
               </div>
 
@@ -86,7 +89,7 @@ export function WhyHeroV2() {
                 href="/apply"
                 className="mt-8 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-white px-6 text-base font-bold text-green-deep transition-colors hover:bg-white/90"
               >
-                Check eligibility
+                See what you can afford
               </Link>
             </div>
           </ScrollReveal>

@@ -4,9 +4,9 @@ const defaultVariant: LandingVariant = {
   id: "default",
   introHeading: "Car finance and inspected stock, under one roof.",
   supportingCopy:
-    "Check your eligibility with a soft search, browse AA-inspected vehicles, and get a decision in under a minute — all with one trusted team.",
-  cta: "Check my eligibility",
-  firstReassurance: "Soft search only · no impact on your credit file",
+    "See what you can afford with a soft search, browse AA-inspected vehicles, and arrange your car finance and your car with one team from application to keys.",
+  cta: "See what you can afford",
+  firstReassurance: "Soft search, no impact on your credit score.",
   applicationIntroHeading: "Every credit story deserves a fair hearing.",
   applicationSupportingCopy:
     "At Hero, we consider every credit story — not just a score. A few quick questions help us understand your situation before we run a soft search.",

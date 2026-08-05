@@ -27,8 +27,9 @@ export function BudgetSearchV2() {
                 See what you can afford
               </h2>
               <p className="mt-5 text-base leading-relaxed text-muted md:text-lg">
-                Set your monthly budget, deposit, and term. We&apos;ll show AA-inspected cars that
-                fit — before you apply. Finance-first search with real monthly payments upfront.
+                Set your monthly budget, deposit and term, and we will show AA-inspected cars that
+                fit, before you apply. A finance-first search with real monthly payments shown
+                upfront.
               </p>
             </div>
           </ScrollReveal>
