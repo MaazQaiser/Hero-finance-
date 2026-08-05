@@ -15,7 +15,11 @@ export const metadata: Metadata = {
   description:
     "Check your eligibility with a soft search. Get approved for car finance and reserve AA-inspected vehicles with one trusted team.",
   icons: {
-    icon: "/favicon.png",
+    icon: [
+      { url: "/favicon.png", sizes: "512x512", type: "image/png" },
+      { url: "/favicon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/favicon-512.png", sizes: "512x512", type: "image/png" }],
   },
 };
 

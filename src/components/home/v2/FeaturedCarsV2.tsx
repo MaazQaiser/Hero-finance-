@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { VehicleCertificateBadges } from "@/components/trust/VehicleCertificateBadges";
 import { formatPrice, vehicles } from "@/data/vehicles";
 
 const FEATURED_IDS = ["1", "2", "3", "4", "5", "6"];
@@ -70,8 +71,8 @@ export function FeaturedCarsV2() {
                 Featured cars
               </h2>
               <p className="mt-4 max-w-sm text-base leading-relaxed text-muted md:text-lg">
-                A wide selection of AA-inspected stock with clear monthly HP payments — ready to
-                reserve online.
+                AA Pass on every car. Aviloo battery checks on EVs and hybrids — clear monthly HP,
+                ready to reserve.
               </p>
             </div>
           </ScrollReveal>
@@ -93,12 +94,17 @@ export function FeaturedCarsV2() {
                           className="object-cover transition-transform duration-500 group-hover:scale-105"
                           sizes="260px"
                         />
+                        <VehicleCertificateBadges
+                          vehicle={car}
+                          variant="overlay"
+                          className="absolute bottom-3 left-3 right-3 z-10"
+                        />
                       </div>
 
                       <h3 className="mt-4 text-lg font-semibold text-ink">
                         {car.make} {car.model}
                       </h3>
-                      <p className="mt-1 text-sm text-muted">
+                      <p className="mt-1.5 text-sm text-muted">
                         {formatPrice(car.monthlyHp)}/mo · {car.year}
                       </p>
                     </Link>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ApprovedDecision } from "@/components/decision/ApprovedDecision";
 import { DeclinedDecision } from "@/components/decision/DeclinedDecision";
@@ -73,17 +74,15 @@ export function DecisionFlow({ stateOverride }: DecisionFlowProps) {
             alignItems: "center",
           }}
         >
-          <Link
-            href="/"
-            style={{
-              fontWeight: 700,
-              fontSize: 20,
-              letterSpacing: "-0.02em",
-              textDecoration: "none",
-              color: "var(--aink)",
-            }}
-          >
-            Her<span style={{ color: "var(--agreen)" }}>o</span>
+          <Link href="/" aria-label="Hero Car Finance home" className="inline-flex items-center">
+            <Image
+              src="/brand/hero-logo-primary.png"
+              alt="Hero Car Finance"
+              width={140}
+              height={36}
+              className="h-7 w-auto"
+              priority
+            />
           </Link>
           <span style={{ fontSize: 12, color: "var(--aink-soft)", letterSpacing: "0.04em" }}>
             {state === "approved"

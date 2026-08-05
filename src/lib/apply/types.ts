@@ -65,6 +65,8 @@ export interface ApplicationData {
 
   // Licence (extended in v2 to include EU/international)
   drivingLicence: DrivingLicence | "";
+  /** UK passport — empty until answered */
+  ukPassport: "" | "yes" | "no";
 
   // Vehicle (legacy — v2 removes vehicle search from apply)
   vehicleId: string;
@@ -102,8 +104,9 @@ export type StepId =
   | "email"
   | "dob"
   | "joint-choice"
-  // v2 Section 2 — Licence
+  // v2 Section 2 — Licence / ID
   | "licence"
+  | "uk-passport"
   // v2 Section 3 — Address
   | "address"
   | "address-duration"
@@ -165,6 +168,7 @@ export const initialApplicationData: ApplicationData = {
   otherIncome: "",
   // licence
   drivingLicence: "",
+  ukPassport: "",
   // vehicle (legacy)
   vehicleId: "",
   vehicleSearch: "",
@@ -187,7 +191,7 @@ export const initialApplicationData: ApplicationData = {
 };
 
 const AUTO_ADVANCE_STEPS: StepId[] = [
-  "residential", "employment", "licence", "joint-choice",
+  "residential", "employment", "licence", "uk-passport", "joint-choice",
   "budget", "deposit", "car-type", "credit-rating", "when",
   "address-duration", "living", "previous-address-duration",
   "job-duration",

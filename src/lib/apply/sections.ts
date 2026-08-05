@@ -41,7 +41,7 @@ export const SECTIONS: SectionConfig[] = [
     name: "Your licence",
     tone: "warm",
     title: "Your licence",
-    desc: "One question. Lenders need to know what you hold.",
+    desc: "A couple of quick questions. Lenders need to know what you hold.",
     assure: "FCA regulated dealer. Your details stay with us.",
     tint: "#F2F7F3",
   },
@@ -123,6 +123,11 @@ const STEP_META: Record<string, { title: string; help?: string; stepType: StepTy
   licence: {
     sectionIndex: 2, stepType: "choice",
     title: "What licence do you hold?",
+  },
+  "uk-passport": {
+    sectionIndex: 2, stepType: "choice",
+    title: "Do you have a UK passport?",
+    help: "Lenders may ask for this as part of identity checks later.",
   },
   address: {
     sectionIndex: 3, stepType: "address",
@@ -206,8 +211,9 @@ export function getV2Steps(data: ApplicationData): V2StepMeta[] {
   add("dob");
   add("joint-choice");
 
-  // Section 2 — Licence
+  // Section 2 — Licence / ID
   add("licence");
+  add("uk-passport");
 
   // Section 3 — Address
   add("address");

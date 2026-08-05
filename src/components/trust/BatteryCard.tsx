@@ -6,6 +6,7 @@ import { vehicleTrustContent } from "@/config/vehicleTrustContent";
 
 interface BatteryCardProps {
   onViewReport?: () => void;
+  sohPercent?: number;
   className?: string;
 }
 
@@ -19,7 +20,7 @@ function BatteryIcon() {
   );
 }
 
-export function BatteryCard({ onViewReport, className = "" }: BatteryCardProps) {
+export function BatteryCard({ onViewReport, sohPercent, className = "" }: BatteryCardProps) {
   const { battery } = vehicleTrustContent;
 
   return (
@@ -27,7 +28,7 @@ export function BatteryCard({ onViewReport, className = "" }: BatteryCardProps) 
       className={`motion-card motion-card-interactive rounded-[var(--radius-card)] border border-line bg-paper p-4 ${className}`}
     >
       <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green/10 text-green-deep">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1B4F9C]/10 text-[#1B4F9C]">
           <BatteryIcon />
         </div>
         <div className="min-w-0 flex-1">
@@ -35,6 +36,11 @@ export function BatteryCard({ onViewReport, className = "" }: BatteryCardProps) 
             <h3 className="text-sm font-semibold text-ink">{battery.title}</h3>
             <InformationTrigger topic="batteryHealth" />
           </div>
+          {sohPercent != null ? (
+            <p className="mt-1 text-sm font-semibold text-[#1B4F9C]">
+              State of Health {sohPercent.toFixed(1)}%
+            </p>
+          ) : null}
           <p className="mt-1 text-sm leading-relaxed text-muted">{battery.description}</p>
           <div className="mt-3 flex flex-wrap items-center gap-3">
             {onViewReport ? (

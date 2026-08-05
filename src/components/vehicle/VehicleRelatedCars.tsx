@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { VehicleCertificateBadges } from "@/components/trust/VehicleCertificateBadges";
 import { type Vehicle, formatPrice } from "@/data/vehicles";
 
 interface VehicleRelatedCarsProps {
@@ -29,6 +30,11 @@ export function VehicleRelatedCars({ vehicles }: VehicleRelatedCarsProps) {
                     fill
                     className="object-cover"
                     sizes="280px"
+                  />
+                  <VehicleCertificateBadges
+                    vehicle={vehicle}
+                    variant="overlay"
+                    className="absolute bottom-3 left-3 right-3 z-10"
                   />
                 </div>
                 <div className="p-4">

@@ -1,5 +1,6 @@
 /**
  * Vehicle trust layer copy — Hero owns the vehicles, not a broker.
+ * AA Pass on every car · Aviloo battery certificates on EVs & hybrids.
  */
 
 export type CertificateType = "inspection" | "battery";
@@ -15,22 +16,23 @@ export const vehicleTrustContent = {
   panelTitle: "Included with every Hero vehicle",
 
   trustItems: {
-    aaInspection: "AA Vehicle Health Check",
+    aaInspection: "AA Pass certificate",
     readyToDrive: "Ready to Drive",
     freeDelivery: "Free Delivery",
-    batteryHealth: "Battery Health Verified",
+    batteryHealth: "Aviloo battery health",
   },
 
   inspection: {
-    title: "AA Vehicle Health Check",
-    description: "Every vehicle is independently inspected before collection.",
-    actionLabel: "View Certificate",
+    title: "AA Pass certificate",
+    description: "Every vehicle is independently AA inspected before collection.",
+    actionLabel: "View AA certificate",
   },
 
   battery: {
-    title: "Battery Health Verified",
-    description: "Independent battery state-of-health certificate.",
-    actionLabel: "View Report",
+    title: "Aviloo battery health check",
+    description:
+      "Independent State of Health certificate for electric and hybrid batteries.",
+    actionLabel: "View Aviloo report",
   },
 
   warranty: {
@@ -43,15 +45,16 @@ export const vehicleTrustContent = {
   certificates: {
     inspection: {
       title: "AA Vehicle Health Check",
-      description: "Independently inspected before collection.",
+      description: "Independently inspected and passed before collection.",
       filename: "AA_Vehicle_Inspection.pdf",
-      previewLabel: "Inspection certificate",
+      previewLabel: "AA Pass certificate",
     },
     battery: {
-      title: "Battery Health Report",
-      description: "State-of-health certificate for eligible EVs and hybrids.",
-      filename: "Battery_Health_Report.pdf",
-      previewLabel: "Battery health report",
+      title: "Aviloo Independent Battery Certificate",
+      description:
+        "Independent battery diagnostics — State of Health, range and cell checks.",
+      filename: "Aviloo_Battery_Certificate.pdf",
+      previewLabel: "Aviloo battery certificate",
     },
   } satisfies Record<CertificateType, CertificateContent>,
 
@@ -61,8 +64,8 @@ export const vehicleTrustContent = {
     items: [
       "Finance and vehicle from one place",
       "Hundreds of cars in stock",
-      "Independently inspected vehicles",
-      "Battery health reports on eligible EVs",
+      "AA Pass certificate on every car",
+      "Aviloo battery health checks on EVs & hybrids",
       "Warranty available",
     ],
   },

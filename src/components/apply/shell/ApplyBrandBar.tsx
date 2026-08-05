@@ -1,5 +1,8 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
+
 interface ApplyBrandBarProps {
   savedFlash: boolean;
 }
@@ -10,16 +13,16 @@ export function ApplyBrandBar({ savedFlash }: ApplyBrandBarProps) {
       className="flex items-center justify-between px-5 py-4"
       style={{ paddingTop: "max(16px, env(safe-area-inset-top))" }}
     >
-      <div
-        style={{
-          fontWeight: 700,
-          fontSize: 22,
-          letterSpacing: "-0.02em",
-          color: "var(--aink)",
-        }}
-      >
-        Her<span style={{ color: "var(--agreen)" }}>o</span>
-      </div>
+      <Link href="/" aria-label="Hero Car Finance home" className="inline-flex items-center">
+        <Image
+          src="/brand/hero-logo-primary.png"
+          alt="Hero Car Finance"
+          width={160}
+          height={40}
+          className="h-7 w-auto"
+          priority
+        />
+      </Link>
 
       <div
         style={{

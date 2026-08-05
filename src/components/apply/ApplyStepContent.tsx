@@ -361,6 +361,19 @@ export function ApplyStepContent({
         />
       );
 
+    case "uk-passport":
+      return (
+        <ChoiceList
+          options={["Yes", "No"]}
+          value={
+            data.ukPassport === "yes" ? "Yes" : data.ukPassport === "no" ? "No" : ""
+          }
+          onSelect={(v) =>
+            autoSelect({ ukPassport: v === "Yes" ? "yes" : "no" })
+          }
+        />
+      );
+
     // ── Section 3: Address ────────────────────────────────────────────────
     case "address":
       return (

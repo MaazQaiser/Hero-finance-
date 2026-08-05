@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { type Vehicle, formatPrice } from "@/data/vehicles";
 import { VehicleSpecs } from "@/components/decision/recommended/VehicleSpecs";
 import { VehicleTrustSection } from "@/components/trust/VehicleTrustSection";
+import { VehicleCertificateBadges } from "@/components/trust/VehicleCertificateBadges";
 
 interface VehicleCardProps {
   vehicle: Vehicle;
@@ -36,6 +37,11 @@ export function VehicleCard({ vehicle, index = 0, onOpenWarranty }: VehicleCardP
           fill
           className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           sizes="(max-width: 768px) 85vw, 280px"
+        />
+        <VehicleCertificateBadges
+          vehicle={vehicle}
+          variant="overlay"
+          className="absolute bottom-3 left-3 right-3 z-10"
         />
       </div>
 

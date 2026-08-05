@@ -25,11 +25,11 @@ export interface InformationPanelContent {
 export const informationPanels: Record<InformationTopicId, InformationPanelContent> = {
   aaInspection: {
     id: "aaInspection",
-    title: "AA Vehicle Inspection",
+    title: "AA Pass certificate",
     description:
-      "Every vehicle is independently inspected before collection to ensure it meets our quality standards.",
+      "Every vehicle is independently AA inspected before collection to ensure it meets our quality standards.",
     benefits: [
-      "Independently inspected",
+      "AA Pass certificate on every car",
       "Mechanical checks",
       "Safety checks",
       "Interior & exterior inspection",
@@ -38,12 +38,13 @@ export const informationPanels: Record<InformationTopicId, InformationPanelConte
   },
   batteryHealth: {
     id: "batteryHealth",
-    title: "Battery Health Verified",
+    title: "Aviloo battery health check",
     description:
-      "Eligible electric vehicles include an independent battery health report showing the battery's condition.",
+      "Eligible electric and hybrid vehicles include an independent Aviloo battery certificate showing State of Health, remaining capacity and range.",
     benefits: [
-      "Independent testing",
-      "State of Health",
+      "Independent Aviloo diagnostics",
+      "State of Health (SOH) %",
+      "No impact on your credit",
       "Increased buying confidence",
     ],
   },

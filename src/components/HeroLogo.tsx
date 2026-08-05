@@ -1,27 +1,56 @@
 import Image from "next/image";
 
+type HeroLogoVariant = "primary" | "endorsed" | "icon";
+
 interface HeroLogoProps {
   priority?: boolean;
   className?: string;
+  /** primary = Hero Car Finance · endorsed = + Part of Oakwood · icon = shield only */
+  variant?: HeroLogoVariant;
 }
 
-export function HeroLogo({ priority = false, className = "" }: HeroLogoProps) {
+const ASSETS: Record<
+  HeroLogoVariant,
+  { src: string; width: number; height: number; alt: string; className: string }
+> = {
+  primary: {
+    src: "/brand/hero-logo-primary.png",
+    width: 220,
+    height: 56,
+    alt: "Hero Car Finance",
+    className: "h-8 w-auto sm:h-9 md:h-10",
+  },
+  endorsed: {
+    src: "/brand/hero-logo-endorsed.png",
+    width: 240,
+    height: 72,
+    alt: "Hero — Part of Oakwood Motor Company",
+    className: "h-10 w-auto sm:h-11 md:h-12",
+  },
+  icon: {
+    src: "/brand/hero-icon.png",
+    width: 48,
+    height: 60,
+    alt: "Hero Car Finance",
+    className: "h-9 w-auto",
+  },
+};
+
+export function HeroLogo({
+  priority = false,
+  className = "",
+  variant = "primary",
+}: HeroLogoProps) {
+  const asset = ASSETS[variant];
+
   return (
     <span className={`inline-flex shrink-0 items-center ${className}`}>
       <Image
-        src="/brand/hero-wordmark-light.svg"
-        alt="Hero Car Finance"
-        width={100}
-        height={36}
-        className="h-8 w-auto sm:hidden"
-        priority={priority}
-      />
-      <Image
-        src="/brand/hero-logo-full-light.svg"
-        alt="Hero Car Finance"
-        width={156}
-        height={44}
-        className="hidden h-9 w-auto sm:block md:h-10"
+        src={asset.src}
+        alt={asset.alt}
+        width={asset.width}
+        height={asset.height}
+        className={asset.className}
         priority={priority}
       />
     </span>

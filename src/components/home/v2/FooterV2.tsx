@@ -107,7 +107,7 @@ export function FooterV2() {
             <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
               <div>
                 <Link href="/" aria-label="Hero Car Finance home">
-                  <HeroLogo />
+                  <HeroLogo variant="endorsed" />
                 </Link>
                 <p className="mt-3 flex flex-wrap items-center gap-2 text-sm text-white/45">
                   <span>Hero Car Finance</span>

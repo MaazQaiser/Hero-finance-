@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { VehicleCertificateBadges } from "@/components/trust/VehicleCertificateBadges";
 import {
   type SearchMode,
   type Vehicle,
@@ -32,25 +33,32 @@ export function StockVehicleCard({ vehicle, searchMode }: StockVehicleCardProps)
               key={`${vehicle.id}-${index}`}
               className="relative h-full min-w-full shrink-0 snap-center"
             >
-            <Image
-              src={image}
-              alt={`${vehicle.make} ${vehicle.model} view ${index + 1}`}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 50vw"
-            />
-          </div>
+              <Image
+                src={image}
+                alt={`${vehicle.make} ${vehicle.model} view ${index + 1}`}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
           ))}
         </div>
         <div className="pointer-events-none absolute left-4 top-4 z-10">
           <Badge variant={badgeVariantMap[vehicle.badge]}>{vehicle.badge}</Badge>
         </div>
+        <VehicleCertificateBadges
+          vehicle={vehicle}
+          variant="overlay"
+          className="absolute bottom-3 left-3 right-3 z-10"
+        />
       </div>
 
       <div className="p-4 md:p-5">
         <h3 className="text-lg font-medium text-ink">
           {vehicle.make} {vehicle.model}
         </h3>
+
+        <VehicleCertificateBadges vehicle={vehicle} variant="inline" className="mt-2.5" />
 
         <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted">
           <span>{vehicle.year}</span>

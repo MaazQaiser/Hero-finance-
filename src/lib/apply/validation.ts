@@ -38,9 +38,12 @@ export function validateStep(stepId: StepId | string, data: ApplicationData): Fi
     case "dob":
       break;
 
-    // v2 Section 2 — Licence
+    // v2 Section 2 — Licence / ID
     case "licence":
       if (!data.drivingLicence) errors.drivingLicence = "Select an option";
+      break;
+
+    case "uk-passport":
       break;
 
     // v2 Section 3 — Address

@@ -11,6 +11,12 @@ export interface VehicleSpecs {
   performance: string[];
 }
 
+export interface BatteryHealthCert {
+  provider: "aviloo";
+  sohPercent: number;
+  certificateImage?: string;
+}
+
 export interface Vehicle {
   id: string;
   make: string;
@@ -27,6 +33,10 @@ export interface Vehicle {
   images: string[];
   addedAt: string;
   specs: VehicleSpecs;
+  /** Every Hero car has an AA pass certificate */
+  aaPass: boolean;
+  /** Independent Aviloo battery certificate — EV / hybrid only */
+  batteryHealth?: BatteryHealthCert;
 }
 
 
@@ -47,7 +57,9 @@ const registrations = [
   "VX20 ELI",
 ];
 
-function buildSpecs(vehicle: Omit<Vehicle, "specs" | "registration" | "apr">): VehicleSpecs {
+function buildSpecs(
+  vehicle: Omit<Vehicle, "specs" | "registration" | "apr" | "aaPass" | "batteryHealth">,
+): VehicleSpecs {
   return {
     engine: [
       `${vehicle.fuel} engine`,
@@ -89,18 +101,34 @@ function buildSpecs(vehicle: Omit<Vehicle, "specs" | "registration" | "apr">): V
 }
 
 function enrichVehicle(
-  vehicle: Omit<Vehicle, "specs" | "registration" | "apr">,
+  vehicle: Omit<Vehicle, "specs" | "registration" | "apr" | "aaPass" | "batteryHealth">,
   index: number,
 ): Vehicle {
+  const isEvOrHybrid = /electric|ev|hybrid/i.test(vehicle.fuel);
+  // Stable demo SOH values per vehicle so cards look realistic
+  const sohById: Record<string, number> = {
+    "6": 91.2, // Toyota Corolla Hybrid
+    "8": 88.4, // Kia Sportage Hybrid
+    "11": 94.1, // Tesla Model 3
+  };
+
   return {
     ...vehicle,
     registration: registrations[index] ?? `XX${vehicle.year.toString().slice(-2)} ABC`,
     apr: 9.9,
+    aaPass: true,
+    batteryHealth: isEvOrHybrid
+      ? {
+          provider: "aviloo",
+          sohPercent: sohById[vehicle.id] ?? 90.0,
+          certificateImage: "/images/certificates/aviloo-battery-certificate.png",
+        }
+      : undefined,
     specs: buildSpecs(vehicle),
   };
 }
 
-const rawVehicles: Omit<Vehicle, "specs" | "registration" | "apr">[] = [
+const rawVehicles: Omit<Vehicle, "specs" | "registration" | "apr" | "aaPass" | "batteryHealth">[] = [
   {
     id: "1",
     make: "BMW",

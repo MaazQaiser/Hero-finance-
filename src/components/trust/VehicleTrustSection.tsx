@@ -46,7 +46,10 @@ export function VehicleTrustSection({
         <div className="grid gap-3 sm:grid-cols-2">
           <InspectionCard onViewCertificate={() => setCertificateType("inspection")} />
           {showBattery ? (
-            <BatteryCard onViewReport={() => setCertificateType("battery")} />
+            <BatteryCard
+              sohPercent={vehicle.batteryHealth?.sohPercent}
+              onViewReport={() => setCertificateType("battery")}
+            />
           ) : null}
         </div>
       ) : (
@@ -81,6 +84,8 @@ export function VehicleTrustSection({
         type={certificateType ?? "inspection"}
         vehicleLabel={vehicleLabel}
         registration={vehicle.registration}
+        sohPercent={vehicle.batteryHealth?.sohPercent}
+        certificateImage={vehicle.batteryHealth?.certificateImage}
         onClose={() => setCertificateType(null)}
       />
 

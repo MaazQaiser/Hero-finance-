@@ -4,6 +4,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Badge } from "@/components/ui/Badge";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { VehicleCertificateBadges } from "@/components/trust/VehicleCertificateBadges";
 import { formatPrice, vehicles } from "@/data/vehicles";
 
 const FEATURED_IDS = ["1", "2", "3", "4"];
@@ -27,7 +28,7 @@ export function FeaturedCars() {
             <SectionHeading
               eyebrow="Featured cars"
               title="Premium stock, ready to reserve"
-              description="Every vehicle is AA inspected with clear monthly HP payments shown first."
+              description="Every vehicle has an AA Pass certificate. EVs and hybrids include Aviloo battery health checks — with clear monthly HP shown first."
             />
             <Link href="/cars" className="hidden md:inline-flex">
               <ArrowLink>View all stock</ArrowLink>
@@ -62,6 +63,11 @@ export function FeaturedCars() {
                         per month
                       </p>
                     </div>
+                    <VehicleCertificateBadges
+                      vehicle={car}
+                      variant="overlay"
+                      className="absolute bottom-3 left-3 right-3 z-10"
+                    />
                   </div>
 
                   <div className="p-5 md:p-6">

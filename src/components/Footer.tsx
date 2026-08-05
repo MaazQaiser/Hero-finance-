@@ -26,7 +26,7 @@ export function Footer() {
             <div className="grid gap-12 md:grid-cols-3">
               <div>
                 <Link href="/" aria-label="Hero Car Finance home">
-                  <HeroLogo />
+                  <HeroLogo variant="endorsed" />
                 </Link>
                 <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted">
                   Finance-first car buying. Check eligibility, get approved, and

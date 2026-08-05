@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/Badge";
-import { InformationTrigger } from "@/components/information/InformationTrigger";
+import { VehicleCertificateBadges } from "@/components/trust/VehicleCertificateBadges";
 import { type Vehicle } from "@/data/vehicles";
 
 interface VehicleGalleryProps {
@@ -97,12 +97,13 @@ export function VehicleGallery({ vehicle }: VehicleGalleryProps) {
 
             <div className="pointer-events-none absolute left-4 top-4 flex flex-wrap gap-2">
               <Badge variant="coral">{vehicle.badge}</Badge>
-              <div className="pointer-events-auto inline-flex items-center gap-1">
-                <Badge variant="success">AA Inspected</Badge>
-                <InformationTrigger topic="aaInspection" className="bg-paper/90 shadow-sm" />
-              </div>
               {vehicle.mileage < 25000 && <Badge variant="neutral">Low Mileage</Badge>}
             </div>
+            <VehicleCertificateBadges
+              vehicle={vehicle}
+              variant="overlay"
+              className="absolute bottom-4 left-4 right-4 z-10"
+            />
           </div>
         </div>
       </section>
