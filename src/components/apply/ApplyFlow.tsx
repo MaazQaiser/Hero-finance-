@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import {
   SECTIONS,
   getV2Steps,
-  getSectionRailProgress,
+  getJourneyProgress,
+  PART_EXCHANGE_SECTION_INDEX,
   type V2StepMeta,
 } from "@/lib/apply/sections";
 import { ApplyBrandBar } from "@/components/apply/shell/ApplyBrandBar";
@@ -16,6 +17,7 @@ import { ApplySessionTimeout } from "@/components/apply/ApplySessionTimeout";
 import { ApplyNetworkError } from "@/components/apply/ApplyNetworkError";
 import { SaveProgressModal } from "@/components/apply/SaveProgressModal";
 import { ResumeApplicationScreen } from "@/components/apply/save/ResumeApplicationScreen";
+import { ReviewTrustChecklist } from "@/components/apply/ApplyReviewSummary";
 import { mockSavedApplication } from "@/lib/apply/mockSaveProgress";
 import {
   clearProgress,
@@ -58,6 +60,7 @@ export function ApplyFlow({
   const dataRef = useRef(data);
   dataRef.current = data;
   const [stepIndex, setStepIndex] = useState(0);
+  const [maxStepIndex, setMaxStepIndex] = useState(0);
   const [phase, setPhase] = useState<FlowPhase>(() =>
     sessionExpired ? "session-expired" : "flow",
   );
@@ -65,14 +68,25 @@ export function ApplyFlow({
   const [savedFlash, setSavedFlash] = useState(false);
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [goingBack, setGoingBack] = useState(false);
+  const [returnStepId, setReturnStepId] = useState<string | null>(null);
 
   const steps = useMemo(() => getV2Steps(data), [data]);
   const safeIndex = Math.min(stepIndex, Math.max(steps.length - 1, 0));
   const currentStep: V2StepMeta = steps[safeIndex] ?? steps[0];
-  const { sectionIndex, segmentPct } = getSectionRailProgress(steps, safeIndex);
+  const journeyProgress = getJourneyProgress(steps, safeIndex);
+  const fillProgress = getJourneyProgress(steps, safeIndex, Math.max(safeIndex, maxStepIndex));
+  const { sectionIndex } = journeyProgress;
   const currentSection = SECTIONS[sectionIndex];
   const isChoice = currentStep?.stepType === "choice";
-  const showSaveLater = sectionIndex >= 2;
+  const isReviewSubmit = currentStep?.id === "consent";
+  const showSaveLater = sectionIndex >= 2 && sectionIndex !== PART_EXCHANGE_SECTION_INDEX;
+  const reassuranceText = isReviewSubmit
+    ? undefined
+    : (currentStep?.assure ?? currentSection?.assure);
+
+  useEffect(() => {
+    setMaxStepIndex((prev) => Math.max(prev, safeIndex));
+  }, [safeIndex]);
 
   const fieldErrors = useMemo(
     () => (currentStep ? validateStep(currentStep.id, data) : {}),
@@ -105,6 +119,7 @@ export function ApplyFlow({
     const idx = rebuiltSteps.findIndex((s) => s.id === savedStepId);
     if (idx >= 0) {
       setStepIndex(idx);
+      setMaxStepIndex(idx);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resume]);
@@ -152,16 +167,48 @@ export function ApplyFlow({
     }, LOADING_DURATION_MS);
   }, [router]);
 
+  const goToStep = useCallback(
+    (stepId: string) => {
+      const nextSteps = getV2Steps(dataRef.current);
+      const idx = nextSteps.findIndex((s) => s.id === stepId);
+      if (idx >= 0) {
+        // Editing from a review screen should return there after Continue
+        if (currentStep?.id === "consent" || currentStep?.id === "ja-review") {
+          setReturnStepId(currentStep.id);
+        }
+        setGoingBack(true);
+        setStepIndex(idx);
+      }
+    },
+    [currentStep?.id],
+  );
+
   const goNext = useCallback(() => {
     if (!currentStep) return;
     if (!isChoice && !canContinue) return;
 
     flashSaved();
-    saveProgress(data, currentStep.id as StepId);
+    const latestData = dataRef.current;
+    saveProgress(latestData, currentStep.id as StepId);
 
-    const nextIndex = safeIndex + 1;
+    const latestSteps = getV2Steps(latestData);
 
-    if (nextIndex >= steps.length) {
+    // After editing a field from a review screen, jump straight back
+    if (returnStepId) {
+      const reviewIdx = latestSteps.findIndex((s) => s.id === returnStepId);
+      if (reviewIdx >= 0) {
+        setReturnStepId(null);
+        setGoingBack(false);
+        setStepIndex(reviewIdx);
+        return;
+      }
+      setReturnStepId(null);
+    }
+
+    const currentIdx = latestSteps.findIndex((s) => s.id === currentStep.id);
+    const nextIndex = (currentIdx >= 0 ? currentIdx : safeIndex) + 1;
+
+    if (nextIndex >= latestSteps.length) {
       if (simulateNetworkError && !networkRetried.current) {
         networkRetried.current = true;
         setPhase("network-error");
@@ -171,7 +218,7 @@ export function ApplyFlow({
       return;
     }
 
-    const nextSec = steps[nextIndex].sectionIndex;
+    const nextSec = latestSteps[nextIndex].sectionIndex;
     setGoingBack(false);
     setStepIndex(nextIndex);
 
@@ -179,12 +226,13 @@ export function ApplyFlow({
       setArrivalSection(nextSec);
     }
   }, [
-    currentStep, isChoice, canContinue, flashSaved, data,
-    safeIndex, steps, sectionIndex, simulateNetworkError, submitApplication,
+    currentStep, isChoice, canContinue, flashSaved, safeIndex,
+    sectionIndex, simulateNetworkError, submitApplication, returnStepId,
   ]);
 
   const goBack = useCallback(() => {
     if (safeIndex === 0) return;
+    setReturnStepId(null);
     setGoingBack(true);
     setArrivalSection(null);
     setStepIndex(safeIndex - 1);
@@ -205,9 +253,12 @@ export function ApplyFlow({
       setData((cur) => ({ ...cur, ...saved.data }));
       const rebuiltSteps = getV2Steps({ ...data, ...saved.data });
       const idx = rebuiltSteps.findIndex((s) => s.id === normalizeStepId(saved.stepId));
-      setStepIndex(idx >= 0 ? idx : 0);
+      const nextIndex = idx >= 0 ? idx : 0;
+      setStepIndex(nextIndex);
+      setMaxStepIndex(nextIndex);
     } else {
       setStepIndex(0);
+      setMaxStepIndex(0);
     }
     setPhase("flow");
   }, [data]);
@@ -216,6 +267,7 @@ export function ApplyFlow({
     clearProgress();
     setData(mergeInitialData(undefined, false));
     setStepIndex(0);
+    setMaxStepIndex(0);
     setArrivalSection(null);
     setGoingBack(false);
     setPhase("flow");
@@ -224,11 +276,23 @@ export function ApplyFlow({
   // ── Infrastructure screens ──────────────────────────────────────────────
 
   if (phase === "loading") {
+    const loadingProgress = getJourneyProgress(steps, steps.length - 1, steps.length - 1, {
+      loadingMode: true,
+    });
     return (
       <div className="apply-shell-outer">
         <div className="apply-shell">
-          <ApplyBrandBar savedFlash={false} />
-          <SectionRail sectionIndex={5} segmentPct={100} loadingMode />
+          <div className="sticky top-0 z-40 bg-white">
+            <ApplyBrandBar savedFlash={false} />
+            <SectionRail
+              sectionIndex={loadingProgress.sectionIndex}
+              segmentPct={loadingProgress.segmentPct}
+              sectionName={loadingProgress.sectionName}
+              timeRemainingLabel={loadingProgress.timeRemainingLabel}
+              loadingMode
+              sticky
+            />
+          </div>
           <div
             style={{
               flex: 1,
@@ -297,11 +361,16 @@ export function ApplyFlow({
   return (
     <div className="apply-shell-outer">
       <div className="apply-shell">
-        {/* Brand bar */}
-        <ApplyBrandBar savedFlash={savedFlash} />
-
-        {/* 6-segment rail */}
-        <SectionRail sectionIndex={sectionIndex} segmentPct={segmentPct} />
+        <div className="sticky top-0 z-40 bg-white">
+          <ApplyBrandBar savedFlash={savedFlash} />
+          <SectionRail
+            sectionIndex={fillProgress.sectionIndex}
+            segmentPct={fillProgress.segmentPct}
+            sectionName={journeyProgress.sectionName}
+            timeRemainingLabel={journeyProgress.timeRemainingLabel}
+            sticky
+          />
+        </div>
 
         {/* Scrollable stage */}
         <main
@@ -326,9 +395,7 @@ export function ApplyFlow({
           >
             {currentStep.id === "employer" && data.employmentStatusFull === "self-employed"
               ? "Tell us about your business."
-              : currentStep.id === "job-duration" && data.employmentStatusFull === "self-employed"
-                ? "How long have you been trading?"
-                : currentStep.title}
+              : currentStep.title}
           </h1>
 
           {currentStep.help && (
@@ -351,6 +418,7 @@ export function ApplyFlow({
               data={data}
               onChange={updateData}
               onAutoAdvance={isChoice ? handleAutoAdvance : undefined}
+              onGoToStep={goToStep}
               fieldErrors={fieldErrors}
             />
           </div>
@@ -365,7 +433,7 @@ export function ApplyFlow({
           }}
         >
           {/* Shield + trust line — shown on every step */}
-          {currentSection && (
+          {reassuranceText && (
             <div
               style={{
                 display: "flex",
@@ -387,11 +455,11 @@ export function ApplyFlow({
                   strokeLinejoin="round"
                 />
               </svg>
-              {currentSection.assure}
+              {reassuranceText}
             </div>
           )}
 
-          {/* CTA — only on non-choice steps */}
+          {/* Primary — Continue / Submit */}
           {!isChoice && (
             <button
               type="button"
@@ -399,46 +467,84 @@ export function ApplyFlow({
               onClick={goNext}
               disabled={!canContinue}
             >
-              {currentStep.stepType === "confirm" ? "Run my soft search" : "Continue"}
+              {currentStep.id === "px-complete"
+                ? "Continue to Review"
+                : isReviewSubmit
+                  ? "Submit"
+                  : "Continue"}
             </button>
           )}
 
-          {/* Save later + Back — side by side white CTAs */}
-          {(showSaveLater || safeIndex > 0) && (
-            <div
+          {isReviewSubmit ? <ReviewTrustChecklist /> : null}
+
+          {/* Secondary — Back */}
+          {safeIndex > 0 && (
+            <button
+              type="button"
+              onClick={goBack}
               style={{
                 display: "flex",
-                alignItems: "stretch",
-                gap: 10,
-                paddingTop: 10,
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 6,
+                width: "100%",
+                marginTop: isChoice ? 4 : 10,
+                minHeight: 44,
+                padding: "10px 16px",
+                border: "1.5px solid var(--aline)",
+                borderRadius: 9999,
+                background: "transparent",
+                fontFamily: "inherit",
+                fontSize: 15,
+                fontWeight: 600,
+                color: "var(--aink)",
+                cursor: "pointer",
+                transition: "background 0.15s, border-color 0.15s",
               }}
             >
-              {showSaveLater && (
-                <button
-                  type="button"
-                  className="a-cta-secondary"
-                  onClick={handleSaveClick}
-                >
-                  Save and continue later
-                </button>
-              )}
+              <span aria-hidden>←</span> Back
+            </button>
+          )}
 
-              {safeIndex > 0 && (
-                <button
-                  type="button"
-                  className="a-cta-secondary"
-                  onClick={goBack}
-                  style={{ flex: showSaveLater ? "0 0 auto" : 1, minWidth: showSaveLater ? 96 : undefined }}
-                >
-                  Back
-                </button>
-              )}
+          {/* Tertiary — Save & continue later */}
+          {showSaveLater && (
+            <div style={{ marginTop: 14, textAlign: "center" }}>
+              <button
+                type="button"
+                onClick={handleSaveClick}
+                style={{
+                  border: "none",
+                  background: "transparent",
+                  padding: "6px 8px",
+                  fontFamily: "inherit",
+                  fontSize: 13.5,
+                  fontWeight: 500,
+                  color: "var(--aink-soft)",
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                  textUnderlineOffset: 3,
+                  textDecorationColor: "rgba(110,106,124,0.45)",
+                }}
+              >
+                Save &amp; continue later
+              </button>
+              <p
+                style={{
+                  margin: "6px 0 0",
+                  fontSize: 12,
+                  lineHeight: 1.4,
+                  color: "var(--aink-soft)",
+                  opacity: 0.9,
+                }}
+              >
+                We&apos;ll text you a secure link so you can continue where you left off.
+              </p>
             </div>
           )}
         </footer>
 
         {/* Section arrival overlay */}
-        {arrivalSection !== null && (
+        {arrivalSection !== null && SECTIONS[arrivalSection] && (
           <SectionArrival
             section={SECTIONS[arrivalSection]}
             sectionIndex={arrivalSection}

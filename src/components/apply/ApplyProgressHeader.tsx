@@ -2,7 +2,7 @@
 
 import { AnimatedProgress } from "@/components/motion/AnimatedProgress";
 import { BackNavigationNotice } from "@/components/apply/save/BackNavigationNotice";
-import { ProgressHint } from "@/components/apply/form/ProgressHint";
+import { formatTimeRemaining } from "@/lib/apply/sections";
 
 interface ApplyProgressHeaderProps {
   stepNumber: number;
@@ -10,6 +10,7 @@ interface ApplyProgressHeaderProps {
   onBack: () => void;
   canGoBack: boolean;
   backNotice?: string | null;
+  sectionName?: string;
 }
 
 export function ApplyProgressHeader({
@@ -18,13 +19,16 @@ export function ApplyProgressHeader({
   onBack,
   canGoBack,
   backNotice,
+  sectionName = "Quick Start",
 }: ApplyProgressHeaderProps) {
-  const progress = (stepNumber / totalSteps) * 100;
+  const progress = (stepNumber / Math.max(totalSteps, 1)) * 100;
+  const stepsRemaining = Math.max(totalSteps - stepNumber, 0);
+  const timeLabel = formatTimeRemaining(stepsRemaining);
 
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-paper/90 backdrop-blur-2xl backdrop-saturate-150">
       <div className="mx-auto max-w-lg px-5 py-4">
-        <div className="mb-3 flex items-center justify-between">
+        <div className="mb-3 flex items-center justify-between gap-3">
           <button
             type="button"
             onClick={onBack}
@@ -33,12 +37,10 @@ export function ApplyProgressHeader({
           >
             <span aria-hidden>←</span> Back
           </button>
-          <p className="text-sm text-muted">
-            Step <span className="font-medium text-ink">{stepNumber}</span> of {totalSteps}
-          </p>
+          <p className="text-sm font-semibold text-ink">{sectionName}</p>
         </div>
 
-        <ProgressHint stepNumber={stepNumber} totalSteps={totalSteps} className="mb-2" />
+        <p className="mb-2 text-xs text-muted">{timeLabel}</p>
 
         <AnimatedProgress value={progress} label="Application progress" />
 

@@ -5,6 +5,8 @@ interface VehicleCertificateBadgesProps {
   vehicle: Pick<Vehicle, "aaPass" | "batteryHealth" | "fuel">;
   /** Overlay on photo vs inline under title */
   variant?: "overlay" | "inline";
+  /** Homepage trust claim; certificate pages may keep product wording */
+  aaLabel?: string;
   className?: string;
 }
 
@@ -32,6 +34,7 @@ function AvilooMark({ className = "" }: { className?: string }) {
 export function VehicleCertificateBadges({
   vehicle,
   variant = "overlay",
+  aaLabel = "AA Pass",
   className = "",
 }: VehicleCertificateBadgesProps) {
   const showAviloo = Boolean(vehicle.batteryHealth);
@@ -59,7 +62,7 @@ export function VehicleCertificateBadges({
             height={18}
             className="h-[18px] w-[18px] rounded-full object-cover object-center"
           />
-          AA Pass
+          {aaLabel}
         </span>
       ) : null}
 

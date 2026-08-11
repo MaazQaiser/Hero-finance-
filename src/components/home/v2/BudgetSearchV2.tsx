@@ -24,10 +24,10 @@ export function BudgetSearchV2() {
                 Search by budget
               </p>
               <h2 className="mt-4 font-display text-3xl font-extrabold leading-tight tracking-tight text-ink md:text-4xl lg:text-[2.75rem]">
-                See what you can afford
+                Find cars in your budget
               </h2>
               <p className="mt-5 text-base leading-relaxed text-muted md:text-lg">
-                Set your monthly budget, deposit and term, and we will show AA-inspected cars that
+                Set your monthly budget, deposit and term, and we will show AA Inspected Vehicles that
                 fit, before you apply. A finance-first search with real monthly payments shown
                 upfront.
               </p>
@@ -88,9 +88,9 @@ export function BudgetSearchV2() {
 
                 <Link
                   href="/cars"
-                  className="mt-6 flex min-h-12 w-full items-center justify-center rounded-xl bg-green px-8 text-base font-bold text-white transition-colors hover:bg-green-deep"
+                  className="mt-6 flex min-h-12 w-full items-center justify-center rounded-xl border border-line bg-paper px-8 text-base font-bold text-ink transition-colors hover:border-green/30 hover:bg-mist"
                 >
-                  See cars I can afford
+                  Find my next car
                 </Link>
               </div>
             </div>

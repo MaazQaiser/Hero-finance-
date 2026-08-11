@@ -47,9 +47,9 @@ export function HeaderV2() {
         <div className="flex flex-1 items-center justify-end gap-3">
           <Link
             href="#hero-eligibility"
-            className="hidden rounded-full bg-green px-6 py-2.5 text-sm font-semibold text-white shadow-[0_8px_24px_rgba(91,43,212,0.3)] transition-all hover:bg-green-deep md:inline-flex"
+            className="hidden rounded-full border border-line bg-paper px-6 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-green/30 hover:bg-mist md:inline-flex"
           >
-            See what you can afford
+            Start my soft search
           </Link>
 
           <button
@@ -79,9 +79,9 @@ export function HeaderV2() {
           <Link
             href="#hero-eligibility"
             onClick={() => setMenuOpen(false)}
-            className="mt-2 inline-flex rounded-full bg-green px-6 py-2.5 text-sm font-semibold text-white"
+            className="mt-2 inline-flex rounded-full border border-line bg-paper px-6 py-2.5 text-sm font-semibold text-ink"
           >
-            See what you can afford
+            Start my soft search
           </Link>
         </nav>
       )}

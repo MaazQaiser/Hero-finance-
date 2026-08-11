@@ -4,7 +4,7 @@ const defaultVariant: LandingVariant = {
   id: "default",
   introHeading: "Car finance and inspected stock, under one roof.",
   supportingCopy:
-    "See what you can afford with a soft search, browse AA-inspected vehicles, and arrange your car finance and your car with one team from application to keys.",
+    "See what you can afford with a soft search, browse AA Inspected Vehicles, and arrange your car finance and your car with one team from application to keys.",
   cta: "See what you can afford",
   firstReassurance: "Soft search, no impact on your credit score.",
   applicationIntroHeading: "Every credit story deserves a fair hearing.",
@@ -15,7 +15,7 @@ const defaultVariant: LandingVariant = {
 
 const badCredit: LandingVariant = {
   id: "bad-credit",
-  introHeading: "Bad credit? You could still get approved.",
+  introHeading: "Bad credit? You could still have options.",
   supportingCopy:
     "Your score isn't the whole story. We match you with lenders who look at your full circumstances — with real cars ready to reserve.",
   cta: "Check my options",
@@ -30,7 +30,7 @@ const refusedFinance: LandingVariant = {
   id: "refused-finance",
   introHeading: "Been refused finance? You could still drive away.",
   supportingCopy:
-    "We consider every credit story. Unlike brokers, we've got real cars ready with decisions in under a minute and finance options tailored for you.",
+    "We consider every credit story. Unlike brokers, we've got real cars ready — check your options with a soft search and finance tailored for you.",
   cta: "Check if I'm eligible",
   firstReassurance: "Refused elsewhere doesn't mean refused here",
   applicationIntroHeading: "We consider every credit story.",
@@ -43,7 +43,7 @@ const selfEmployed: LandingVariant = {
   id: "self-employed",
   introHeading: "Self-employed? Finance built around how you earn.",
   supportingCopy:
-    "We understand variable income. Get a soft-search decision in minutes and browse AA-inspected cars from our own stock.",
+    "We understand variable income. Start with a soft search and browse AA Inspected Vehicles from our own stock.",
   cta: "Check my eligibility",
   firstReassurance: "Lenders who understand self-employed income",
   applicationIntroHeading: "We understand how you earn.",
@@ -56,7 +56,7 @@ const firstTimeBuyer: LandingVariant = {
   id: "first-time-buyer",
   introHeading: "First car on finance? We'll guide you through it.",
   supportingCopy:
-    "No jargon, no pressure. Check your eligibility with a soft search and browse AA-inspected cars with clear monthly payments.",
+    "No jargon, no pressure. Check your eligibility with a soft search and browse AA Inspected Vehicles with clear monthly payments.",
   cta: "Check my eligibility",
   firstReassurance: "Soft search only · perfect for first-time buyers",
   applicationIntroHeading: "Your first step, made straightforward.",
@@ -82,7 +82,7 @@ const affordability: LandingVariant = {
   id: "affordability",
   introHeading: "Know your budget before you browse.",
   supportingCopy:
-    "See what you could borrow with a soft search, then explore AA-inspected cars with clear monthly HP payments — no hidden fees.",
+    "See what you could borrow with a soft search, then explore AA Inspected Vehicles with clear monthly HP payments — no hidden fees.",
   cta: "See my budget",
   firstReassurance: "No admin fees · the price you see is the price you pay",
   applicationIntroHeading: "Know your numbers before you choose.",
@@ -120,7 +120,7 @@ export const landingVariants: Record<LandingVariantId, LandingVariant> = {
     id: "soft-search",
     introHeading: "Check your eligibility — without touching your credit score.",
     supportingCopy:
-      "A soft search gives you real finance options in under a minute. Browse AA-inspected stock from a dealer you can trust.",
+      "A soft search shows your finance options without affecting your credit score. Browse AA Inspected Vehicles from a dealer you can trust.",
     cta: "Run a soft search",
     firstReassurance: "Soft search only · zero impact on your credit file",
     applicationIntroHeading: "A soft search you can trust.",
@@ -132,7 +132,7 @@ export const landingVariants: Record<LandingVariantId, LandingVariant> = {
     id: "just-browsing",
     introHeading: "Just browsing? See what you could borrow first.",
     supportingCopy:
-      "No pressure, no obligation. Check your budget with a soft search and explore AA-inspected cars when you're ready.",
+      "No pressure, no obligation. Check your budget with a soft search and explore AA Inspected Vehicles when you're ready.",
     cta: "See what I could borrow",
     firstReassurance: "No obligation · soft search only",
     applicationIntroHeading: "Browse knowing your budget.",
@@ -166,15 +166,15 @@ export const landingVariants: Record<LandingVariantId, LandingVariant> = {
   },
   "fast-decision": {
     id: "fast-decision",
-    introHeading: "Need a fast decision? Get an answer in under a minute.",
+    introHeading: "See your options with a soft search.",
     supportingCopy:
-      "Our soft search takes seconds, not days. Browse AA-inspected cars and reserve the one you want — all with one team.",
-    cta: "Get a fast decision",
-    firstReassurance: "Decision in under 60 seconds · soft search only",
-    applicationIntroHeading: "A fast decision starts here.",
+      "Our soft search helps you understand where you stand. Browse AA Inspected Vehicles and reserve the one you want — all with one team.",
+    cta: "See what you can afford",
+    firstReassurance: "Soft search only · no impact on your credit score",
+    applicationIntroHeading: "Your soft search starts here.",
     applicationSupportingCopy:
-      "Most applications take around 60 seconds. A few quick questions help us run your soft search straight away.",
-    applicationCta: "Get my decision",
+      "A few quick questions help us run your soft search and show the finance options available to you.",
+    applicationCta: "Start my soft search",
   },
 };
 

@@ -1,5 +1,5 @@
 const floatingCards = [
-  { label: "8.9% APR from", className: "right-0 top-20 animate-float-delay-2" },
+  { label: "FCA Regulated", className: "right-0 top-20 animate-float-delay-2" },
   { label: "400+ cars in stock", className: "-left-4 bottom-32 animate-float-delay-3" },
   { label: "Soft search only", className: "right-2 bottom-16 animate-float-delay-4" },
 ];

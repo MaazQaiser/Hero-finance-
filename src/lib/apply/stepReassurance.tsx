@@ -49,7 +49,7 @@ const stepReassuranceMap: Partial<Record<StepId, StepReassurance>> = {
         <path d="M9 5h6" />
       </ReassuranceIcon>
     ),
-    text: "Hundreds of inspected cars ready to drive away.",
+    text: "We ask this because lenders usually consider employment stability as part of your application.",
   },
   "previous-employer": {
     icon: (
@@ -59,7 +59,7 @@ const stepReassuranceMap: Partial<Record<StepId, StepReassurance>> = {
         <path d="M9 21v-6h6v6" />
       </ReassuranceIcon>
     ),
-    text: "Recent employment history helps lenders assess your application.",
+    text: "We ask this because lenders usually consider employment stability as part of your application.",
   },
   "previous-employment-duration": {
     icon: (
@@ -70,7 +70,7 @@ const stepReassuranceMap: Partial<Record<StepId, StepReassurance>> = {
         <path d="M5 21h14a1 1 0 0 0 1-1V7H4v13a1 1 0 0 0 1 1z" />
       </ReassuranceIcon>
     ),
-    text: "A complete picture helps us match you with the right lender.",
+    text: "We ask this because lenders usually consider employment stability as part of your application.",
   },
   address: {
     icon: (
@@ -87,7 +87,7 @@ const stepReassuranceMap: Partial<Record<StepId, StepReassurance>> = {
         <path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10z" />
       </ReassuranceIcon>
     ),
-    text: "Lenders use residential history to understand stability.",
+    text: "We only ask for previous addresses because lenders normally require three years of address history.",
   },
   "previous-address": {
     icon: (
@@ -95,7 +95,7 @@ const stepReassuranceMap: Partial<Record<StepId, StepReassurance>> = {
         <path d="M12 21s7-4.5 7-11a7 7 0 1 0-14 0c0 6.5 7 11 7 11z" />
       </ReassuranceIcon>
     ),
-    text: "Only needed when you've lived at your current address under three years.",
+    text: "We only ask for previous addresses because lenders normally require three years of address history.",
   },
   income: {
     icon: (

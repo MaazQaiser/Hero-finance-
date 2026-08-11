@@ -33,6 +33,7 @@ export function ResumeApplicationCard({
         progressPercent={saved.progressPercent}
         lastSavedLabel={saved.lastSavedLabel}
         estimatedMinutesRemaining={saved.estimatedMinutesRemaining}
+        sectionName={saved.sectionName}
       />
 
       <div className="space-y-3">

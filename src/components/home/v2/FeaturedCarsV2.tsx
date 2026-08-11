@@ -71,8 +71,8 @@ export function FeaturedCarsV2() {
                 Featured cars
               </h2>
               <p className="mt-4 max-w-sm text-base leading-relaxed text-muted md:text-lg">
-                A wide selection of AA-inspected stock with clear monthly payments, ready to reserve
-                online.
+                A wide selection of AA Inspected Vehicles with clear monthly payments, ready to
+                reserve online.
               </p>
             </div>
           </ScrollReveal>
@@ -97,6 +97,7 @@ export function FeaturedCarsV2() {
                         <VehicleCertificateBadges
                           vehicle={car}
                           variant="overlay"
+                          aaLabel="AA Inspected Vehicles"
                           className="absolute bottom-3 left-3 right-3 z-10"
                         />
                       </div>

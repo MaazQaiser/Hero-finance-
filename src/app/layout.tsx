@@ -11,9 +11,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Hero Car Finance | Get Approved & Reserve Your Car",
+  title: "Hero Car Finance | Soft Search & Reserve Your Car",
   description:
-    "Check your eligibility with a soft search. Get approved for car finance and reserve AA-inspected vehicles with one trusted team.",
+    "Check your eligibility with a soft search. Browse AA Inspected Vehicles and arrange car finance with one trusted team.",
   icons: {
     icon: [
       { url: "/favicon.png", sizes: "512x512", type: "image/png" },

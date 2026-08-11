@@ -4,17 +4,15 @@
 
 export const saveContinueContent = {
   modal: {
-    title: "Progress Saved",
-    description:
-      "Your application has been securely saved. You can return anytime and continue exactly where you left off.",
+    title: "Your progress has been saved",
+    description: "We'll text you a secure link so you can continue anytime.",
     checklist: [
       "Your information is secure",
       "Continue on any device",
       "No need to start again",
-      "Returning only takes a few minutes",
     ],
-    primaryCta: "Continue Later",
-    secondaryCta: "Return to Application",
+    primaryCta: "Keep going",
+    secondaryCta: "I'll continue later",
     footerNote: "No pressure. Continue whenever you're ready.",
   },
 

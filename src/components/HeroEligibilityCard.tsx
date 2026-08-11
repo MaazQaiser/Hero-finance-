@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-
-const TOTAL_STEPS = 5;
+import { SECTIONS } from "@/lib/apply/sections";
 
 interface HeroEligibilityCardProps {
   variant?: "default" | "floating" | "cyclix" | "v2";
@@ -26,6 +25,35 @@ function ShieldIcon({ className }: { className?: string }) {
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden>
       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
     </svg>
+  );
+}
+
+/** Compact journey preview — same segmented model as the apply flow. */
+function JourneyStartPreview() {
+  return (
+    <div className="mb-5">
+      <div className="mb-2.5 flex items-baseline justify-between gap-3">
+        <span className="text-xs font-semibold text-ink">{SECTIONS[0].name}</span>
+        <span className="text-xs font-medium text-muted">Takes about 60 seconds to begin</span>
+      </div>
+      <div className="flex gap-1" aria-hidden>
+        {SECTIONS.map((section, i) => (
+          <div
+            key={section.name}
+            className="h-1 flex-1 overflow-hidden rounded-full bg-mist"
+          >
+            <div
+              className={`h-full rounded-full transition-all duration-500 ${
+                i === 0
+                  ? "w-[28%] bg-gradient-to-r from-green to-green-bright"
+                  : "w-0 bg-green"
+              }`}
+            />
+          </div>
+        ))}
+      </div>
+      <p className="mt-2.5 text-xs font-medium text-muted">Starts with a few quick questions</p>
+    </div>
   );
 }
 
@@ -56,7 +84,7 @@ export function HeroEligibilityCard({
           {isFloating && !isCyclix && (
             <div className="flex items-center gap-4 bg-green px-5 py-4">
               <p className="font-display text-sm font-extrabold tracking-wide text-white">
-                Get approved in 60 seconds
+                Takes about 60 seconds to begin
               </p>
             </div>
           )}
@@ -64,66 +92,17 @@ export function HeroEligibilityCard({
           <div className={isFloating && !isCyclix ? "p-5 md:p-6" : ""}>
             {isCyclix && (
               <p className="mb-3 text-xs font-semibold tracking-wide text-green-deep">
-                Quick eligibility check
+                Quick Start
               </p>
             )}
 
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <span className="flex items-center gap-2 text-xs font-bold text-green-deep">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green opacity-40" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-green" />
-                </span>
-                Step 1 of {TOTAL_STEPS}
-              </span>
-              <span className="text-xs font-semibold text-muted">~60 seconds</span>
-            </div>
-
-            <div
-              className="h-1.5 overflow-hidden rounded-full bg-mist"
-              role="progressbar"
-              aria-valuenow={1}
-              aria-valuemin={0}
-              aria-valuemax={TOTAL_STEPS}
-              aria-label="Application progress"
-            >
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-green to-green-bright transition-all duration-700"
-                style={{ width: `${(1 / TOTAL_STEPS) * 100}%` }}
-              />
-            </div>
+            <JourneyStartPreview />
           </div>
         </div>
       )}
 
       <div className={isFloating && !isCyclix && !isV2 ? "px-5 pb-5 md:px-6 md:pb-6" : ""}>
-        {isV2 && (
-          <>
-            <div className="mb-4 flex items-center justify-between gap-3 text-xs font-semibold text-muted">
-              <span className="flex items-center gap-2">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green opacity-40" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-green" />
-                </span>
-                Step 1 of {TOTAL_STEPS}
-              </span>
-              <span>~60 seconds</span>
-            </div>
-            <div
-              className="mb-6 h-1.5 overflow-hidden rounded-full bg-mist"
-              role="progressbar"
-              aria-valuenow={1}
-              aria-valuemin={0}
-              aria-valuemax={TOTAL_STEPS}
-              aria-label="Application progress"
-            >
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-green to-green-bright transition-all duration-700"
-                style={{ width: `${(1 / TOTAL_STEPS) * 100}%` }}
-              />
-            </div>
-          </>
-        )}
+        {isV2 && <JourneyStartPreview />}
 
         <h3 className={`font-display font-bold text-ink ${isV2 ? "text-xl" : "text-lg"}`}>
           {introHeadline}

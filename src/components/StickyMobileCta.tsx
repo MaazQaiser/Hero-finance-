@@ -25,7 +25,13 @@ export function StickyMobileCta() {
       }`}
     >
       <div className="flex gap-3">
-        <Button fullWidth size="lg" href={applyHref} className="bg-green-bright text-ink hover:bg-green-bright/90">
+        <Button
+          fullWidth
+          size="lg"
+          href={applyHref}
+          variant="secondary"
+          className="border-transparent bg-green-bright text-ink shadow-[0_4px_16px_rgba(223,255,77,0.35)] hover:border-transparent hover:bg-green-bright/90"
+        >
           {variant.cta}
         </Button>
         <a

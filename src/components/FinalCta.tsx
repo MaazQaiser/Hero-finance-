@@ -47,7 +47,7 @@ export function FinalCta() {
 
                 <p className="mt-5 text-base leading-relaxed text-muted">
                   {variant.id === "default"
-                    ? "See what you can afford with a soft search that has no impact on your credit score, then browse AA-inspected stock and arrange the finance and the car with one team."
+                    ? "Start with a soft search that has no impact on your credit score, then browse AA Inspected Vehicles and arrange the finance and the car with one team."
                     : variant.supportingCopy}
                 </p>
 
@@ -69,15 +69,18 @@ export function FinalCta() {
                   </Link>
                 </div>
 
-                <div className="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted">
-                  <span className="flex items-center gap-2">
-                    <span className="text-green-deep">✓</span> FCA regulated
+                <div className="mt-8 flex flex-nowrap gap-x-5 overflow-x-auto pb-1 text-sm text-muted">
+                  <span className="flex shrink-0 items-center gap-2">
+                    <span className="text-green-deep">✓</span> FCA Regulated
                   </span>
-                  <span className="flex items-center gap-2">
-                    <span className="text-green-deep">✓</span> Soft search only
+                  <span className="flex shrink-0 items-center gap-2">
+                    <span className="text-green-deep">✓</span> Soft Search
                   </span>
-                  <span className="flex items-center gap-2">
-                    <span className="text-green-deep">✓</span> AA inspected stock
+                  <span className="flex shrink-0 items-center gap-2">
+                    <span className="text-green-deep">✓</span> Secure Application
+                  </span>
+                  <span className="flex shrink-0 items-center gap-2">
+                    <span className="text-green-deep">✓</span> AA Inspected Vehicles
                   </span>
                 </div>
               </div>

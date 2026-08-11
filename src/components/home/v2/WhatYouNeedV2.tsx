@@ -19,9 +19,9 @@ export function WhatYouNeedV2() {
             </p>
             <Link
               href="/apply"
-              className="mt-8 inline-flex min-h-12 items-center justify-center rounded-full bg-green px-8 text-base font-semibold text-white shadow-[0_8px_24px_rgba(91,43,212,0.3)] transition-colors hover:bg-green-deep"
+              className="mt-8 inline-flex min-h-12 items-center justify-center rounded-full border border-line bg-paper px-8 text-base font-semibold text-ink transition-colors hover:border-green/30 hover:bg-mist"
             >
-              See what you can afford
+              Begin my application
             </Link>
           </div>
         </ScrollReveal>

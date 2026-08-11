@@ -1,15 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
 interface ChoiceOptionProps {
   label: string;
   selected: boolean;
   onClick: () => void;
+  /** Outlined / secondary treatment for helper options */
+  variant?: "default" | "outlined";
+  icon?: ReactNode;
+  helperText?: string;
 }
 
-export function ChoiceOption({ label, selected, onClick }: ChoiceOptionProps) {
+export function ChoiceOption({
+  label,
+  selected,
+  onClick,
+  variant = "default",
+  icon,
+  helperText,
+}: ChoiceOptionProps) {
   const [pressing, setPressing] = useState(false);
+  const isOutlined = variant === "outlined";
 
   const handleClick = () => {
     if (navigator.vibrate) navigator.vibrate(12);
@@ -27,43 +39,97 @@ export function ChoiceOption({ label, selected, onClick }: ChoiceOptionProps) {
       style={{
         position: "relative",
         width: "100%",
+        minHeight: 48,
         textAlign: "left",
         overflow: "hidden",
         fontFamily: "inherit",
         fontSize: 16.5,
         fontWeight: 500,
         color: "var(--aink)",
-        background: selected ? "var(--agreen-wash)" : "#f8f5ff",
-        border: "none",
+        background: selected
+          ? "var(--agreen-wash)"
+          : isOutlined
+            ? "#ffffff"
+            : "#f8f5ff",
+        border: isOutlined
+          ? `1.5px solid ${selected ? "var(--agreen)" : "var(--aline-strong)"}`
+          : "1.5px solid transparent",
         borderRadius: "var(--aradius)",
-        padding: "17px 18px",
+        padding: helperText ? "15px 18px" : "17px 18px",
         cursor: "pointer",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
         gap: 12,
-        transition: "background 0.15s, transform 0.12s",
+        transition: "background 0.15s, transform 0.12s, border-color 0.15s",
         transform: pressing ? "scale(0.985)" : "none",
         boxShadow: "none",
       }}
     >
-      {/* Wash fill sweep */}
+      {!isOutlined && (
+        <span
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "var(--agreen-wash)",
+            transformOrigin: "left",
+            transform: selected ? "scaleX(1)" : "scaleX(0)",
+            transition: "transform 0.28s cubic-bezier(0.32,0.72,0,1)",
+            zIndex: 0,
+          }}
+        />
+      )}
+
       <span
-        aria-hidden
         style={{
-          position: "absolute",
-          inset: 0,
-          background: "var(--agreen-wash)",
-          transformOrigin: "left",
-          transform: selected ? "scaleX(1)" : "scaleX(0)",
-          transition: "transform 0.28s cubic-bezier(0.32,0.72,0,1)",
-          zIndex: 0,
+          position: "relative",
+          zIndex: 1,
+          display: "flex",
+          alignItems: "flex-start",
+          gap: 12,
+          minWidth: 0,
+          flex: 1,
         }}
-      />
+      >
+        {icon ? (
+          <span
+            aria-hidden
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 28,
+              height: 28,
+              flexShrink: 0,
+              marginTop: 1,
+              borderRadius: "50%",
+              background: selected ? "rgba(91,43,212,0.12)" : "var(--agreen-wash)",
+              color: "var(--agreen)",
+            }}
+          >
+            {icon}
+          </span>
+        ) : null}
+        <span style={{ minWidth: 0 }}>
+          <span style={{ display: "block", lineHeight: 1.35 }}>{label}</span>
+          {helperText ? (
+            <span
+              style={{
+                display: "block",
+                marginTop: 4,
+                fontSize: 13,
+                fontWeight: 400,
+                lineHeight: 1.4,
+                color: "var(--aink-soft)",
+              }}
+            >
+              {helperText}
+            </span>
+          ) : null}
+        </span>
+      </span>
 
-      <span style={{ position: "relative", zIndex: 1 }}>{label}</span>
-
-      {/* Tick circle */}
       <span
         aria-hidden
         style={{

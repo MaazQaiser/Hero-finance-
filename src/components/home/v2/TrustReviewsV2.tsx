@@ -23,7 +23,7 @@ const reviews = [
     avatar: "/images/avatars/james.jpg",
   },
   {
-    quote: "Clear monthly payments, AA inspected car, and a smooth process from start to finish.",
+    quote: "Clear monthly payments, AA Inspected Vehicles, and a smooth process from start to finish.",
     supporting:
       "The monthly HP payment was shown upfront on every car. No hidden fees and no broker runaround.",
     name: "Priya K.",

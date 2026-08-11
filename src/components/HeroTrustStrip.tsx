@@ -1,7 +1,8 @@
 const trustMetrics = [
-  { value: "4.8★", label: "Trustpilot" },
-  { value: "8.9%", label: "APR from" },
-  { value: "AA", label: "Assured cars" },
+  { value: "4.8★", label: "Google Reviews" },
+  { value: "Soft", label: "Search" },
+  { value: "FCA", label: "Regulated" },
+  { value: "AA", label: "Inspected Vehicles" },
 ];
 
 const partners = ["Close Brothers", "Black Horse", "Santander", "MotoNovo"];
@@ -9,9 +10,9 @@ const partners = ["Close Brothers", "Black Horse", "Santander", "MotoNovo"];
 export function HeroTrustStrip() {
   return (
     <div className="mt-10 lg:mt-14">
-      <div className="flex flex-wrap items-center gap-6 border-t border-line/80 pt-6">
+      <div className="flex flex-nowrap items-center gap-6 overflow-x-auto border-t border-line/80 pt-6">
         {trustMetrics.map((item) => (
-          <div key={item.label} className="text-left">
+          <div key={item.label} className="shrink-0 text-left">
             <p className="font-display text-xl font-extrabold text-ink md:text-2xl">
               {item.value}
             </p>

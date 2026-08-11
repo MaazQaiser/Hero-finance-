@@ -10,6 +10,7 @@ export interface MockSavedApplication {
   progressPercent: number;
   estimatedMinutesRemaining: number;
   lastSavedLabel: string;
+  sectionName: string;
 }
 
 /** Toggle for empty-state demos in the design prototype */
@@ -22,4 +23,5 @@ export const mockSavedApplication: MockSavedApplication = {
   progressPercent: 42,
   estimatedMinutesRemaining: 3,
   lastSavedLabel: "Today at 2:15 PM",
+  sectionName: "Your Details",
 };

@@ -153,7 +153,7 @@ export function FinanceExplainedV2() {
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted md:text-lg">
             A straightforward way to finance your car. No jargon and no hidden fees, just clear
-            monthly payments and AA-inspected stock from one group.
+            monthly payments and AA Inspected Vehicles from one group.
           </p>
         </div>
 
@@ -168,9 +168,9 @@ export function FinanceExplainedV2() {
         <div className="mx-auto mt-10 flex flex-col items-center gap-4 md:mt-12">
           <Link
             href="/apply"
-            className="inline-flex min-h-12 items-center justify-center rounded-full bg-ink px-8 text-base font-bold text-white transition-colors hover:bg-ink/90"
+            className="inline-flex min-h-12 items-center justify-center rounded-full border border-line bg-paper px-8 text-base font-bold text-ink transition-colors hover:border-green/30 hover:bg-mist"
           >
-            See what you can afford
+            Start my soft search
           </Link>
           <p className="max-w-2xl text-center text-xs leading-relaxed text-muted">
             Representative example: Borrowing £10,000 over 48 months at 9.9% APR would cost £251.32

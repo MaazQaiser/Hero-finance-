@@ -9,7 +9,7 @@ interface SectionArrivalProps {
   onDone: () => void;
 }
 
-export function SectionArrival({ section, sectionIndex, onDone }: SectionArrivalProps) {
+export function SectionArrival({ section, onDone }: SectionArrivalProps) {
   const [leaving, setLeaving] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -56,7 +56,7 @@ export function SectionArrival({ section, sectionIndex, onDone }: SectionArrival
           marginBottom: 12,
         }}
       >
-        Section {sectionIndex + 1} of 6
+        {section.name}
       </p>
       <h2
         style={{

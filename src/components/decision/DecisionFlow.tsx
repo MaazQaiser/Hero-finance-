@@ -40,7 +40,7 @@ export function DecisionFlow({ stateOverride }: DecisionFlowProps) {
         termMonths: 48,
         lenderName: "Close Brothers Motor Finance",
         expectedResponseHours: 24,
-        budgetBand: "£200 to £300",
+        budgetBand: "£200–£300",
         depositBand: "None",
         carType: "Family car or estate",
         purchaseTimeframe: "Within a month",

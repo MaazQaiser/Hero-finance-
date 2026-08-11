@@ -96,9 +96,9 @@ export function FooterV2() {
               <p className="text-sm font-medium text-white/55">Apply online</p>
               <Link
                 href="/apply"
-                className="mt-3 inline-flex min-h-11 items-center justify-center rounded-full bg-green-bright px-6 text-sm font-bold text-ink transition-colors hover:bg-green-bright/90 sm:text-base"
+                className="mt-3 inline-flex min-h-11 items-center justify-center rounded-full border border-white/35 bg-transparent px-6 text-sm font-bold text-white transition-colors hover:bg-white/10 sm:text-base"
               >
-                See what you can afford
+                Start my soft search
               </Link>
             </div>
           </div>

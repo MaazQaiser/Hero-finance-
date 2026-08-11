@@ -12,7 +12,7 @@ interface ApplyEntryScreenProps {
   onSaveLater: () => void;
 }
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 19;
 
 function UserIcon({ className }: { className?: string }) {
   return (
@@ -110,7 +110,7 @@ export function ApplyEntryScreen({ onContinue, onSaveLater }: ApplyEntryScreenPr
 
       <main className="relative mx-auto max-w-2xl px-5 pb-12 pt-6 md:px-8 md:pb-16 md:pt-8">
         <div className="hero-fade-up">
-          <ApplyProgressBar currentStep={1} totalSteps={TOTAL_STEPS} estimatedMinutes={5} />
+          <ApplyProgressBar currentStep={1} totalSteps={TOTAL_STEPS} estimatedMinutes={5} sectionName="Quick Start" />
         </div>
 
         <section className="hero-fade-up-delay mt-8 md:mt-10">
