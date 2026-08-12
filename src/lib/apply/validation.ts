@@ -59,6 +59,12 @@ export function validateStep(stepId: StepId | string, data: ApplicationData): Fi
       if (!data.ukPassport) errors.ukPassport = "Select an option";
       break;
 
+    case "passport-nationality":
+      if (!data.ukPassportNationality.trim()) {
+        errors.ukPassportNationality = "Select your passport nationality";
+      }
+      break;
+
     case "passport-country":
       if (!data.passportCountry.trim()) {
         errors.passportCountry = "Enter the country that issued your passport";

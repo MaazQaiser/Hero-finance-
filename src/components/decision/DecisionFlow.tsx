@@ -88,7 +88,7 @@ export function DecisionFlow({ stateOverride }: DecisionFlowProps) {
             {state === "approved"
               ? "Approved in principle"
               : state === "pending"
-                ? "Processing"
+                ? "Application received"
                 : "Under review"}
           </span>
         </header>

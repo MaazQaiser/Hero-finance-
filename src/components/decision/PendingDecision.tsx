@@ -18,11 +18,11 @@ export function PendingDecision({ decision }: PendingDecisionProps) {
           </div>
         </div>
         <h1 className="mt-6 text-3xl font-medium text-ink">
-          Your application is being processed
+          We&apos;re working on your application
         </h1>
         <p className="mx-auto mt-3 max-w-md text-muted">
-          This usually takes just a little longer. We&apos;ll be in touch as soon as we have an
-          update.
+          Thanks for submitting. We&apos;ll be in touch soon once we have an update from our
+          lenders. Nothing here has touched your credit score.
         </p>
       </section>
 

@@ -738,9 +738,25 @@ export function ApplyStepContent({
             if (v === "Yes") {
               autoSelect({ ukPassport: "yes", passportCountry: "" });
             } else {
-              autoSelect({ ukPassport: "no" });
+              autoSelect({ ukPassport: "no", ukPassportNationality: "" });
             }
           }}
+        />
+      );
+
+    case "passport-nationality":
+      return (
+        <ChoiceList
+          options={[
+            "British citizen",
+            "British overseas territories citizen (BOTC)",
+            "British overseas citizen (BOC)",
+            "British subject",
+            "British national (overseas) (BN(O))",
+            "British protected person (BPP)",
+          ]}
+          value={data.ukPassportNationality}
+          onSelect={(v) => autoSelect({ ukPassportNationality: v })}
         />
       );
 

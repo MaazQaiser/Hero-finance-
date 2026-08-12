@@ -55,7 +55,7 @@ export function generateDecision(data: ApplicationData): FinanceDecision {
   }
 
   const approvedAmount = Math.min(
-    Math.round((income * 0.35 * 48) / 100) * 100,
+    Math.round((income * 0.35 * 48) / 100) * 100 || 18000,
     28000,
   );
   const termMonths = 48;

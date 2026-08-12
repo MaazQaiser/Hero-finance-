@@ -89,6 +89,7 @@ const stepToTrustKey: Record<string, TrustMessageKey> = {
   employment: "employment",
   licence: "licence",
   "uk-passport": "name",
+  "passport-nationality": "name",
   "passport-country": "name",
   "joint-choice": "name",
   mobile: "name",

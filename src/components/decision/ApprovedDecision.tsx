@@ -80,10 +80,27 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
         Good news{firstName ? `, ${firstName}` : ""}.
       </h1>
 
-      <p style={{ fontSize: 14.5, lineHeight: 1.55, color: "var(--aink-soft)", marginBottom: 22 }}>
+      <p style={{ fontSize: 14.5, lineHeight: 1.55, color: "var(--aink-soft)", marginBottom: 14 }}>
         A lender on our panel is happy to proceed based on your soft search. Nothing here
         has touched your credit score.
       </p>
+
+      <div
+        style={{
+          marginBottom: 22,
+          padding: "12px 14px",
+          borderRadius: 14,
+          border: "1.5px solid var(--aline)",
+          background: "var(--agreen-wash, #f3f7f2)",
+          fontSize: 13.5,
+          lineHeight: 1.5,
+          color: "var(--aink)",
+        }}
+      >
+        <strong style={{ fontWeight: 600 }}>We&apos;re still working hard to improve your offer.</strong>{" "}
+        These cars are a starting point — as we refine your options with lenders, your figures
+        may get better.
+      </div>
 
       {/* Budget summary card */}
       <div

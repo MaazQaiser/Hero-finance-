@@ -214,6 +214,12 @@ const STEP_META: Record<
     title: "Do you have a UK passport?",
     help: "Lenders may ask for this as part of identity checks later.",
   },
+  "passport-nationality": {
+    sectionIndex: 1,
+    stepType: "choice",
+    title: "What type of UK passport do you have?",
+    help: "Select the nationality shown in your passport.",
+  },
   "passport-country": {
     sectionIndex: 1,
     stepType: "form",
@@ -557,6 +563,9 @@ export function getV2Steps(data: ApplicationData): V2StepMeta[] {
   add("joint-choice");
   add("licence");
   add("uk-passport");
+  if (data.ukPassport === "yes") {
+    add("passport-nationality");
+  }
   if (data.ukPassport === "no") {
     add("passport-country");
   }
