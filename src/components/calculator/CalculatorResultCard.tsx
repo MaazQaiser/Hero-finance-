@@ -84,7 +84,7 @@ export function CalculatorResultCard({
             {secondaryCta.label}
           </Button>
         )}
-        <Button fullWidth size="lg" href={primaryCta.href} className="bg-green-bright text-ink hover:bg-green-bright/90">
+        <Button variant="lime" fullWidth size="lg" href={primaryCta.href}>
           {primaryCta.label}
         </Button>
       </div>

@@ -37,7 +37,7 @@ export function CalculatorStickyCta({
             {secondaryLabel}
           </Button>
         )}
-        <Button fullWidth size="lg" href={primaryHref} className="bg-green-bright text-ink hover:bg-green-bright/90">
+        <Button variant="lime" fullWidth size="lg" href={primaryHref}>
           {primaryLabel}
         </Button>
       </div>

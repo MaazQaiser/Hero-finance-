@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { type ButtonHTMLAttributes, type ReactNode } from "react";
 
-type ButtonVariant = "primary" | "secondary" | "ghost";
+type ButtonVariant = "primary" | "secondary" | "ghost" | "lime";
 type ButtonSize = "md" | "lg";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -20,6 +20,8 @@ const variantClasses: Record<ButtonVariant, string> = {
     "bg-mist-2 text-ink border-2 border-line hover:border-green/30 hover:bg-mist",
   ghost:
     "bg-transparent text-ink hover:text-green-deep border border-transparent",
+  lime:
+    "bg-green-bright text-ink hover:bg-green-bright/90 border border-transparent shadow-[0_4px_16px_rgba(223,255,77,0.35)] hover:shadow-[0_8px_20px_rgba(223,255,77,0.42)]",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
