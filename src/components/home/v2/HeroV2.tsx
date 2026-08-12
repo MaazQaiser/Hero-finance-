@@ -32,7 +32,7 @@ export function HeroV2() {
             alt="Happy customer holding car keys beside a second-hand car on a dealership forecourt"
             fill
             priority
-            className="object-cover object-[78%_20%] sm:object-[72%_22%] lg:object-[68%_22%]"
+            className="object-cover object-[78%_top] sm:object-[72%_top] lg:object-[68%_top]"
             sizes="(max-width: 1320px) 100vw, 1320px"
           />
 

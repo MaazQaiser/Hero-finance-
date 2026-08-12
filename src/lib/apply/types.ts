@@ -74,6 +74,8 @@ export interface ApplicationData {
   drivingLicence: DrivingLicence | "";
   /** UK passport — empty until answered */
   ukPassport: "" | "yes" | "no";
+  /** When ukPassport is no — country of issue */
+  passportCountry: string;
 
   // Vehicle (legacy — v2 removes vehicle search from apply)
   vehicleId: string;
@@ -139,6 +141,7 @@ export type StepId =
   // v2 Section 2 — Licence / ID
   | "licence"
   | "uk-passport"
+  | "passport-country"
   // v2 Section 3 — Address
   | "address"
   | "address-duration"
@@ -243,6 +246,7 @@ export const initialApplicationData: ApplicationData = {
   // licence
   drivingLicence: "",
   ukPassport: "",
+  passportCountry: "",
   // vehicle (legacy)
   vehicleId: "",
   vehicleSearch: "",

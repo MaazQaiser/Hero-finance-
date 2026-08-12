@@ -78,6 +78,9 @@ function buildSections(data: ApplicationData): ReviewSection[] {
         { label: "Mobile", value: data.mobile || "—" },
         { label: "Email", value: data.email || "Not provided" },
         { label: "Date of birth", value: data.dateOfBirth || "—" },
+        ...(data.ukPassport === "no" && data.passportCountry
+          ? [{ label: "Passport country", value: data.passportCountry }]
+          : []),
       ],
     },
     {

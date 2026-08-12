@@ -301,7 +301,7 @@ export function ApprovedDecision({ decision }: ApprovedDecisionProps) {
       <div
         style={{
           border: "1.5px solid var(--aline)",
-          borderRadius: 9999,
+          borderRadius: "var(--aradius)",
           padding: "15px 16px",
           fontSize: 12.5,
           lineHeight: 1.6,

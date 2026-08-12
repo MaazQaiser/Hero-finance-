@@ -734,9 +734,27 @@ export function ApplyStepContent({
           value={
             data.ukPassport === "yes" ? "Yes" : data.ukPassport === "no" ? "No" : ""
           }
-          onSelect={(v) =>
-            autoSelect({ ukPassport: v === "Yes" ? "yes" : "no" })
-          }
+          onSelect={(v) => {
+            if (v === "Yes") {
+              autoSelect({ ukPassport: "yes", passportCountry: "" });
+            } else {
+              autoSelect({ ukPassport: "no" });
+            }
+          }}
+        />
+      );
+
+    case "passport-country":
+      return (
+        <ShellInput
+          id="passportCountry"
+          label="Country of issue"
+          placeholder="e.g. Poland, India, France"
+          autoFocus
+          autoComplete="country-name"
+          value={data.passportCountry}
+          onChange={(e) => onChange({ passportCountry: e.target.value })}
+          error={fieldErrors.passportCountry}
         />
       );
 

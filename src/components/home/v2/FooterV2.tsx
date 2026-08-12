@@ -100,6 +100,12 @@ export function FooterV2() {
               >
                 Start my soft search
               </Link>
+              <Link
+                href="/calculator"
+                className="mt-3 block text-sm font-semibold text-white/70 transition-colors hover:text-green-bright md:text-right"
+              >
+                Finance calculator
+              </Link>
             </div>
           </div>
 

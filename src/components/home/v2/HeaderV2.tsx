@@ -6,6 +6,7 @@ import { HeroLogo } from "@/components/HeroLogo";
 
 const navLinks = [
   { label: "How it works", href: "#how-it-works" },
+  { label: "Calculator", href: "/calculator" },
   { label: "Browse cars", href: "/cars" },
   { label: "Why Hero", href: "#why-hero" },
 ];

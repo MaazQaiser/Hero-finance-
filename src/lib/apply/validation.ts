@@ -56,6 +56,13 @@ export function validateStep(stepId: StepId | string, data: ApplicationData): Fi
       break;
 
     case "uk-passport":
+      if (!data.ukPassport) errors.ukPassport = "Select an option";
+      break;
+
+    case "passport-country":
+      if (!data.passportCountry.trim()) {
+        errors.passportCountry = "Enter the country that issued your passport";
+      }
       break;
 
     // v2 Section 3 — Address

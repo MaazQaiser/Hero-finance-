@@ -92,6 +92,12 @@ export function BudgetSearchV2() {
                 >
                   Find my next car
                 </Link>
+                <Link
+                  href="/calculator"
+                  className="mt-3 flex min-h-11 w-full items-center justify-center text-sm font-semibold text-green-deep transition-colors hover:text-green"
+                >
+                  Or use our finance calculator
+                </Link>
               </div>
             </div>
           </ScrollReveal>
