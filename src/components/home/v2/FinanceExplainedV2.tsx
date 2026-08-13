@@ -26,7 +26,7 @@ const cards: {
     label: "Fixed payments",
     title: "Know your monthly cost",
     description:
-      "Your rate and term are agreed upfront — clear monthly HP payments with no broker surprises.",
+      "Your rate and term are agreed upfront, with clear monthly payments and no surprises.",
     image: "/images/finance/fixed-payments.jpg",
     imageAlt: "Customer and dealer shaking hands after agreeing finance",
     featured: true,

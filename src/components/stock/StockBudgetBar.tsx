@@ -87,6 +87,8 @@ export function StockBudgetBar({ budget, onChange, onApply }: StockBudgetBarProp
                 <option value={36}>36 months</option>
                 <option value={48}>48 months</option>
                 <option value={60}>60 months</option>
+                <option value={72}>72 months</option>
+                <option value={84}>84 months</option>
               </select>
             </div>
           </div>
