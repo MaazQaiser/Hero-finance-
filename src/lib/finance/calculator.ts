@@ -94,33 +94,3 @@ export function calculateAffordabilityMode(input: {
   };
 }
 
-export function calculateDepositMode(input: {
-  vehiclePrice: number;
-  monthlyBudget: number;
-  termMonths: number;
-  creditProfile: CreditProfileId;
-}) {
-  const apr = getCreditProfile(input.creditProfile).apr;
-  const maxBorrowable = calculatePrincipalFromPayment(
-    input.monthlyBudget,
-    apr,
-    input.termMonths,
-  );
-  const recommendedDeposit = Math.max(0, Math.round(input.vehiclePrice - maxBorrowable));
-  const remainingFinance = Math.max(0, input.vehiclePrice - recommendedDeposit);
-  const monthlyPayment = calculateMonthlyPayment(remainingFinance, apr, input.termMonths);
-  const totalRepayable = monthlyPayment * input.termMonths;
-  const costOfCredit = Math.max(0, totalRepayable - remainingFinance);
-
-  return {
-    apr,
-    recommendedDeposit,
-    remainingFinance,
-    monthlyPayment,
-    amountBorrowed: remainingFinance,
-    totalRepayable,
-    costOfCredit,
-    headline: recommendedDeposit,
-    headlineLabel: "Maximum recommended deposit",
-  };
-}

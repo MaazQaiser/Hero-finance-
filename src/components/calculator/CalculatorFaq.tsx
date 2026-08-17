@@ -22,7 +22,7 @@ const faqs = [
   {
     question: "What deposit do I need?",
     answer:
-      "Deposits vary by lender and vehicle. Some customers qualify with little or no deposit. Use our Maximum Deposit mode to see what you'd need for a specific car at your monthly budget.",
+      "Deposits vary by lender and vehicle. Some customers qualify with little or no deposit. Use What Can I Afford to see how a deposit changes the cars in your budget.",
   },
   {
     question: "What's the difference between HP and PCP?",

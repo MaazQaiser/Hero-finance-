@@ -1,11 +1,10 @@
 "use client";
 
-export type CalculatorMode = "monthly" | "affordability" | "deposit";
+export type CalculatorMode = "monthly" | "affordability";
 
 const modes: { id: CalculatorMode; label: string }[] = [
   { id: "monthly", label: "Monthly Payment" },
   { id: "affordability", label: "What Can I Afford" },
-  { id: "deposit", label: "Maximum Deposit" },
 ];
 
 interface CalculatorModeSwitcherProps {
@@ -16,7 +15,7 @@ interface CalculatorModeSwitcherProps {
 export function CalculatorModeSwitcher({ mode, onChange }: CalculatorModeSwitcherProps) {
   return (
     <div className="rounded-full border border-line bg-mist-2 p-1.5">
-      <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
         {modes.map((item) => {
           const active = mode === item.id;
 

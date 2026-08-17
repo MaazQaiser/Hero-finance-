@@ -5,7 +5,7 @@ import { CalculatorExperience } from "@/components/calculator/CalculatorExperien
 export const metadata = {
   title: "Car Finance Calculator | Hero Car Finance",
   description:
-    "Estimate monthly payments, see what you can afford, or calculate your deposit with Hero's car finance calculator. Soft search only.",
+    "Estimate monthly payments or see what you can afford with Hero's car finance calculator. Soft search only.",
 };
 
 export default function CalculatorPage() {

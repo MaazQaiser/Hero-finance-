@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import { formatPrice } from "@/data/vehicles";
 import {
   calculateAffordabilityMode,
-  calculateDepositMode,
   calculateMonthlyPaymentMode,
 } from "@/lib/finance/calculator";
 import {
@@ -55,42 +54,19 @@ export function CalculatorExperience() {
     [monthlyBudget, deposit, termMonths, creditProfile],
   );
 
-  const depositResult = useMemo(
-    () =>
-      calculateDepositMode({
-        vehiclePrice,
-        monthlyBudget,
-        termMonths,
-        creditProfile,
-      }),
-    [vehiclePrice, monthlyBudget, termMonths, creditProfile],
-  );
-
-  const activeResult =
-    mode === "monthly"
-      ? monthlyResult
-      : mode === "affordability"
-        ? affordabilityResult
-        : depositResult;
+  const activeResult = mode === "monthly" ? monthlyResult : affordabilityResult;
 
   const browseHref =
     mode === "affordability"
       ? `/cars?mode=monthly&monthly=${monthlyBudget}&deposit=${deposit}&term=${termMonths}`
-      : mode === "deposit"
-        ? `/cars?mode=price&maxPrice=${vehiclePrice}`
-        : `/cars?mode=price&maxPrice=${vehiclePrice}`;
+      : `/cars?mode=price&maxPrice=${vehiclePrice}`;
 
   const primaryCta =
     mode === "affordability"
       ? { label: "Browse Cars Within This Budget", href: browseHref }
-      : mode === "deposit"
-        ? { label: "Continue Application", href: "/apply" }
-        : { label: "Check My Eligibility", href: "/apply?campaign=affordability" };
+      : { label: "Check My Eligibility", href: "/apply?campaign=affordability" };
 
-  const secondaryCta =
-    mode === "deposit"
-      ? { label: "Browse Cars", href: browseHref }
-      : { label: "Browse Cars", href: browseHref };
+  const secondaryCta = { label: "Browse Cars", href: browseHref };
 
   const resultRows =
     mode === "monthly"
@@ -99,17 +75,11 @@ export function CalculatorExperience() {
           { label: "Cost of credit", value: formatPrice(monthlyResult.costOfCredit) },
           { label: "Total repayable", value: formatPrice(monthlyResult.totalRepayable), highlight: true },
         ]
-      : mode === "affordability"
-        ? [
-            { label: "Amount borrowed", value: formatPrice(affordabilityResult.amountBorrowed) },
-            { label: "Suggested monthly budget", value: formatPrice(affordabilityResult.suggestedMonthlyBudget) },
-            { label: "Total repayable", value: formatPrice(affordabilityResult.totalRepayable) },
-          ]
-        : [
-            { label: "Remaining finance amount", value: formatPrice(depositResult.remainingFinance) },
-            { label: "Estimated monthly payment", value: `${formatPrice(depositResult.monthlyPayment)}/mo`, highlight: true },
-            { label: "Total repayable", value: formatPrice(depositResult.totalRepayable) },
-          ];
+      : [
+          { label: "Amount borrowed", value: formatPrice(affordabilityResult.amountBorrowed) },
+          { label: "Suggested monthly budget", value: formatPrice(affordabilityResult.suggestedMonthlyBudget) },
+          { label: "Total repayable", value: formatPrice(affordabilityResult.totalRepayable) },
+        ];
 
   return (
     <>
@@ -175,29 +145,6 @@ export function CalculatorExperience() {
                     max={15000}
                     step={250}
                     onChange={setDeposit}
-                  />
-                </>
-              )}
-
-              {mode === "deposit" && (
-                <>
-                  <CurrencySlider
-                    id="deposit-vehicle-price"
-                    label="Vehicle price"
-                    value={vehiclePrice}
-                    min={3000}
-                    max={50000}
-                    step={500}
-                    onChange={setVehiclePrice}
-                  />
-                  <CurrencySlider
-                    id="deposit-monthly-budget"
-                    label="Monthly budget"
-                    value={monthlyBudget}
-                    min={100}
-                    max={800}
-                    step={10}
-                    onChange={setMonthlyBudget}
                   />
                 </>
               )}
